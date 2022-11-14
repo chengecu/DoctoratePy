@@ -1,7 +1,7 @@
 on: 
   push:
     tags:
-      - "GUI-Update"
+      - "GUI-v*"
 
 jobs:
   # job id, can be anything
