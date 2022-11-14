@@ -26,7 +26,6 @@ focus_mode = 1
 script = ExtResource("1_njp3f")
 
 [node name="Background" type="ColorRect" parent="."]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -35,7 +34,6 @@ grow_vertical = 2
 color = Color(0.341176, 0.329412, 0.317647, 1)
 
 [node name="TabContainer" type="TabContainer" parent="."]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -43,8 +41,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Account" type="Control" parent="TabContainer"]
-visible = false
-layout_mode = 2
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -53,7 +50,6 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="TODO" type="Panel" parent="TabContainer/Account"]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -62,7 +58,6 @@ grow_vertical = 2
 
 [node name="Label" type="Label" parent="TabContainer/Account/TODO"]
 modulate = Color(0.435294, 0.435294, 0.435294, 1)
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -78,7 +73,8 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Roster" type="Control" parent="TabContainer"]
-layout_mode = 2
+visible = false
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -87,7 +83,6 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="TODO" type="Panel" parent="TabContainer/Roster"]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -96,7 +91,6 @@ grow_vertical = 2
 
 [node name="Label" type="Label" parent="TabContainer/Roster/TODO"]
 modulate = Color(0.435294, 0.435294, 0.435294, 1)
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -113,7 +107,7 @@ vertical_alignment = 1
 
 [node name="Crisis" type="Control" parent="TabContainer"]
 visible = false
-layout_mode = 2
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -122,14 +116,13 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Left" type="Control" parent="TabContainer/Crisis"]
-layout_mode = 1
+layout_mode = 3
 anchors_preset = 9
 anchor_bottom = 1.0
 offset_right = 128.0
 grow_vertical = 2
 
 [node name="ItemList" type="ItemList" parent="TabContainer/Crisis/Left"]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -145,7 +138,7 @@ item_1/text = "cc1"
 
 [node name="Right" type="Control" parent="TabContainer/Crisis"]
 visible = false
-layout_mode = 1
+layout_mode = 3
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
@@ -154,7 +147,6 @@ offset_bottom = 616.0
 grow_horizontal = 0
 
 [node name="Info" type="Panel" parent="TabContainer/Crisis/Right"]
-layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
@@ -164,7 +156,6 @@ offset_bottom = 300.0
 grow_vertical = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Crisis/Right/Info"]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -177,13 +168,12 @@ grow_vertical = 2
 
 [node name="Season" type="Control" parent="TabContainer/Crisis/Right/Info/VBoxContainer"]
 custom_minimum_size = Vector2(0, 48)
-layout_mode = 2
+layout_mode = 3
 anchors_preset = 0
 offset_right = 304.0
 offset_bottom = 48.0
 
 [node name="Label" type="Label" parent="TabContainer/Crisis/Right/Info/VBoxContainer/Season"]
-layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
@@ -196,7 +186,6 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="OptionButton" type="OptionButton" parent="TabContainer/Crisis/Right/Info/VBoxContainer/Season"]
-layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
 anchor_top = 0.5
@@ -215,14 +204,13 @@ popup/item_0/id = 0
 
 [node name="StageCode" type="Control" parent="TabContainer/Crisis/Right/Info/VBoxContainer"]
 custom_minimum_size = Vector2(0, 48)
-layout_mode = 2
+layout_mode = 3
 anchors_preset = 0
 offset_top = 52.0
 offset_right = 304.0
 offset_bottom = 100.0
 
 [node name="Label" type="Label" parent="TabContainer/Crisis/Right/Info/VBoxContainer/StageCode"]
-layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
@@ -235,7 +223,6 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="LineEdit" type="LineEdit" parent="TabContainer/Crisis/Right/Info/VBoxContainer/StageCode"]
-layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
 anchor_top = 0.5
@@ -251,14 +238,13 @@ alignment = 1
 
 [node name="StageName" type="Control" parent="TabContainer/Crisis/Right/Info/VBoxContainer"]
 custom_minimum_size = Vector2(0, 48)
-layout_mode = 2
+layout_mode = 3
 anchors_preset = 0
 offset_top = 104.0
 offset_right = 304.0
 offset_bottom = 152.0
 
 [node name="Label" type="Label" parent="TabContainer/Crisis/Right/Info/VBoxContainer/StageName"]
-layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
@@ -271,7 +257,6 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="LineEdit" type="LineEdit" parent="TabContainer/Crisis/Right/Info/VBoxContainer/StageName"]
-layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
 anchor_top = 0.5
@@ -287,14 +272,13 @@ alignment = 1
 
 [node name="StageId" type="Control" parent="TabContainer/Crisis/Right/Info/VBoxContainer"]
 custom_minimum_size = Vector2(0, 48)
-layout_mode = 2
+layout_mode = 3
 anchors_preset = 0
 offset_top = 156.0
 offset_right = 304.0
 offset_bottom = 204.0
 
 [node name="Label" type="Label" parent="TabContainer/Crisis/Right/Info/VBoxContainer/StageId"]
-layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
@@ -307,7 +291,6 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="LineEdit" type="LineEdit" parent="TabContainer/Crisis/Right/Info/VBoxContainer/StageId"]
-layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
 anchor_top = 0.5
@@ -324,14 +307,13 @@ alignment = 1
 [node name="MapId" type="Control" parent="TabContainer/Crisis/Right/Info/VBoxContainer"]
 visible = false
 custom_minimum_size = Vector2(0, 48)
-layout_mode = 2
+layout_mode = 3
 anchors_preset = 0
 offset_top = 208.0
 offset_right = 304.0
 offset_bottom = 256.0
 
 [node name="Label" type="Label" parent="TabContainer/Crisis/Right/Info/VBoxContainer/MapId"]
-layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
@@ -344,7 +326,6 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="OptionButton" type="OptionButton" parent="TabContainer/Crisis/Right/Info/VBoxContainer/MapId"]
-layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
 anchor_top = 0.5
@@ -364,14 +345,13 @@ popup/item_0/id = 0
 [node name="LoadingId" type="Control" parent="TabContainer/Crisis/Right/Info/VBoxContainer"]
 visible = false
 custom_minimum_size = Vector2(0, 48)
-layout_mode = 2
+layout_mode = 3
 anchors_preset = 0
 offset_top = 260.0
 offset_right = 304.0
 offset_bottom = 308.0
 
 [node name="Load" type="Label" parent="TabContainer/Crisis/Right/Info/VBoxContainer/LoadingId"]
-layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
@@ -384,7 +364,6 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="OptionButton" type="OptionButton" parent="TabContainer/Crisis/Right/Info/VBoxContainer/LoadingId"]
-layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
 anchor_top = 0.5
@@ -403,14 +382,13 @@ popup/item_0/id = 0
 
 [node name="Description" type="Control" parent="TabContainer/Crisis/Right/Info/VBoxContainer"]
 custom_minimum_size = Vector2(0, 256)
-layout_mode = 2
+layout_mode = 3
 anchors_preset = 0
 offset_top = 208.0
 offset_right = 304.0
 offset_bottom = 464.0
 
 [node name="TextEdit" type="TextEdit" parent="TabContainer/Crisis/Right/Info/VBoxContainer/Description"]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -425,7 +403,6 @@ placeholder_text = "Stage description"
 wrap_mode = 1
 
 [node name="TabContainer" type="TabContainer" parent="TabContainer/Crisis/Right"]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -437,7 +414,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Risks" type="Control" parent="TabContainer/Crisis/Right/TabContainer"]
-layout_mode = 2
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -447,7 +424,7 @@ grow_vertical = 2
 
 [node name="Icon" type="Control" parent="TabContainer/Crisis/Right/TabContainer/Risks"]
 modulate = Color(1, 0.521569, 0.313726, 1)
-layout_mode = 1
+layout_mode = 3
 anchors_preset = 0
 offset_left = 8.0
 offset_top = 9.0
@@ -457,7 +434,6 @@ offset_bottom = 73.0
 [node name="ColorRect" type="ColorRect" parent="TabContainer/Crisis/Right/TabContainer/Risks/Icon"]
 modulate = Color(0.996078, 0.996078, 0.996078, 1)
 material = SubResource("ShaderMaterial_yvmww")
-layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -474,7 +450,7 @@ pivot_offset = Vector2(8, 8)
 
 [node name="Icon2" type="Control" parent="TabContainer/Crisis/Right/TabContainer/Risks"]
 modulate = Color(0.984314, 0.333333, 0, 1)
-layout_mode = 1
+layout_mode = 3
 anchors_preset = 0
 offset_left = 8.0
 offset_top = 81.0
@@ -483,7 +459,6 @@ offset_bottom = 145.0
 
 [node name="ColorRect" type="ColorRect" parent="TabContainer/Crisis/Right/TabContainer/Risks/Icon2"]
 material = SubResource("ShaderMaterial_yvmww")
-layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -500,7 +475,6 @@ pivot_offset = Vector2(8, 8)
 
 [node name="ColorRect2" type="ColorRect" parent="TabContainer/Crisis/Right/TabContainer/Risks/Icon2"]
 material = SubResource("ShaderMaterial_yvmww")
-layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -515,7 +489,7 @@ pivot_offset = Vector2(8, 8)
 
 [node name="Icon3" type="Control" parent="TabContainer/Crisis/Right/TabContainer/Risks"]
 modulate = Color(0.811765, 0, 0.160784, 1)
-layout_mode = 1
+layout_mode = 3
 anchors_preset = 0
 offset_left = 8.0
 offset_top = 145.0
@@ -524,7 +498,6 @@ offset_bottom = 201.0
 
 [node name="ColorRect" type="ColorRect" parent="TabContainer/Crisis/Right/TabContainer/Risks/Icon3"]
 material = SubResource("ShaderMaterial_yvmww")
-layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -540,7 +513,6 @@ pivot_offset = Vector2(8, 8)
 
 [node name="ColorRect2" type="ColorRect" parent="TabContainer/Crisis/Right/TabContainer/Risks/Icon3"]
 material = SubResource("ShaderMaterial_yvmww")
-layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -557,7 +529,6 @@ pivot_offset = Vector2(8, 8)
 
 [node name="ColorRect3" type="ColorRect" parent="TabContainer/Crisis/Right/TabContainer/Risks/Icon3"]
 material = SubResource("ShaderMaterial_yvmww")
-layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -572,14 +543,12 @@ grow_vertical = 2
 pivot_offset = Vector2(8, 8)
 
 [node name="RuneInfo" type="Panel" parent="TabContainer/Crisis/Right/TabContainer/Risks"]
-layout_mode = 0
 offset_left = 16.0
 offset_top = 217.0
 offset_right = 680.0
 offset_bottom = 561.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Crisis/Right/TabContainer/Risks/RuneInfo"]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -592,13 +561,12 @@ grow_vertical = 2
 
 [node name="Id" type="Control" parent="TabContainer/Crisis/Right/TabContainer/Risks/RuneInfo/VBoxContainer"]
 custom_minimum_size = Vector2(0, 48)
-layout_mode = 2
+layout_mode = 3
 anchors_preset = 0
 offset_right = 344.0
 offset_bottom = 48.0
 
 [node name="Label" type="Label" parent="TabContainer/Crisis/Right/TabContainer/Risks/RuneInfo/VBoxContainer/Id"]
-layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
@@ -611,7 +579,6 @@ text = "ID
 vertical_alignment = 1
 
 [node name="LineEdit" type="LineEdit" parent="TabContainer/Crisis/Right/TabContainer/Risks/RuneInfo/VBoxContainer/Id"]
-layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
 anchor_top = 0.5
@@ -628,14 +595,13 @@ alignment = 1
 
 [node name="Risk" type="Control" parent="TabContainer/Crisis/Right/TabContainer/Risks/RuneInfo/VBoxContainer"]
 custom_minimum_size = Vector2(0, 48)
-layout_mode = 2
+layout_mode = 3
 anchors_preset = 0
 offset_top = 52.0
 offset_right = 344.0
 offset_bottom = 100.0
 
 [node name="Label" type="Label" parent="TabContainer/Crisis/Right/TabContainer/Risks/RuneInfo/VBoxContainer/Risk"]
-layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
@@ -647,7 +613,6 @@ text = "Risk"
 vertical_alignment = 1
 
 [node name="OptionButton" type="OptionButton" parent="TabContainer/Crisis/Right/TabContainer/Risks/RuneInfo/VBoxContainer/Risk"]
-layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
 anchor_top = 0.5
@@ -671,14 +636,13 @@ popup/item_2/id = 2
 
 [node name="Icon" type="Control" parent="TabContainer/Crisis/Right/TabContainer/Risks/RuneInfo/VBoxContainer"]
 custom_minimum_size = Vector2(0, 96)
-layout_mode = 2
+layout_mode = 3
 anchors_preset = 0
 offset_top = 104.0
 offset_right = 344.0
 offset_bottom = 200.0
 
 [node name="Label" type="Label" parent="TabContainer/Crisis/Right/TabContainer/Risks/RuneInfo/VBoxContainer/Icon"]
-layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
@@ -690,7 +654,6 @@ text = "Icon"
 vertical_alignment = 1
 
 [node name="OptionButton" type="OptionButton" parent="TabContainer/Crisis/Right/TabContainer/Risks/RuneInfo/VBoxContainer/Icon"]
-layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
 anchor_top = 0.5
@@ -712,14 +675,13 @@ popup/item_0/id = 0
 
 [node name="Description" type="Control" parent="TabContainer/Crisis/Right/TabContainer/Risks/RuneInfo/VBoxContainer"]
 custom_minimum_size = Vector2(0, 120)
-layout_mode = 2
+layout_mode = 3
 anchors_preset = 0
 offset_top = 204.0
 offset_right = 344.0
 offset_bottom = 324.0
 
 [node name="LineEdit" type="TextEdit" parent="TabContainer/Crisis/Right/TabContainer/Risks/RuneInfo/VBoxContainer/Description"]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -732,7 +694,6 @@ placeholder_text = "Risk description"
 wrap_mode = 1
 
 [node name="TextEdit" type="CodeEdit" parent="TabContainer/Crisis/Right/TabContainer/Risks/RuneInfo"]
-layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
 anchor_top = 0.5
@@ -822,7 +783,6 @@ wrap_mode = 1
 gutters_draw_line_numbers = true
 
 [node name="Runes" type="ScrollContainer" parent="TabContainer/Crisis/Right/TabContainer/Risks"]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -833,619 +793,521 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="RunesContainer" type="GridContainer" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes"]
-layout_mode = 2
 offset_right = 2172.0
 offset_bottom = 200.0
 columns = 32
 script = ExtResource("4_t8s73")
 
 [node name="Rune" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_right = 64.0
 
 [node name="Rune2" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 68.0
 offset_right = 132.0
 
 [node name="Rune3" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 136.0
 offset_right = 200.0
 
 [node name="Rune4" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 204.0
 offset_right = 268.0
 
 [node name="Rune5" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 272.0
 offset_right = 336.0
 
 [node name="Rune6" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 340.0
 offset_right = 404.0
 
 [node name="Rune7" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 408.0
 offset_right = 472.0
 
 [node name="Rune8" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 476.0
 offset_right = 540.0
 
 [node name="Rune9" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 544.0
 offset_right = 608.0
 
 [node name="Rune10" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 612.0
 offset_right = 676.0
 
 [node name="Rune11" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 680.0
 offset_right = 744.0
 
 [node name="Rune12" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 748.0
 offset_right = 812.0
 
 [node name="Rune13" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 816.0
 offset_right = 880.0
 
 [node name="Rune14" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 884.0
 offset_right = 948.0
 
 [node name="Rune15" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 952.0
 offset_right = 1016.0
 
 [node name="Rune16" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1020.0
 offset_right = 1084.0
 
 [node name="Rune17" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1088.0
 offset_right = 1152.0
 
 [node name="Rune18" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1156.0
 offset_right = 1220.0
 
 [node name="Rune19" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1224.0
 offset_right = 1288.0
 
 [node name="Rune20" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1292.0
 offset_right = 1356.0
 
 [node name="Rune21" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1360.0
 offset_right = 1424.0
 
 [node name="Rune22" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1428.0
 offset_right = 1492.0
 
 [node name="Rune23" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1496.0
 offset_right = 1560.0
 
 [node name="Rune24" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1564.0
 offset_right = 1628.0
 
 [node name="Rune25" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1632.0
 offset_right = 1696.0
 
 [node name="Rune26" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1700.0
 offset_right = 1764.0
 
 [node name="Rune27" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1768.0
 offset_right = 1832.0
 
 [node name="Rune28" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1836.0
 offset_right = 1900.0
 
 [node name="Rune29" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1904.0
 offset_right = 1968.0
 
 [node name="Rune30" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1972.0
 offset_right = 2036.0
 
 [node name="Rune31" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 2040.0
 offset_right = 2104.0
 
 [node name="Rune32" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 2108.0
 offset_right = 2172.0
 
 [node name="Rune33" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_top = 68.0
 offset_right = 64.0
 offset_bottom = 132.0
 
 [node name="Rune34" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 68.0
 offset_top = 68.0
 offset_right = 132.0
 offset_bottom = 132.0
 
 [node name="Rune35" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 136.0
 offset_top = 68.0
 offset_right = 200.0
 offset_bottom = 132.0
 
 [node name="Rune36" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 204.0
 offset_top = 68.0
 offset_right = 268.0
 offset_bottom = 132.0
 
 [node name="Rune37" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 272.0
 offset_top = 68.0
 offset_right = 336.0
 offset_bottom = 132.0
 
 [node name="Rune38" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 340.0
 offset_top = 68.0
 offset_right = 404.0
 offset_bottom = 132.0
 
 [node name="Rune39" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 408.0
 offset_top = 68.0
 offset_right = 472.0
 offset_bottom = 132.0
 
 [node name="Rune40" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 476.0
 offset_top = 68.0
 offset_right = 540.0
 offset_bottom = 132.0
 
 [node name="Rune41" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 544.0
 offset_top = 68.0
 offset_right = 608.0
 offset_bottom = 132.0
 
 [node name="Rune42" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 612.0
 offset_top = 68.0
 offset_right = 676.0
 offset_bottom = 132.0
 
 [node name="Rune43" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 680.0
 offset_top = 68.0
 offset_right = 744.0
 offset_bottom = 132.0
 
 [node name="Rune44" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 748.0
 offset_top = 68.0
 offset_right = 812.0
 offset_bottom = 132.0
 
 [node name="Rune45" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 816.0
 offset_top = 68.0
 offset_right = 880.0
 offset_bottom = 132.0
 
 [node name="Rune46" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 884.0
 offset_top = 68.0
 offset_right = 948.0
 offset_bottom = 132.0
 
 [node name="Rune47" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 952.0
 offset_top = 68.0
 offset_right = 1016.0
 offset_bottom = 132.0
 
 [node name="Rune48" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1020.0
 offset_top = 68.0
 offset_right = 1084.0
 offset_bottom = 132.0
 
 [node name="Rune49" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1088.0
 offset_top = 68.0
 offset_right = 1152.0
 offset_bottom = 132.0
 
 [node name="Rune50" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1156.0
 offset_top = 68.0
 offset_right = 1220.0
 offset_bottom = 132.0
 
 [node name="Rune51" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1224.0
 offset_top = 68.0
 offset_right = 1288.0
 offset_bottom = 132.0
 
 [node name="Rune52" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1292.0
 offset_top = 68.0
 offset_right = 1356.0
 offset_bottom = 132.0
 
 [node name="Rune53" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1360.0
 offset_top = 68.0
 offset_right = 1424.0
 offset_bottom = 132.0
 
 [node name="Rune54" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1428.0
 offset_top = 68.0
 offset_right = 1492.0
 offset_bottom = 132.0
 
 [node name="Rune55" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1496.0
 offset_top = 68.0
 offset_right = 1560.0
 offset_bottom = 132.0
 
 [node name="Rune56" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1564.0
 offset_top = 68.0
 offset_right = 1628.0
 offset_bottom = 132.0
 
 [node name="Rune57" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1632.0
 offset_top = 68.0
 offset_right = 1696.0
 offset_bottom = 132.0
 
 [node name="Rune58" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1700.0
 offset_top = 68.0
 offset_right = 1764.0
 offset_bottom = 132.0
 
 [node name="Rune59" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1768.0
 offset_top = 68.0
 offset_right = 1832.0
 offset_bottom = 132.0
 
 [node name="Rune60" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1836.0
 offset_top = 68.0
 offset_right = 1900.0
 offset_bottom = 132.0
 
 [node name="Rune61" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1904.0
 offset_top = 68.0
 offset_right = 1968.0
 offset_bottom = 132.0
 
 [node name="Rune62" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1972.0
 offset_top = 68.0
 offset_right = 2036.0
 offset_bottom = 132.0
 
 [node name="Rune63" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 2040.0
 offset_top = 68.0
 offset_right = 2104.0
 offset_bottom = 132.0
 
 [node name="Rune64" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 2108.0
 offset_top = 68.0
 offset_right = 2172.0
 offset_bottom = 132.0
 
 [node name="Rune65" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_top = 136.0
 offset_right = 64.0
 offset_bottom = 200.0
 
 [node name="Rune66" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 68.0
 offset_top = 136.0
 offset_right = 132.0
 offset_bottom = 200.0
 
 [node name="Rune67" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 136.0
 offset_top = 136.0
 offset_right = 200.0
 offset_bottom = 200.0
 
 [node name="Rune68" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 204.0
 offset_top = 136.0
 offset_right = 268.0
 offset_bottom = 200.0
 
 [node name="Rune69" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 272.0
 offset_top = 136.0
 offset_right = 336.0
 offset_bottom = 200.0
 
 [node name="Rune70" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 340.0
 offset_top = 136.0
 offset_right = 404.0
 offset_bottom = 200.0
 
 [node name="Rune71" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 408.0
 offset_top = 136.0
 offset_right = 472.0
 offset_bottom = 200.0
 
 [node name="Rune72" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 476.0
 offset_top = 136.0
 offset_right = 540.0
 offset_bottom = 200.0
 
 [node name="Rune73" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 544.0
 offset_top = 136.0
 offset_right = 608.0
 offset_bottom = 200.0
 
 [node name="Rune74" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 612.0
 offset_top = 136.0
 offset_right = 676.0
 offset_bottom = 200.0
 
 [node name="Rune75" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 680.0
 offset_top = 136.0
 offset_right = 744.0
 offset_bottom = 200.0
 
 [node name="Rune76" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 748.0
 offset_top = 136.0
 offset_right = 812.0
 offset_bottom = 200.0
 
 [node name="Rune77" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 816.0
 offset_top = 136.0
 offset_right = 880.0
 offset_bottom = 200.0
 
 [node name="Rune78" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 884.0
 offset_top = 136.0
 offset_right = 948.0
 offset_bottom = 200.0
 
 [node name="Rune79" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 952.0
 offset_top = 136.0
 offset_right = 1016.0
 offset_bottom = 200.0
 
 [node name="Rune80" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1020.0
 offset_top = 136.0
 offset_right = 1084.0
 offset_bottom = 200.0
 
 [node name="Rune81" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1088.0
 offset_top = 136.0
 offset_right = 1152.0
 offset_bottom = 200.0
 
 [node name="Rune82" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1156.0
 offset_top = 136.0
 offset_right = 1220.0
 offset_bottom = 200.0
 
 [node name="Rune83" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1224.0
 offset_top = 136.0
 offset_right = 1288.0
 offset_bottom = 200.0
 
 [node name="Rune84" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1292.0
 offset_top = 136.0
 offset_right = 1356.0
 offset_bottom = 200.0
 
 [node name="Rune85" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1360.0
 offset_top = 136.0
 offset_right = 1424.0
 offset_bottom = 200.0
 
 [node name="Rune86" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1428.0
 offset_top = 136.0
 offset_right = 1492.0
 offset_bottom = 200.0
 
 [node name="Rune87" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1496.0
 offset_top = 136.0
 offset_right = 1560.0
 offset_bottom = 200.0
 
 [node name="Rune88" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1564.0
 offset_top = 136.0
 offset_right = 1628.0
 offset_bottom = 200.0
 
 [node name="Rune89" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1632.0
 offset_top = 136.0
 offset_right = 1696.0
 offset_bottom = 200.0
 
 [node name="Rune90" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1700.0
 offset_top = 136.0
 offset_right = 1764.0
 offset_bottom = 200.0
 
 [node name="Rune91" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1768.0
 offset_top = 136.0
 offset_right = 1832.0
 offset_bottom = 200.0
 
 [node name="Rune92" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1836.0
 offset_top = 136.0
 offset_right = 1900.0
 offset_bottom = 200.0
 
 [node name="Rune93" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1904.0
 offset_top = 136.0
 offset_right = 1968.0
 offset_bottom = 200.0
 
 [node name="Rune94" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 1972.0
 offset_top = 136.0
 offset_right = 2036.0
 offset_bottom = 200.0
 
 [node name="Rune95" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 2040.0
 offset_top = 136.0
 offset_right = 2104.0
 offset_bottom = 200.0
 
 [node name="Rune96" parent="TabContainer/Crisis/Right/TabContainer/Risks/Runes/RunesContainer" instance=ExtResource("5_jf4fy")]
-layout_mode = 2
 offset_left = 2108.0
 offset_top = 136.0
 offset_right = 2172.0
 offset_bottom = 200.0
 
 [node name="TODO" type="Panel" parent="TabContainer/Crisis/Right/TabContainer/Risks"]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -1454,7 +1316,6 @@ grow_vertical = 2
 
 [node name="Label" type="Label" parent="TabContainer/Crisis/Right/TabContainer/Risks/TODO"]
 modulate = Color(0.435294, 0.435294, 0.435294, 1)
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -1469,13 +1330,12 @@ vertical_alignment = 1
 
 [node name="Challenges" type="Control" parent="TabContainer/Crisis/Right/TabContainer"]
 visible = false
-layout_mode = 2
+layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="TODO" type="Panel" parent="TabContainer/Crisis/Right/TabContainer/Challenges"]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -1484,7 +1344,6 @@ grow_vertical = 2
 
 [node name="Label" type="Label" parent="TabContainer/Crisis/Right/TabContainer/Challenges/TODO"]
 modulate = Color(0.435294, 0.435294, 0.435294, 1)
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -1498,7 +1357,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="NoCC" type="Control" parent="TabContainer/Crisis"]
-layout_mode = 1
+layout_mode = 3
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
@@ -1508,7 +1367,6 @@ grow_horizontal = 0
 
 [node name="Label" type="Label" parent="TabContainer/Crisis/NoCC"]
 modulate = Color(0.662745, 0.662745, 0.662745, 1)
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -1521,7 +1379,6 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="TopRight" type="HBoxContainer" parent="."]
-layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
@@ -1533,7 +1390,6 @@ alignment = 2
 
 [node name="Save" type="Button" parent="TopRight"]
 custom_minimum_size = Vector2(112, 0)
-layout_mode = 2
 offset_left = 288.0
 offset_right = 400.0
 offset_bottom = 31.0
@@ -1542,7 +1398,6 @@ focus_mode = 0
 text = "     Save"
 
 [node name="Autosave" type="CheckBox" parent="TopRight/Save"]
-layout_mode = 0
 offset_left = 8.0
 offset_right = 32.0
 offset_bottom = 32.0
@@ -1552,7 +1407,6 @@ focus_mode = 0
 [node name="Start" type="Button" parent="TopRight"]
 modulate = Color(1, 0.717647, 0.0352941, 1)
 custom_minimum_size = Vector2(96, 0)
-layout_mode = 2
 offset_left = 416.0
 offset_right = 512.0
 offset_bottom = 31.0

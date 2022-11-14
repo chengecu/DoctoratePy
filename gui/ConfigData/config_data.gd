@@ -1,6 +1,9 @@
 extends Node
 
-var BASE_PATH = OS.get_executable_path() if not OS.is_debug_build() else "C:\\Users\\Logos\\DoctoratePy\\"
+# Change your dev path in the exported property
+@export var dev_path = "C:\\Users\\Logos\\DoctoratePy\\"
+
+var BASE_PATH = OS.get_executable_path() if not OS.is_debug_build() else dev_path
 var CRISIS_PATH = BASE_PATH + "data\\crisis\\"
 var START_PATH = BASE_PATH + "start.bat"
 var CONFIG_PATH = BASE_PATH + "config\\config.json"
