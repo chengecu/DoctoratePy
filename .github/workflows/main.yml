@@ -36,8 +36,8 @@ jobs:
       uses: firebelley/godot-export@v4.2.0
       with:
         # Defining all the required inputs
-        godot_executable_download_url: https://downloads.tuxfamily.org/godotengine/4.0/beta1/Godot_v4.0-beta1_linux.x86_64.zip
-        godot_export_templates_download_url: https://downloads.tuxfamily.org/godotengine/4.0/beta1/Godot_v4.0-beta1_export_templates.tpz
+        godot_executable_download_url: https://downloads.tuxfamily.org/godotengine/4.0/beta4/Godot_v4.0-beta4_linux.x86_64.zip
+        godot_export_templates_download_url: https://downloads.tuxfamily.org/godotengine/4.0/beta4/Godot_v4.0-beta4_export_templates.tpz
         relative_project_path: ./gui
         use_preset_export_path: true
         wine_path: ${{ steps.wine_install.outputs.WINE_PATH }}
