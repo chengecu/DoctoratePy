@@ -1,0 +1,33 @@
+[gd_scene load_steps=3 format=3 uid="uid://mpx1ve8vvck3"]
+
+[ext_resource type="Script" path="res://Main/rune.gd" id="1_iiv43"]
+[ext_resource type="Texture2D" uid="uid://iknmvmv26u0r" path="res://icon.svg" id="2_63fts"]
+
+[node name="Rune" type="Control"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 3
+anchors_preset = 0
+offset_bottom = 64.0
+script = ExtResource("1_iiv43")
+id = "s"
+
+[node name="Button" type="Button" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Icon" type="TextureRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_63fts")
+ignore_texture_size = true

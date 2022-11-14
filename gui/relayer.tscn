@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dnaxja7tlvpyj"]
+
+[ext_resource type="Script" path="res://relayer.gd" id="1_ag6kp"]
+
+[node name="Relayer" type="Node"]
+script = ExtResource("1_ag6kp")
