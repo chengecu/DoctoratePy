@@ -56,14 +56,16 @@ def accountSyncData():
     #Tamper Skins
     skinKeys = list(data_skin["charSkins"].keys())
     player_data["user"]["skin"]["characterSkins"] = {}
-    for i in data_skin["charSkins"]:
+    for i in data_skin["charSkins"].values():
         if "@" not in skinKeys[cnt]:
             # Not Special Skins
             cnt += 1
             continue
         
         player_data["user"]["skin"]["characterSkins"][skinKeys[cnt]] = 1
-        tempSkinTable[data_skin["charSkins"][i]["charId"]] = data_skin["charSkins"][i]["skinId"]
+        if not i["charId"] in tempSkinTable.keys() \
+                or i["displaySkin"]["onYear"] > data_skin["charSkins"][tempSkinTable[i["charId"]]]["displaySkin"]["onYear"]:
+            tempSkinTable[i["charId"]] = i["skinId"]
         cnt += 1
         
     #Tamper Operators
@@ -113,7 +115,7 @@ def accountSyncData():
             "level": level,
             "exp": 0,
             "evolvePhase": evolvePhase,
-            "defaultSkillIndex": 0,
+            "defaultSkillIndex": len(character_table[i]["skills"])-1,
             "gainTime": int(time()),
             "skills": [],
             "voiceLan": "JP",
