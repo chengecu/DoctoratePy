@@ -83,7 +83,7 @@ func _on_save_pressed():
 
 func _on_cc_season_item_selected(index):
 	var cc = ConfigData.crisis[ConfigData.config["crisisConfig"]["selectedCrisis"]]
-	cc["data"]["seasonInfo"][0]["seasonId"] = "rune_season_" + int(index) + "_1"
+	cc["data"]["seasonInfo"][0]["seasonId"] = "rune_season_" + str(index) + "_1"
 	ConfigData.dirty = true
 	cc["data"]["seasonInfo"][0]["stages"].values()[0]["code"]
 
