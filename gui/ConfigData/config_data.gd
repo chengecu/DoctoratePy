@@ -1,12 +1,12 @@
 extends Node
 
 # Change your dev path in the exported property
-@export var dev_path = "C:\\Users\\Logos\\DoctoratePy\\"
+@export var dev_path = "C:\\Users\\Logos\\DoctoratePy"
 
-var BASE_PATH = OS.get_executable_path() if not OS.is_debug_build() else dev_path
-var CRISIS_PATH = BASE_PATH + "data\\crisis\\"
-var START_PATH = BASE_PATH + "start.bat"
-var CONFIG_PATH = BASE_PATH + "config\\config.json"
+var BASE_PATH = OS.get_executable_path().get_base_dir() if not OS.is_debug_build() else dev_path
+var CRISIS_PATH = BASE_PATH + "\\data\\crisis\\"
+var START_PATH = BASE_PATH + "\\start.bat"
+var CONFIG_PATH = BASE_PATH + "\\config\\config.json"
 
 var crisis = {}
 var crisis_dirty = true
@@ -20,6 +20,7 @@ var dirty = false:
 var autosave = false
 
 func _ready():
+	print(OS.get_executable_path())
 	for f in DirAccess.get_files_at(CRISIS_PATH):
 		if "json" in f:
 			var file = FileAccess.open(CRISIS_PATH + f, FileAccess.READ)
