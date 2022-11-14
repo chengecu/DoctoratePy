@@ -18,6 +18,11 @@ jobs:
       # Ensure that you get the entire project history
       with:
         fetch-depth: 0
+    
+    - name: get tag from version
+      id: tag_version
+      run: |
+          echo echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
 
     - name: install wine
       id: wine_install
@@ -45,5 +50,5 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         generate_release_notes: true
-        tag_name: GUI Update
+        tag_name: $RELEASE_VERSION
         files: ./DoctorateGUI.exe
