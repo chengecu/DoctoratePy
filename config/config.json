@@ -2,6 +2,7 @@
     "server": {
         "host": "192.168.86.243",
         "port": 8443,
+        "enableCaptcha": true,
         "enableServer": true,
         "maintenanceMsg": "Server is currently under maintenance!"
     },

@@ -1,10 +1,13 @@
 import hashlib
 
 from flask import request
+from utils import read_json
+from constants import CONFIG_PATH
 from core.database import userData
 from core.Account import Account
+from core.function.captcha import sentSmsCode, verifySmsCode
 
-user_key = "IxMMveJRWsxStJgX"
+LOG_TOKEN_KEY = "IxMMveJRWsxStJgX"
 
 
 def userV1NeedCloudAuth():
@@ -78,11 +81,24 @@ def userCheckIdCard():
 def userSendSmsCode():
 
     data = request.data
+    body = request.json
 
-    data = {
-        "result": 4
-    }
-    return data
+    server_config = read_json(CONFIG_PATH)
+    account = body["account"]
+
+    if not server_config["server"]["enableCaptcha"]:
+        data = {
+            "result": 4
+        }
+        return data
+    
+    else:
+        if account:
+            sentSmsCode()
+            data = {
+                "result": 0
+            }
+            return data
 
 
 def userRegister():
@@ -92,9 +108,9 @@ def userRegister():
     
     account = str(body["account"])
     password = str(body["password"])
-    smsCode = str(body["smsCode"]) # TODO
+    smsCode = str(body["smsCode"])
 
-    secret = hashlib.md5((account + user_key).encode()).hexdigest()
+    secret = hashlib.md5((account + LOG_TOKEN_KEY).encode()).hexdigest()
     
     if len(userData.query_account_by_phone(account)) != 0:
         data = {
@@ -103,7 +119,17 @@ def userRegister():
         }
         return data
     
-    if userData.register_account(account, hashlib.md5((password + user_key).encode()).hexdigest(), secret) != 1:
+    server_config = read_json(CONFIG_PATH)
+    
+    if server_config["server"]["enableCaptcha"]:
+        if not verifySmsCode(smsCode):
+            data = {
+                "result": 5,
+                "errMsg": "Wrong verification code."
+            }
+            return data
+    
+    if userData.register_account(account, hashlib.md5((password + LOG_TOKEN_KEY).encode()).hexdigest(), secret) != 1:
         data = {
             "result": 5,
             "errMsg": "Registration failed, unknown error."
@@ -133,11 +159,11 @@ def userLogin():
 
     if len(userData.query_account_by_phone(account)) == 0:
         data = {
-            "result": 2,
+            "result": 1,
         }
         return data
     
-    result = userData.login_account(account, hashlib.md5((password + user_key).encode()).hexdigest())
+    result = userData.login_account(account, hashlib.md5((password + LOG_TOKEN_KEY).encode()).hexdigest())
 
     if len(result) != 1:
         data = {
@@ -147,6 +173,49 @@ def userLogin():
 
     accounts = Account(*result[0])
     
+    data = {
+        "result": 0,
+        "uid": accounts.get_uid(),
+        "token": accounts.get_secret(),
+        "isAuthenticate": True,
+        "isMinor": False,
+        "needAuthenticate": False,
+        "isLatestUserAgreement": True
+    }
+
+    return data
+
+
+def userLoginBySmsCode():
+    
+    data = request.data
+    body = request.json
+
+    account = str(body["account"])
+    smsCode = str(body["smsCode"])
+
+    if len(userData.query_account_by_phone(account)) == 0:
+        data = {
+            "result": 1,
+        }
+        return data
+    
+    if not verifySmsCode(smsCode):
+        data = {
+            "result": 5
+        }
+        return data
+    
+    result = userData.login_account(account, hashlib.md5((account + LOG_TOKEN_KEY).encode()).hexdigest())
+
+    if len(result) != 1:
+        data = {
+            "result": 1,
+        }
+        return data
+
+    accounts = Account(*result[0])
+
     data = {
         "result": 0,
         "uid": accounts.get_uid(),
