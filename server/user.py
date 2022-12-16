@@ -44,48 +44,6 @@ def userChangeSecretary():
         return data
 
 
-def userLogin():
-
-    data = request.data
-    data = {
-        "isAuthenticate": True,
-        "isLatestUserAgreement": True,
-        "isMinor": False,
-        "needAuthenticate": False,
-        "result": 0,
-        "token": "abcd",
-        "uid": "1"
-    }
-
-    return data
-
-
-def userOAuth2V1Grant():
-    
-    data = request.data
-    data = {
-        "data": {
-            "code": "abcd",
-            "uid": "1"
-        },
-        "msg": "OK",
-        "status": 0
-    }
-
-    return data
-
-
-def userV1NeedCloudAuth():
-
-    data = request.data
-    data = {
-        "msg": "OK",
-        "status": 0
-    }
-    
-    return data
-
-
 def userV1getToken():
 
     data = request.data
@@ -99,21 +57,6 @@ def userV1getToken():
         "isGuest": 0,
         "result": 0,
         "token": "abcd",
-        "uid": "1"
-    }
-
-    return data
-
-
-def userAuth():
-
-    data = request.data
-    data = {
-        "isAuthenticate": True,
-        "isGuest": False,
-        "isLatestUserAgreement": True,
-        "isMinor": False,
-        "needAuthenticate": False,
         "uid": "1"
     }
 

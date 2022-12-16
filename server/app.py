@@ -6,9 +6,10 @@ from constants import CONFIG_PATH
 
 import account, background, building, campaignV2, char, charBuild, charm, \
         crisis, deepsea, mail, online, quest, pay, rlv2, shop, story, user, \
-        asset.assetbundle, config.prod
+        asset.assetbundle, auth.user, config.prod, core.database.initDatabase
 
 server_config = read_json(CONFIG_PATH)
+core.database.initDatabase.initDB()
 
 app = Flask(__name__)
 host = server_config["server"]["host"]
@@ -92,14 +93,20 @@ app.add_url_rule('/shop/getSkinGoodList', methods=['POST'], view_func=shop.shopG
 app.add_url_rule('/story/finishStory', methods=['POST'], view_func=story.storyFinishStory)
 app.add_url_rule('/quest/finishStoryStage', methods=['POST'], view_func=story.storyFinishStory)
 
-app.add_url_rule('/user/auth', methods=['POST'], view_func=user.userAuth)
+app.add_url_rule('/user/auth', methods=['POST'], view_func=auth.user.userAuth)
+app.add_url_rule('/user/authenticateUserIdentity', methods=['POST'], view_func=auth.user.userAuthenticateUserIdentity)
+app.add_url_rule('/user/checkIdCard"', methods=['POST'], view_func=auth.user.userCheckIdCard)
 app.add_url_rule('/user/checkIn', methods=['POST'], view_func=user.userCheckIn)
 app.add_url_rule('/user/changeSecretary', methods=['POST'], view_func=user.userChangeSecretary)
-app.add_url_rule('/user/login', methods=['POST'], view_func=user.userLogin)
+app.add_url_rule('/user/info/v1/need_cloud_auth', methods=['POST'], view_func=auth.user.userV1NeedCloudAuth)
+app.add_url_rule('/user/login', methods=['POST'], view_func=auth.user.userLogin)
 app.add_url_rule('/user/changeAvatar', methods=['POST'], view_func=user.userChangeAvatar)
-app.add_url_rule('/user/oauth2/v1/grant', methods=['POST'], view_func=user.userOAuth2V1Grant)
-app.add_url_rule('/user/info/v1/need_cloud_auth', methods=['POST'], view_func=user.userV1NeedCloudAuth)
-app.add_url_rule('/u8/user/v1/getToken', methods=['POST'], view_func=user.userV1getToken)
+app.add_url_rule('/user/oauth2/v1/grant', methods=['POST'], view_func=auth.user.userOAuth2V1Grant)
+app.add_url_rule('/user/register', methods=['POST'], view_func=auth.user.userRegister)
+app.add_url_rule('/user/sendSmsCode', methods=['POST'], view_func=auth.user.userSendSmsCode)
+app.add_url_rule('/user/updateAgreement', methods=['POST'], view_func=auth.user.userUpdateAgreement)
+app.add_url_rule('/user/v1/guestLogin', methods=['POST'], view_func=auth.user.userV1GuestLogin)
+app.add_url_rule('/u8/user/v1/getToken', methods=['POST'], view_func=user.userV1getToken) # TODO
 
 
 def writeLog(data):
