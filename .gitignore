@@ -16,7 +16,10 @@ mods/*
 !mods/.placeholder
 
 platform-tools/
-mysql/
+
+# Mysql
+mysql-dev/
+
 
 # Data files
 data/excel/
