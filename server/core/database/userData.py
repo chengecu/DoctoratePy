@@ -1,3 +1,4 @@
+import json
 import pymysql
 
 from typing import List
@@ -80,6 +81,21 @@ def login_account(phone, password):
         cursor = connection.cursor()
         cursor.execute(sql, params)
         result = cursor.fetchall()
+        
+    finally:
+        cursor.close()
+        connection.close()
+        return result
+
+
+def set_user_data(uid, user_data):
+    try:
+        sql = "UPDATE account SET user = %s WHERE uid = %s"
+        params = (json.dumps(user_data, ensure_ascii=False), uid)
+        connection = getConnection()
+        cursor = connection.cursor()
+        result = cursor.execute(sql, params)
+        connection.commit()
         
     finally:
         cursor.close()
