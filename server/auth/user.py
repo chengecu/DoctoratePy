@@ -1,4 +1,5 @@
 import hashlib
+from unittest import result
 
 from flask import request
 from utils import read_json
@@ -36,7 +37,7 @@ def userV1GuestLogin():
     data = request.data
     data = {
         "result": 6,
-        "message": "Forbid visitors to log in."
+        "message": "禁止游客登录"
     }
 
     return data
@@ -115,7 +116,7 @@ def userRegister():
     if len(userData.query_account_by_phone(account)) != 0:
         data = {
             "result": 5,
-            "errMsg": "Account already exists."
+            "errMsg": "该账户已存在，请检查注册信息"
         }
         return data
     
@@ -125,14 +126,14 @@ def userRegister():
         if not verifySmsCode(smsCode):
             data = {
                 "result": 5,
-                "errMsg": "Wrong verification code."
+                "errMsg": "验证码错误"
             }
             return data
     
     if userData.register_account(account, hashlib.md5((password + LOG_TOKEN_KEY).encode()).hexdigest(), secret) != 1:
         data = {
             "result": 5,
-            "errMsg": "Registration failed, unknown error."
+            "errMsg": "注册失败，未知错误"
         }
         return data
     
@@ -244,20 +245,19 @@ def userAuth():
         }
         return data
     
-    accounts = userData.query_account_by_secret(secret)
+    result = userData.query_account_by_secret(secret)
     
-    if len(accounts) != 1:
+    if len(result) != 1:
         data = {
             "result": 2,
-            "error": "Unable to query this account."
+            "error": "此账户不存在"
         }
         return data
     
-    for item in accounts:
-        uid = item.uid
+    accounts = Account(*result[0])
         
     data = {
-        "uid": uid,
+        "uid": accounts.get_uid(),
         "isMinor": False,
         "isAuthenticate": True,
         "isGuest": False,

@@ -44,25 +44,6 @@ def userChangeSecretary():
         return data
 
 
-def userV1getToken():
-
-    data = request.data
-    data = {
-        "channelUid": "1",
-        "error": "",
-        "extension": json.dumps({
-            "isMinor": False,
-            "isAuthenticate": True
-        }),
-        "isGuest": 0,
-        "result": 0,
-        "token": "abcd",
-        "uid": "1"
-    }
-
-    return data
-
-
 def userChangeAvatar():
 
     data = request.data

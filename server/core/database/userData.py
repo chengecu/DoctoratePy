@@ -4,6 +4,7 @@ from typing import List
 from constants import CONFIG_PATH
 from utils import read_json
 from core.Account import Account
+
         
 def getConnection():
 
@@ -27,7 +28,8 @@ def query_account_by_secret(secret: str) -> List[Account]:
         connection = getConnection()
         cursor = connection.cursor()
         cursor.execute(sql, params)
-        result = [Account(*row) for row in cursor.fetchall()]
+        result = cursor.fetchall()
+        # result = [Account(*row) for row in cursor.fetchall()]
     
     finally:
         cursor.close()
@@ -43,7 +45,8 @@ def query_account_by_phone(phone: str) -> List[Account]:
         connection = getConnection()
         cursor = connection.cursor()
         cursor.execute(sql, params)
-        result = [Account(*row) for row in cursor.fetchall()]
+        result = cursor.fetchall()
+        # result = [Account(*row) for row in cursor.fetchall()]
     
     finally:
         cursor.close()
@@ -98,3 +101,6 @@ def table_exists(table_name):
         cursor.close()
         connection.close()
         return result
+
+
+#### TODO ####

@@ -6,7 +6,8 @@ from constants import CONFIG_PATH
 
 import account, background, building, campaignV2, char, charBuild, charm, \
         crisis, deepsea, mail, online, quest, pay, rlv2, shop, story, user, \
-        asset.assetbundle, auth.user, config.prod, core.database.initDatabase
+        asset.assetbundle, auth.user, auth.u8, config.prod, \
+        core.database.initDatabase
 
 server_config = read_json(CONFIG_PATH)
 core.database.initDatabase.initDB()
@@ -68,7 +69,8 @@ app.add_url_rule('/online/v1/ping', methods=['POST'], view_func=online.onlineV1P
 app.add_url_rule('/online/v1/loginout', methods=['POST'], view_func=online.onlineV1LoginOut)
 
 app.add_url_rule('/pay/getUnconfirmedOrderIdList', methods=['POST'], view_func=pay.payGetUnconfirmedOrderIdList)
-app.add_url_rule('/u8/pay/getAllProductList', methods=['POST'], view_func=pay.paygetAllProductList)
+app.add_url_rule('/u8/pay/confirmOrderState', methods=['POST'], view_func=auth.u8.payConfirmOrderState)
+app.add_url_rule('/u8/pay/getAllProductList', methods=['POST'], view_func=auth.u8.payGetAllProductList) # TODO
 
 app.add_url_rule('/quest/battleStart', methods=['POST'], view_func=quest.questBattleStart)
 app.add_url_rule('/quest/battleFinish', methods=['POST'], view_func=quest.questBattleFinish)
@@ -95,19 +97,20 @@ app.add_url_rule('/quest/finishStoryStage', methods=['POST'], view_func=story.st
 
 app.add_url_rule('/user/auth', methods=['POST'], view_func=auth.user.userAuth)
 app.add_url_rule('/user/authenticateUserIdentity', methods=['POST'], view_func=auth.user.userAuthenticateUserIdentity)
+app.add_url_rule('/user/changeAvatar', methods=['POST'], view_func=user.userChangeAvatar)
+app.add_url_rule('/user/changeSecretary', methods=['POST'], view_func=user.userChangeSecretary)
 app.add_url_rule('/user/checkIdCard"', methods=['POST'], view_func=auth.user.userCheckIdCard)
 app.add_url_rule('/user/checkIn', methods=['POST'], view_func=user.userCheckIn)
-app.add_url_rule('/user/changeSecretary', methods=['POST'], view_func=user.userChangeSecretary)
 app.add_url_rule('/user/info/v1/need_cloud_auth', methods=['POST'], view_func=auth.user.userV1NeedCloudAuth)
 app.add_url_rule('/user/login', methods=['POST'], view_func=auth.user.userLogin)
 app.add_url_rule('/user/loginBySmsCode', methods=['POST'], view_func=auth.user.userLoginBySmsCode)
-app.add_url_rule('/user/changeAvatar', methods=['POST'], view_func=user.userChangeAvatar)
 app.add_url_rule('/user/oauth2/v1/grant', methods=['POST'], view_func=auth.user.userOAuth2V1Grant)
 app.add_url_rule('/user/register', methods=['POST'], view_func=auth.user.userRegister)
 app.add_url_rule('/user/sendSmsCode', methods=['POST'], view_func=auth.user.userSendSmsCode)
 app.add_url_rule('/user/updateAgreement', methods=['POST'], view_func=auth.user.userUpdateAgreement)
 app.add_url_rule('/user/v1/guestLogin', methods=['POST'], view_func=auth.user.userV1GuestLogin)
-app.add_url_rule('/u8/user/v1/getToken', methods=['POST'], view_func=user.userV1getToken) # TODO
+app.add_url_rule('/u8/user/v1/getToken', methods=['POST'], view_func=auth.u8.userV1getToken)
+app.add_url_rule('/u8/user/verifyAccount', methods=['POST'], view_func=auth.u8.userV1getToken)
 
 
 def writeLog(data):

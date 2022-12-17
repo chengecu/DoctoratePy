@@ -13,13 +13,3 @@ def payGetUnconfirmedOrderIdList():
     }
 
     return data
-
-
-def paygetAllProductList():
-
-    data = request.data
-    data = {
-        "productList": []
-    }
-
-    return data

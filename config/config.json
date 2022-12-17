@@ -1,6 +1,6 @@
 {
     "server": {
-        "host": "192.168.86.243",
+        "host": "192.168.0.104",
         "port": 8443,
         "enableCaptcha": true,
         "enableServer": true,
