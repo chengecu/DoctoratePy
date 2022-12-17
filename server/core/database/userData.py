@@ -30,7 +30,6 @@ def query_account_by_secret(secret: str) -> List[Account]:
         cursor = connection.cursor()
         cursor.execute(sql, params)
         result = cursor.fetchall()
-        # result = [Account(*row) for row in cursor.fetchall()]
     
     finally:
         cursor.close()
@@ -47,7 +46,22 @@ def query_account_by_phone(phone: str) -> List[Account]:
         cursor = connection.cursor()
         cursor.execute(sql, params)
         result = cursor.fetchall()
-        # result = [Account(*row) for row in cursor.fetchall()]
+    
+    finally:
+        cursor.close()
+        connection.close()
+        return result
+    
+    
+def query_nick_name(nick_name: str):
+
+    try:
+        sql = "SELECT uid FROM account WHERE user -> '$.status.nickName' = %s"
+        params = (nick_name,)
+        connection = getConnection()
+        cursor = connection.cursor()
+        cursor.execute(sql, params)
+        result = cursor.fetchall()
     
     finally:
         cursor.close()

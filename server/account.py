@@ -11,10 +11,10 @@ from core.Account import Account
 def accountLogin():
 
     data = request.data
-    body = request.json
+    request_data = request.get_json()
     
-    secret = str(body["token"])
-    clientVersion = str(body["clientVersion"])
+    secret = str(request_data["token"])
+    clientVersion = str(request_data["clientVersion"])
 
     result = userData.query_account_by_secret(secret)
     
@@ -161,12 +161,7 @@ def accountSyncStatus():
     
     data = {
         "ts": round(time()),
-        "result": {
-            "4": {
-                "announcementVersion": "1195",
-			    "announcementPopUpVersion": "1090"
-            }
-        },
+        "result": {}, # TODO
         "playerDataDelta": {
             "modified": {
                 "status": player_data["status"],

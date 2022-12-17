@@ -10,9 +10,9 @@ from core.database import userData
 def userV1getToken():
     
     data = request.data
-    body = request.json
+    request_data = request.get_json()
     
-    secret = json.loads(body["extension"])["access_token"]
+    secret = json.loads(request_data["extension"])["access_token"]
     server_config = read_json(CONFIG_PATH)
     
     if not server_config["server"]["enableServer"]:

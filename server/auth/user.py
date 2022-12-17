@@ -82,10 +82,10 @@ def userCheckIdCard():
 def userSendSmsCode():
 
     data = request.data
-    body = request.json
+    request_data = request.get_json()
 
     server_config = read_json(CONFIG_PATH)
-    account = body["account"]
+    account = request_data["account"]
 
     if not server_config["server"]["enableCaptcha"]:
         data = {
@@ -105,11 +105,11 @@ def userSendSmsCode():
 def userRegister():
     
     data = request.data
-    body = request.json
+    request_data = request.get_json()
     
-    account = str(body["account"])
-    password = str(body["password"])
-    smsCode = str(body["smsCode"])
+    account = str(request_data["account"])
+    password = str(request_data["password"])
+    smsCode = str(request_data["smsCode"])
 
     secret = hashlib.md5((account + LOG_TOKEN_KEY).encode()).hexdigest()
     
@@ -153,10 +153,10 @@ def userRegister():
 def userLogin():
     
     data = request.data
-    body = request.json
+    request_data = request.get_json()
 
-    account = str(body["account"])
-    password = str(body["password"])
+    account = str(request_data["account"])
+    password = str(request_data["password"])
 
     if len(userData.query_account_by_phone(account)) == 0:
         data = {
@@ -190,10 +190,10 @@ def userLogin():
 def userLoginBySmsCode():
     
     data = request.data
-    body = request.json
+    request_data = request.get_json()
 
-    account = str(body["account"])
-    smsCode = str(body["smsCode"])
+    account = str(request_data["account"])
+    smsCode = str(request_data["smsCode"])
 
     if len(userData.query_account_by_phone(account)) == 0:
         data = {
@@ -233,9 +233,9 @@ def userLoginBySmsCode():
 def userAuth():
 
     data = request.data
-    body = request.json
+    request_data = request.get_json()
 
-    secret = str(body["token"])
+    secret = str(request_data["token"])
     
     if secret is None or len(secret) < 0:
         data = {

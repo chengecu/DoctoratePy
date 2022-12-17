@@ -97,6 +97,8 @@ app.add_url_rule('/quest/finishStoryStage', methods=['POST'], view_func=story.st
 
 app.add_url_rule('/user/auth', methods=['POST'], view_func=auth.user.userAuth)
 app.add_url_rule('/user/authenticateUserIdentity', methods=['POST'], view_func=auth.user.userAuthenticateUserIdentity)
+app.add_url_rule('/user/bindNickName', methods=['POST'], view_func=user.userBindNickName)
+app.add_url_rule('/user/buyAp', methods=['POST'], view_func=user.userBuyAp)
 app.add_url_rule('/user/changeAvatar', methods=['POST'], view_func=user.userChangeAvatar)
 app.add_url_rule('/user/changeSecretary', methods=['POST'], view_func=user.userChangeSecretary)
 app.add_url_rule('/user/checkIdCard"', methods=['POST'], view_func=auth.user.userCheckIdCard)
@@ -105,6 +107,7 @@ app.add_url_rule('/user/info/v1/need_cloud_auth', methods=['POST'], view_func=au
 app.add_url_rule('/user/login', methods=['POST'], view_func=auth.user.userLogin)
 app.add_url_rule('/user/loginBySmsCode', methods=['POST'], view_func=auth.user.userLoginBySmsCode)
 app.add_url_rule('/user/oauth2/v1/grant', methods=['POST'], view_func=auth.user.userOAuth2V1Grant)
+app.add_url_rule('/user/rebindNickName', methods=['POST'], view_func=user.userRebindNickName)
 app.add_url_rule('/user/register', methods=['POST'], view_func=auth.user.userRegister)
 app.add_url_rule('/user/sendSmsCode', methods=['POST'], view_func=auth.user.userSendSmsCode)
 app.add_url_rule('/user/updateAgreement', methods=['POST'], view_func=auth.user.userUpdateAgreement)
