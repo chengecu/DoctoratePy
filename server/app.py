@@ -5,9 +5,8 @@ from utils import read_json
 from constants import CONFIG_PATH
 
 import account, background, building, campaignV2, char, charBuild, charm, \
-        crisis, deepsea, mail, online, quest, pay, rlv2, shop, story, user, \
-        asset.assetbundle, auth.user, auth.u8, config.prod, \
-        core.database.initDatabase
+        crisis, deepsea, gacha, mail, online, quest, pay, rlv2, shop, story, user, \
+        asset.assetbundle, auth.user, auth.u8, config.prod, core.database.initDatabase
 
 server_config = read_json(CONFIG_PATH)
 core.database.initDatabase.initDB()
@@ -58,6 +57,15 @@ app.add_url_rule('/crisis/battleFinish', methods=['POST'], view_func=crisis.cris
 
 app.add_url_rule('/deepSea/branch', methods=['POST'], view_func=deepsea.deepSeaBranch)
 app.add_url_rule('/deepSea/event', methods=['POST'], view_func=deepsea.deepSeaEvent)
+
+app.add_url_rule('/gacha/advancedGacha', methods=['POST'], view_func=gacha.gachaAdvancedGacha)
+app.add_url_rule('/gacha/boostNormalGacha', methods=['POST'], view_func=gacha.gachaBoostNormalGacha)
+app.add_url_rule('/gacha/cancelNormalGacha', methods=['POST'], view_func=gacha.gachaCancelNormalGacha)
+app.add_url_rule('/gacha/finishNormalGacha', methods=['POST'], view_func=gacha.gachaFinishNormalGacha)
+app.add_url_rule('/gacha/getPoolDetail', methods=['POST'], view_func=gacha.gachaGetPoolDetail)
+app.add_url_rule('/gacha/syncNormalGacha', methods=['POST'], view_func=gacha.gachaSyncNormalGacha)
+app.add_url_rule('/gacha/tenAdvancedGacha', methods=['POST'], view_func=gacha.gachaTenAdvancedGacha)
+app.add_url_rule('/gacha/normalGacha', methods=['POST'], view_func=gacha.gachaNormalGacha)
 
 app.add_url_rule('/mail/getMetaInfoList', methods=['POST'], view_func=mail.mailGetMetaInfoList)
 app.add_url_rule('/mail/listMailBox', methods=['POST'], view_func=mail.mailListMailBox)

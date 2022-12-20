@@ -2,10 +2,20 @@ import json
 
 from time import time
 from flask import request
-from constants import CONFIG_PATH, SYNC_DATA_TEMPLATE_PATH
+from core.function.update import updateData
+from constants import CONFIG_PATH, CHARACTER_TABLE_URL, CHARWORD_TABLE_URL, \
+    EQUIP_TABLE_URL, GACHA_TABLE_URL, SYNC_DATA_TEMPLATE_PATH
 from utils import read_json
 from core.database import userData
 from core.Account import Account
+
+
+class DataFile:
+    
+    CHARWORD_TABLE = None
+    CHARACTER_TABLE = None
+    EQUIP_TABLE = None
+    GACHA_TABLE = None
 
 
 def accountLogin():
@@ -48,7 +58,7 @@ def accountLogin():
         syncData["status"]["lastApAddTime"] = round(time())
         
         userData.set_user_data(accounts.get_uid(), syncData)
-    
+
     data = {
         "result": 0,
         "uid": accounts.get_uid(),
@@ -100,6 +110,11 @@ def accountSyncData():
     player_data["status"]["lastRefreshTs"] = ts # TODO
 
     userData.set_user_data(accounts.get_uid(), player_data)
+
+    DataFile.CHARACTER_TABLE = updateData(CHARACTER_TABLE_URL)
+    DataFile.CHARWORD_TABLE = updateData(CHARWORD_TABLE_URL)
+    DataFile.EQUIP_TABLE = updateData(EQUIP_TABLE_URL)
+    DataFile.GACHA_TABLE = updateData(GACHA_TABLE_URL)
 
     data = {
         "result": 0,

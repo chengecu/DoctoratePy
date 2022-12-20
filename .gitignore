@@ -23,6 +23,7 @@ mysql-dev/
 # Data files
 data/excel/
 data/announce/
+data/gacha/data_format.py
 assets/
 
 # Byte-compiled / optimized / DLL files
