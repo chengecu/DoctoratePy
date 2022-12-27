@@ -1,10 +1,12 @@
 import json
+from turtle import update
+from flask import request
 
 from time import time
-from flask import request
 from core.function.update import updateData
 from constants import CONFIG_PATH, CHARACTER_TABLE_URL, CHARWORD_TABLE_URL, \
-    EQUIP_TABLE_URL, GACHA_TABLE_URL, SYNC_DATA_TEMPLATE_PATH
+    EQUIP_TABLE_URL, GACHA_TABLE_URL, SYNC_DATA_TEMPLATE_PATH, ITEM_TABLE_URL, \
+    STAGE_TABLE_URL
 from utils import read_json
 from core.database import userData
 from core.Account import Account
@@ -16,6 +18,8 @@ class DataFile:
     CHARACTER_TABLE = None
     EQUIP_TABLE = None
     GACHA_TABLE = None
+    ITEM_TABLE = None
+    STAGE_TABLE = None
 
 
 def accountLogin():
@@ -103,11 +107,11 @@ def accountSyncData():
         }
         return data
 
-    ts = round(time()) # TODO
+    ts = round(time()) # TODO: Add userTimeStamps
     player_data = json.loads(accounts.get_user())
     
     player_data["status"]["lastOnlineTs"] = round(time())
-    player_data["status"]["lastRefreshTs"] = ts # TODO
+    player_data["status"]["lastRefreshTs"] = ts # TODO: Add userTimeStamps
 
     userData.set_user_data(accounts.get_uid(), player_data)
 
@@ -115,11 +119,13 @@ def accountSyncData():
     DataFile.CHARWORD_TABLE = updateData(CHARWORD_TABLE_URL)
     DataFile.EQUIP_TABLE = updateData(EQUIP_TABLE_URL)
     DataFile.GACHA_TABLE = updateData(GACHA_TABLE_URL)
+    DataFile.ITEM_TABLE = updateData(ITEM_TABLE_URL)
+    DataFile.STAGE_TABLE = updateData(STAGE_TABLE_URL)
 
     data = {
         "result": 0,
         "user": player_data,
-        "ts": ts # TODO
+        "ts": ts # TODO: Add userTimeStamps
     }
     
     return data
@@ -161,11 +167,11 @@ def accountSyncStatus():
     
     player_data = json.loads(accounts.get_user())
     player_data["status"]["lastOnlineTs"] = round(time())
-    player_data["status"]["lastRefreshTs"] = round(time()) # TODO
+    player_data["status"]["lastRefreshTs"] = round(time()) # TODO: Add userTimeStamps
     player_data["pushFlags"]["hasGifts"] = 0
     player_data["pushFlags"]["hasFriendRequest"] = 0
 
-    mailbox_list = json.loads(accounts.get_mails()) # TODO
+    mailbox_list = json.loads(accounts.get_mails()) # TODO: Move mail system to mysql
 
     friend_request = json.loads(accounts.get_friend())["request"]
     
@@ -175,8 +181,8 @@ def accountSyncStatus():
     userData.set_user_data(accounts.get_uid(), player_data)
     
     data = {
-        "ts": round(time()),
-        "result": {}, # TODO
+        "ts": round(time()), # TODO: Add userTimeStamps
+        "result": {}, # TODO: Research the data that needs to be filled here
         "playerDataDelta": {
             "modified": {
                 "status": player_data["status"],

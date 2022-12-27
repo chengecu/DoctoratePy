@@ -78,7 +78,7 @@ app.add_url_rule('/online/v1/loginout', methods=['POST'], view_func=online.onlin
 
 app.add_url_rule('/pay/getUnconfirmedOrderIdList', methods=['POST'], view_func=pay.payGetUnconfirmedOrderIdList)
 app.add_url_rule('/u8/pay/confirmOrderState', methods=['POST'], view_func=auth.u8.payConfirmOrderState)
-app.add_url_rule('/u8/pay/getAllProductList', methods=['POST'], view_func=auth.u8.payGetAllProductList) # TODO
+app.add_url_rule('/u8/pay/getAllProductList', methods=['POST'], view_func=auth.u8.payGetAllProductList) # TODO: Add full pay system
 
 app.add_url_rule('/quest/battleStart', methods=['POST'], view_func=quest.questBattleStart)
 app.add_url_rule('/quest/battleFinish', methods=['POST'], view_func=quest.questBattleFinish)

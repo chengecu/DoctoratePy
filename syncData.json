@@ -19678,7 +19678,7 @@
         }
     },
     "checkIn": {
-        "canCheckIn": 1,
+        "canCheckIn": 0,
         "checkInGroupId": "signin52",
         "checkInRewardIndex": 0,
         "checkInHistory": []

@@ -290,7 +290,7 @@ def gachaCancelNormalGacha():
     return data
 
 
-def gachaFinishNormalGacha(): # TODO
+def gachaFinishNormalGacha():
     
     data = request.data
     request_data = request.get_json()
@@ -343,21 +343,21 @@ def gachaFinishNormalGacha(): # TODO
 
     if repeatCharId == 0:
         char_data = {}
-        skilsArray = DataFile.CHARACTER_TABLE
-        skils = []
+        skills_array = DataFile.CHARACTER_TABLE[random_char_id]["skills"]
+        skills = []
 
-        for index in range(len(skilsArray)):
+        for index in range(len(skills_array)):
             new_skils = {
-                "skillId": skilsArray[index]["skillId"],
+                "skillId": skills_array[index]["skillId"],
                 "state": 0,
                 "specializeLevel": 0,
                 "completeUpgradeTime": -1
             }
-            if skilsArray[index]["unlockCond"]["phase"] == 0:
+            if skills_array[index]["unlockCond"]["phase"] == 0:
                 new_skils["unlock"] = 1
             else:
                 new_skils["unlock"] = 0
-            skils.append(new_skils)
+            skills.append(new_skils)
             
         instId = len(player_data["troop"]["chars"]) + 1
         charinstId = instId
@@ -372,11 +372,11 @@ def gachaFinishNormalGacha(): # TODO
             "exp": 0,
             "evolvePhase": 0,
             "gainTime": round(time()),
-            "skills": skils,
+            "skills": skills,
             "equip": {},
             "voiceLan": DataFile.CHARWORD_TABLE["charDefaultTypeDict"][random_char_id],
         }
-        if skils == []:
+        if skills == []:
             char_data["defaultSkillIndex"] = -1
         else:
             char_data["defaultSkillIndex"] = 0

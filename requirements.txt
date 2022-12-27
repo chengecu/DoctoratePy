@@ -2,5 +2,6 @@ flask
 requests
 mitmproxy
 frida
+pycryptodome
 pure-python-adb
 pymysql

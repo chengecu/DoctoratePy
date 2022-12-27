@@ -1,6 +1,6 @@
 import json
-
 from flask import request
+
 from constants import CONFIG_PATH
 from utils import read_json
 from core.Account import Account
@@ -63,7 +63,7 @@ def payGetAllProductList():
         return data
     
     data = {
-        "productList": [] # TODO
+        "productList": [] # TODO: Add productList
     }
 
     return data

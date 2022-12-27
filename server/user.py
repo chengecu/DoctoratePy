@@ -137,7 +137,7 @@ def userRebindNickName():
     return data
 
 
-def userCheckIn(): # TODO
+def userCheckIn(): # TODO: Add CheckIn
 
     data = request.data
     data = {
@@ -223,8 +223,8 @@ def userChangeSecretary():
         }
         return data
 
-    charInstId = str(request_data["charInstId"])
-    skinID = str(request_data["skinID"])
+    charInstId = request_data["charInstId"]
+    skinId = request_data["skinId"]
 
     result = userData.query_account_by_secret(secret)
     
@@ -247,7 +247,7 @@ def userChangeSecretary():
     
     player_data = json.loads(accounts.get_user())
     player_data["status"]["secretary"] = player_data["troop"]["chars"][str(charInstId)]["charId"]
-    player_data["status"]["secretarySkinId"] = skinID
+    player_data["status"]["secretarySkinId"] = skinId
 
     userData.set_user_data(accounts.get_uid(), player_data)
     
@@ -302,12 +302,12 @@ def userBuyAp():
         return data
     
     player_data = json.loads(accounts.get_user())
-    timeNow = round(time())
+    time_now = round(time())
 
     player_data["status"]["androidDiamond"] -= 1
     player_data["status"]["iosDiamond"] -= 1
     player_data["status"]["ap"] += player_data["status"]["maxAp"]
-    player_data["status"]["lastApAddTime"] = timeNow
+    player_data["status"]["lastApAddTime"] = time_now
     player_data["status"]["buyApRemainTimes"] = player_data["status"]["buyApRemainTimes"]
 
     userData.set_user_data(accounts.get_uid(), player_data)

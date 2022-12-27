@@ -17,9 +17,13 @@
         "downloadLocally": true,
         "enableMods": false
     },
+    "developer": {
+        "dropRate": 1,
+        "debugMode": true
+    },
     "version": {
         "android": {
-            "resVersion": "22-12-14-13-42-39-ee18cc",
+            "resVersion": "22-12-20-13-30-24-38ef9c",
             "clientVersion": "1.9.42"
         }
     },

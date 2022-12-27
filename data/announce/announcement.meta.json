@@ -2,6 +2,15 @@
     "focusAnnounceId": "1090",
     "announceList": [
         {
+            "announceId": "1098",
+            "title": "\u7279\u5b9a\u5e72\u5458\n\u9650\u65f6\u51fa\u7387\u4e0a\u5347",
+            "isWebUrl": true,
+            "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1098_1671095553.html",
+            "day": 22,
+            "month": 12,
+            "group": "ACTIVITY"
+        },
+        {
             "announceId": "1102",
             "title": "\u8de8\u5e74\u6b22\u5e86\u00b7\u76f8\u9022\n\u5bfb\u8bbf\u5373\u5c06\u5f00\u542f",
             "isWebUrl": true,
@@ -18,15 +27,6 @@
             "day": 17,
             "month": 12,
             "group": "ACTIVITY"
-        },
-        {
-            "announceId": "1100",
-            "title": "\u3010\u7130\u5f71\u82c7\u8349\u3011\n\u6280\u80fd\u5f02\u5e38\u8bf4\u660e",
-            "isWebUrl": true,
-            "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1100_1671104134.html",
-            "day": 15,
-            "month": 12,
-            "group": "SYSTEM"
         },
         {
             "announceId": "1090",
@@ -47,15 +47,6 @@
             "group": "ACTIVITY"
         },
         {
-            "announceId": "1096",
-            "title": "\u7167\u6211\u4ee5\u706b\nUP\u4e3b\u5e94\u63f4\u8ba1\u5212",
-            "isWebUrl": true,
-            "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1096_1671078271.html",
-            "day": 15,
-            "month": 12,
-            "group": "ACTIVITY"
-        },
-        {
             "announceId": "1091",
             "title": "\u5bd2\u6b66\u7eaa\u7cfb\u5217\n\u590d\u523b\u9650\u65f6\u4e0a\u67b6",
             "isWebUrl": true,
@@ -70,24 +61,6 @@
             "isWebUrl": true,
             "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1087_1671078302.html",
             "day": 15,
-            "month": 12,
-            "group": "ACTIVITY"
-        },
-        {
-            "announceId": "1088",
-            "title": "\u9ca4\u6c0f\u4fa6\u63a2\u4e8b\u52a1\u6240\n\u5b98\u7f51\u5373\u5c06\u4e0a\u7ebf",
-            "isWebUrl": true,
-            "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1088_1670479493.html",
-            "day": 9,
-            "month": 12,
-            "group": "ACTIVITY"
-        },
-        {
-            "announceId": "1085",
-            "title": "\u7279\u5b9a\u5e72\u5458\n\u9650\u65f6\u51fa\u7387\u4e0a\u5347",
-            "isWebUrl": true,
-            "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1085_1670431378.html",
-            "day": 8,
             "month": 12,
             "group": "ACTIVITY"
         },

@@ -52,5 +52,5 @@ def insertUserTable():
     ) ENGINE = INNODB AUTO_INCREMENT = 3 CHARACTER 
     SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;""")
     cursor.execute("SET FOREIGN_KEY_CHECKS = 1")
-    cursor.execute("ALTER TABLE account auto_increment=1000000")
+    cursor.execute("ALTER TABLE account auto_increment=100000000")
     cursor.close()

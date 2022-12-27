@@ -29,7 +29,7 @@ def backgroundSetBackground():
     if len(result) != 1:
         data ={
             "result": 2,
-            "error": "此账户不存在"
+            "error": "姝よ处鎴蜂笉瀛樺湪"
         }
         return data
     
