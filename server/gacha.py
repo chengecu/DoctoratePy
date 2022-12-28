@@ -70,6 +70,8 @@ def gachaSyncNormalGacha():
         return data
     
     player_data = json.loads(accounts.get_user())
+    if "recruitChar" not in list(player_data["status"].keys()):
+        player_data["status"]["recruitChar"] = ""
     
     data = {
         "playerDataDelta": {
@@ -373,34 +375,32 @@ def gachaFinishNormalGacha():
             "evolvePhase": 0,
             "gainTime": round(time()),
             "skills": skills,
-            "equip": {},
             "voiceLan": DataFile.CHARWORD_TABLE["charDefaultTypeDict"][random_char_id],
+            "currentEquip": None,
+            "equip": {},
+            "starMark": 0
         }
         if skills == []:
             char_data["defaultSkillIndex"] = -1
         else:
             char_data["defaultSkillIndex"] = 0
-
+            
         sub1 = random_char_id[random_char_id.index("_") + 1:]
         charName = sub1[sub1.index("_") + 1:]
 
-        if f"uniequip_001_{charName}" in DataFile.EQUIP_TABLE["equipDict"]:
-            equip = {
-                f"uniequip_001_{charName}": {
-                    "hide": 0,
-                    "locked": 0,
-                    "level": 1
-                },
-                f"uniequip_002_{charName}": {
-                    "hide": 0,
-                    "locked": 0,
-                    "level": 1
-                }
-            }
-            char_data["equip"] = equip
+        if random_char_id in list(DataFile.EQUIP_TABLE["charEquip"].keys()):
+            for item in DataFile.EQUIP_TABLE["charEquip"][random_char_id]:
+                locked = 1
+                if "_001_" in item:
+                    locked = 0
+                char_data["equip"].update({
+                    item: {
+                        "hide": 1,
+                        "locked": locked,
+                        "level": 1
+                    }
+                })
             char_data["currentEquip"] = f"uniequip_001_{charName}"
-        else:
-            char_data["currentEquip"] = None
 
         player_data["troop"]["chars"][str(instId)] = char_data
         player_data["troop"]["charGroup"][random_char_id] = {"favorPoint": 0}
@@ -480,6 +480,29 @@ def gachaFinishNormalGacha():
         
         chars[str(repeatCharId)] = player_data["troop"]["chars"][str(repeatCharId)]
         
+    characterList = list(player_data["dexNav"]["character"].keys())
+    if random_char_id not in characterList:
+        player_data["dexNav"]["character"][random_char_id] = {
+            "charInstId": instId,
+            "count": 1
+        }
+        
+        new_char = DataFile.CHARACTER_TABLE[random_char_id]
+        teamList = [
+            new_char["nationId"],
+            new_char["groupId"],
+            new_char["teamId"]
+        ]
+
+        for team in teamList:
+            if team is not None:
+                try:
+                    player_data["dexNav"]["teamV2"][team].update({str(instId): 1})
+                except:
+                    player_data["dexNav"]["teamV2"][team] = {str(instId): 1}
+    else:
+        player_data["dexNav"]["character"][random_char_id]["count"] += 1
+        
     player_data["troop"]["chars"] = chars
     player_data["recruit"]["normal"]["slots"][str(slotId)]["state"] = 1
     player_data["recruit"]["normal"]["slots"][str(slotId)]["selectTags"] = []
@@ -496,6 +519,7 @@ def gachaFinishNormalGacha():
     data = {
         "playerDataDelta": {
             "modified": {
+                "dexNav": player_data["dexNav"],
                 "recruit": player_data["recruit"],
                 "status": player_data["status"],
                 "troop": player_data["troop"],
@@ -790,6 +814,9 @@ def userGacha(type: str, diamondShard: int, secret: str, request_data: Dict):
     poolId = request_data["poolId"]
     PoolPath = './data/gacha/' + poolId + '.json'
     useTkt = request_data["useTkt"]
+
+    if "gachaCount" not in list(player_data["status"].keys()):
+        player_data["status"]["gachaCount"] = 0
     
     if not os.path.exists(PoolPath):
         data = {
@@ -950,34 +977,33 @@ def userGacha(type: str, diamondShard: int, secret: str, request_data: Dict):
                 "evolvePhase": 0,
                 "gainTime": round(time()),
                 "skills": skills,
-                "voiceLan": DataFile.CHARWORD_TABLE["charDefaultTypeDict"][random_char_id]
+                "voiceLan": DataFile.CHARWORD_TABLE["charDefaultTypeDict"][random_char_id],
+                "currentEquip": None,
+                "equip": {},
+                "starMark": 0
             }
 
             if skills == []:
                 char_data["defaultSkillIndex"] = -1
             else:
                 char_data["defaultSkillIndex"] = 0
-                
+            
             sub1 = random_char_id[random_char_id.index("_") + 1:]
             charName = sub1[sub1.index("_") + 1:]
 
-            if f"uniequip_001_{charName}" in DataFile.EQUIP_TABLE["equipDict"]:
-                equip = {
-                    f"uniequip_001_{charName}": {
-                        "hide": 0,
-                        "locked": 0,
-                        "level": 1
-                    },
-                    f"uniequip_002_{charName}": {
-                        "hide": 0,
-                        "locked": 0,
-                        "level": 1
-                    }
-                }
-                char_data["equip"] = equip
+            if random_char_id in list(DataFile.EQUIP_TABLE["charEquip"].keys()):
+                for item in DataFile.EQUIP_TABLE["charEquip"][random_char_id]:
+                    locked = 1
+                    if "_001_" in item:
+                        locked = 0
+                    char_data["equip"].update({
+                        item: {
+                            "hide": 1,
+                            "locked": locked,
+                            "level": 1
+                        }
+                    })
                 char_data["currentEquip"] = f"uniequip_001_{charName}"
-            else:
-                char_data["currentEquip"] = None
                 
             player_data["troop"]["chars"][str(instId)] = char_data
             player_data["troop"]["charGroup"][random_char_id] = {"favorPoint": 0}
@@ -1106,7 +1132,30 @@ def userGacha(type: str, diamondShard: int, secret: str, request_data: Dict):
             }
             chars[str(repeatCharId)] = player_data["troop"]["chars"][str(repeatCharId)]
             troop["chars"] = charinstId
-            
+
+        characterList = list(player_data["dexNav"]["character"].keys())
+        if random_char_id not in characterList:
+            player_data["dexNav"]["character"][random_char_id] = {
+                "charInstId": instId,
+                "count": 1
+            }
+
+            new_char = DataFile.CHARACTER_TABLE[random_char_id]
+            teamList = [
+                new_char["nationId"],
+                new_char["groupId"],
+                new_char["teamId"]
+            ]
+
+            for team in teamList:
+                if team is not None:
+                    try:
+                        player_data["dexNav"]["teamV2"][team].update({str(instId): 1})
+                    except:
+                        player_data["dexNav"]["teamV2"][team] = {str(instId): 1}
+        else:
+            player_data["dexNav"]["character"][random_char_id]["count"] += 1
+
     if useTkt in [1, 2]:
         player_data["status"][type] -= 1
     else:
@@ -1123,6 +1172,7 @@ def userGacha(type: str, diamondShard: int, secret: str, request_data: Dict):
         "playerDataDelta": {
             "deleted": {},
             "modified": {
+                "dexNav": player_data["dexNav"],
                 "troop": player_data["troop"],
                 "consumable": player_data["consumable"],
                 "status": player_data["status"],

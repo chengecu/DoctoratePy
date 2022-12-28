@@ -303,6 +303,16 @@ def userBuyAp():
     
     player_data = json.loads(accounts.get_user())
     time_now = round(time())
+    addAp = (time_now - int(player_data["status"]["lastApAddTime"])) // 360
+    
+    if player_data["status"]["ap"] < player_data["status"]["maxAp"]:
+        if (player_data["status"]["ap"] + addAp) >= player_data["status"]["maxAp"]:
+            player_data["status"]["ap"] = player_data["status"]["maxAp"]
+            player_data["status"]["lastApAddTime"] = time_now
+        else:
+            if addAp != 0:
+                player_data["status"]["ap"] += addAp
+                player_data["status"]["lastApAddTime"] = time_now
 
     player_data["status"]["androidDiamond"] -= 1
     player_data["status"]["iosDiamond"] -= 1

@@ -948,9 +948,7 @@
         "monthlySubscriptionEndTime": 0,
         "tipMonthlyCardExpireTs": 0,
         "secretary": "char_002_amiya",
-        "secretarySkinId": "char_002_amiya#1",
-        "gachaCount": 0,
-        "recruitChar": ""
+        "secretarySkinId": "char_002_amiya#1"
     },
     "troop": {
         "curCharInstId": 5,

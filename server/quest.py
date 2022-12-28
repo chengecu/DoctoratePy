@@ -1,15 +1,17 @@
 import json
+import uuid
+import base64
 import random
 import socket
 from flask import request
 
 from time import time
 from datetime import datetime
-from constants import BATTLE_REPLAY_JSON_PATH, USER_JSON_PATH, CONFIG_PATH
-from utils import read_json, write_json, decrypt_battle_data
+from constants import CONFIG_PATH
+from utils import read_json, decrypt_battle_data, decrypt_battle_replay
 from account import DataFile
 from core.database import userData
-from core.Account import Account
+from core.Account import Account, UserInfo
 
 
 def writeLog(data):
@@ -57,6 +59,7 @@ def questBattleStart():
         return data
 
     player_data = json.loads(accounts.get_user())
+    player_data["status"]["battleId"] = str(base64.b64encode(stageId.encode('utf-8')), 'utf-8')
     stage_table = DataFile.STAGE_TABLE["stages"][stageId]
     
     if not stageId in player_data['dungeon']['stages']:
@@ -83,7 +86,7 @@ def questBattleStart():
 
     data = {
         "apFailReturn": stage_table["apFailReturn"],
-        "battleId": stageId,
+        "battleId": str(uuid.uuid1()),
         "inApProtectPeriod": False,
         "isApProtect": 0,
         "notifyPowerScoreNotEnoughIfFailed": False,
@@ -149,11 +152,12 @@ def questBattleFinish():
 
     player_data = json.loads(accounts.get_user())
     BattleData = decrypt_battle_data(request_data["data"], player_data["pushFlags"]["status"])
-    DropRate = server_config["developer"]["dropRate"] # Drop Rate Multiplier
-    if server_config["developer"]["debugMode"]:
-        writeLog(BattleData)
-    stageId = BattleData["battleId"]
+    dexNav = player_data["dexNav"]
+    dropRate = server_config["developer"]["dropRate"] # Drop Rate Multiplier
+    stageId = str(base64.b64decode(player_data["status"]["battleId"]), 'utf-8')
     stage_table = DataFile.STAGE_TABLE["stages"][stageId]
+    if server_config["developer"]["debugMode"]:
+        writeLog("\033[1;33m" + str(BattleData) + "\033[0;0m")
     
     if player_data["dungeon"]["stages"][stageId]["practiceTimes"] == 1:
         if player_data["dungeon"]["stages"][stageId]["state"] == 0:
@@ -205,10 +209,10 @@ def questBattleFinish():
         if (player_data["status"]["ap"] + addAp) >= player_data["status"]["maxAp"]:
             player_data["status"]["ap"] = player_data["status"]["maxAp"]
             player_data["status"]["lastApAddTime"] = time_now
-    else:
-        if addAp != 0:
-            player_data["status"]["ap"] += addAp
-            player_data["status"]["lastApAddTime"] = time_now
+        else:
+            if addAp != 0:
+                player_data["status"]["ap"] += addAp
+                player_data["status"]["lastApAddTime"] = time_now
 
     player_data["status"]["ap"] -= apCost
     
@@ -385,7 +389,7 @@ def questBattleFinish():
         displayDetailRewards = stage_table["stageDropInfo"]["displayDetailRewards"]
         for index in range(len(displayDetailRewards)):
             dropType = displayDetailRewards[index]["dropType"]
-            reward_count = 1 * DropRate
+            reward_count = 1 * dropRate
             reward_id = displayDetailRewards[index]["id"]
             reward_type = displayDetailRewards[index]["type"]
 
@@ -421,7 +425,7 @@ def questBattleFinish():
                             skills.append(new_skills)
 
                         instId = len(player_data["troop"]["chars"]) + 1
-                        charinstId = instId
+                        
                         char_data = {
                             "instId": instId,
                             "charId": random_char_id,
@@ -434,9 +438,12 @@ def questBattleFinish():
                             "evolvePhase": 0,
                             "gainTime": round(time()),
                             "skills": skills,
-                            "equip": {},
                             "voiceLan": DataFile.CHARWORD_TABLE["charDefaultTypeDict"][random_char_id],
+                            "currentEquip": None,
+                            "equip": {},
+                            "starMark": 0
                         }
+                        
                         if skills == []:
                             char_data["defaultSkillIndex"] = -1
                         else:
@@ -445,23 +452,19 @@ def questBattleFinish():
                         sub1 = random_char_id[random_char_id.index("_") + 1:]
                         charName = sub1[sub1.index("_") + 1:]
 
-                        if f"uniequip_001_{charName}" in DataFile.EQUIP_TABLE["equipDict"]:
-                            equip = {
-                                f"uniequip_001_{charName}": {
-                                    "hide": 0,
-                                    "locked": 0,
-                                    "level": 1
-                                },
-                                f"uniequip_002_{charName}": {
-                                    "hide": 0,
-                                    "locked": 0,
-                                    "level": 1
-                                }
-                            }
-                            char_data["equip"] = equip
+                        if random_char_id in list(DataFile.EQUIP_TABLE["charEquip"].keys()):
+                            for item in DataFile.EQUIP_TABLE["charEquip"][random_char_id]:
+                                locked = 1
+                                if "_001_" in item:
+                                    locked = 0
+                                char_data["equip"].update({
+                                    item: {
+                                        "hide": 1,
+                                        "locked": locked,
+                                        "level": 1
+                                    }
+                                })
                             char_data["currentEquip"] = f"uniequip_001_{charName}"
-                        else:
-                            char_data["currentEquip"] = None
 
                         player_data["troop"]["chars"][str(instId)] = char_data
                         player_data["troop"]["charGroup"][random_char_id] = {"favorPoint": 0}
@@ -574,6 +577,30 @@ def questBattleFinish():
                         chars[str(repeatCharId)] = player_data["troop"]["chars"][str(repeatCharId)]
                         troop["chars"] = charinstId
                         
+                    # Unlock character dexNav
+                    characterList = list(dexNav["character"].keys())
+                    if random_char_id not in characterList:
+                        dexNav["character"][random_char_id] = {
+                            "charInstId": instId,
+                            "count": 1
+                        }
+                        
+                        new_char = DataFile.CHARACTER_TABLE[random_char_id]
+                        teamList = [
+                            new_char["nationId"],
+                            new_char["groupId"],
+                            new_char["teamId"]
+                        ]
+                        
+                        for team in teamList:
+                            if team is not None:
+                                try:
+                                    dexNav["teamV2"][team].update({str(instId): 1})
+                                except:
+                                    dexNav["teamV2"][team] = {str(instId): 1}
+                    else:
+                        dexNav["character"][random_char_id]["count"] += 1
+                        
                     first_reward = {
                         "count": 1,
                         "id": reward_id,
@@ -583,9 +610,15 @@ def questBattleFinish():
                     firstRewards.append(first_reward)
                 else:
                     if reward_type == "MATERIAL":
-                        player_data["inventory"][reward_id] += reward_count
+                        try:
+                            player_data["inventory"][reward_id] += reward_count
+                        except:
+                            player_data["inventory"][reward_id] = reward_count
                     if reward_type == "CARD_EXP":
-                        player_data["inventory"][reward_id] += reward_count
+                        try:
+                            player_data["inventory"][reward_id] += reward_count
+                        except:
+                            player_data["inventory"][reward_id] = reward_count
                     if reward_type == "DIAMOND":
                         player_data["status"]["androidDiamond"] += reward_count
                         player_data["status"]["iosDiamond"] += reward_count
@@ -719,7 +752,7 @@ def questBattleFinish():
     for index in range(len(displayDetailRewards)):
         occPercent = displayDetailRewards[index]["occPercent"]
         dropType = displayDetailRewards[index]["dropType"]
-        reward_count = 1 * DropRate
+        reward_count = 1 * dropRate
 
         reward_id = displayDetailRewards[index]["id"]
         reward_type = displayDetailRewards[index]["type"]
@@ -824,7 +857,7 @@ def questBattleFinish():
         if occPercent == 0 and dropType == 2:
             if reward_type == "MATERIAL":
                 # Tough Siege - Purchase Certificate
-                if stageId == "wk_toxic_1":     # AP-1
+                if stageId == "wk_toxic_1":   # AP-1
                     if completeState == 3:
                         reward_count = 4
                     else:
@@ -1393,6 +1426,12 @@ def questBattleFinish():
                 if charId in player_data["troop"]["charGroup"]:
                     player_data["troop"]["charGroup"][charId]["favorPoint"] = charFavor + passFavor
     
+    # Unlock enemy dexNav
+    enemyList = list(BattleData["battleData"]["stats"]["enemyList"].keys())
+    for enemyId in enemyList:
+        if enemyId not in list(dexNav["enemy"]["enemies"].keys()):
+            dexNav["enemy"]["enemies"].update({enemyId: 1})
+            
     stages = {}
     for index in range(len(unlockStagesObject)):
         unlock_stageId = unlockStagesObject[index]["stageId"]
@@ -1416,6 +1455,7 @@ def questBattleFinish():
         "playerDataDelta": {
             "deleted": {},
             "modified": {
+                "dexNav": dexNav,
                 "dungeon": {
                     "stages": stages
                 },
@@ -1427,7 +1467,7 @@ def questBattleFinish():
     }
 
     userData.set_user_data(accounts.get_uid(), player_data)
-    
+    print(dexNav)
     return data
 
 
@@ -1435,39 +1475,62 @@ def questSaveBattleReplay():
 
     data = request.data
     request_data = request.get_json()
+    
+    secret = request.headers.get("secret")
+    battleReplay = decrypt_battle_replay(request_data["battleReplay"])
+    server_config = read_json(CONFIG_PATH)
+    if server_config["developer"]["debugMode"]:
+        writeLog("\033[1;33m" + str(battleReplay) + "\033[0;0m")
+    
+    if not server_config["server"]["enableServer"]:
+        data = {
+            "statusCode": 400,
+            "error": "Bad Request",
+            "message": "Server is close"
+        }
+        return data
 
-    replay_data = read_json(BATTLE_REPLAY_JSON_PATH)
+    result = userData.query_account_by_secret(secret)
+    
+    if len(result) != 1:
+        data ={
+            "result": 2,
+            "error": "此账户不存在"
+        }
+        return data
+    
+    accounts = Account(*result[0])
+    
+    if accounts.get_ban() == 1:
+        data = {
+            "statusCode": 403,
+            "error": "Bad Request",
+            "message": "Your account has been banned"
+        }
+        return data
+    
+    player_data = json.loads(accounts.get_user())
+    stageId = battleReplay["journal"]["metadata"]["stageId"]
+    stages_data = player_data["dungeon"]["stages"][stageId]
+    
+    stages_data["hasBattleReplay"] = 1
+    stages_data["battleReplay"] = request_data["battleReplay"]
+
+    userData.set_user_data(accounts.get_uid(), player_data)
+
 
     data = {
-        "result": 0,
         "playerDataDelta": {
+            "deleted": {},
             "modified": {
                 "dungeon": {
                     "stages": {
-                        replay_data["current"]: {
-                            "hasBattleReplay": 1
-                        }
+                        stageId: player_data["dungeon"]["stages"][stageId]
                     }
                 }
-            },
-            "deleted": {}
+            }
         }
     }
-
-    char_config = replay_data["currentCharConfig"]
-
-    if char_config in list(replay_data["saved"].keys()):
-        replay_data["saved"][char_config].update({
-            replay_data["current"]: request_data["battleReplay"]
-        })
-    else:
-        replay_data["saved"].update({
-            char_config: {
-                replay_data["current"]: request_data["battleReplay"]
-            }
-        })
-    replay_data["current"] = None
-    write_json(replay_data, BATTLE_REPLAY_JSON_PATH)
 
     return data
 
@@ -1475,131 +1538,394 @@ def questSaveBattleReplay():
 def questGetBattleReplay():
 
     data = request.data
-    stageId = request.get_json()["stageId"]
+    request_data = request.get_json()
 
-    replay_data = read_json(BATTLE_REPLAY_JSON_PATH)
-    battleData = {
-        "battleReplay": replay_data["saved"][replay_data["currentCharConfig"]][stageId],
+    secret = request.headers.get("secret")
+    stageId = request_data["stageId"]
+    server_config = read_json(CONFIG_PATH)
+    
+    if not server_config["server"]["enableServer"]:
+        data = {
+            "statusCode": 400,
+            "error": "Bad Request",
+            "message": "Server is close"
+        }
+        return data
+
+    result = userData.query_account_by_secret(secret)
+    
+    if len(result) != 1:
+        data ={
+            "result": 2,
+            "error": "此账户不存在"
+        }
+        return data
+    
+    accounts = Account(*result[0])
+    
+    if accounts.get_ban() == 1:
+        data = {
+            "statusCode": 403,
+            "error": "Bad Request",
+            "message": "Your account has been banned"
+        }
+        return data
+    
+    player_data = json.loads(accounts.get_user())
+    
+    data = {
+        "battleReplay": player_data["dungeon"]["stages"][stageId]["battleReplay"],
         "playerDataDelta": {
             "deleted": {},
             "modified": {}
         }
     }
     
-    return battleData
+    return data
 
 
 def questChangeSquadName():
 
     data = request.data
     request_data = request.get_json()
+
+    secret = request.headers.get("secret")
+    squadId = request_data["squadId"]
+    name = request_data["name"]
+    server_config = read_json(CONFIG_PATH)
+    
+    if not server_config["server"]["enableServer"]:
+        data = {
+            "statusCode": 400,
+            "error": "Bad Request",
+            "message": "Server is close"
+        }
+        return data
+
+    result = userData.query_account_by_secret(secret)
+    
+    if len(result) != 1:
+        data ={
+            "result": 2,
+            "error": "此账户不存在"
+        }
+        return data
+    
+    accounts = Account(*result[0])
+    
+    if accounts.get_ban() == 1:
+        data = {
+            "statusCode": 403,
+            "error": "Bad Request",
+            "message": "Your account has been banned"
+        }
+        return data
+    
+    player_data = json.loads(accounts.get_user())
+    player_data["troop"]["squads"][squadId]["name"] = name
+
+    userData.set_user_data(accounts.get_uid(), player_data)
+    
     data = {
         "playerDataDelta":{
+            "deleted":{},
             "modified":{
                 "troop":{
-                    "squads":{}
+                    "squads":{
+                        squadId: player_data["troop"]["squads"][squadId]
+                    }
                 }
-            },
-            "deleted":{}
+            }
         }
     }
 
-    if request_data["squadId"] and request_data["name"]:
-        data["playerDataDelta"]["modified"]["troop"]["squads"].update({
-            str(request_data["squadId"]): {
-                "name": request_data["name"]
-            }
-        })
-
-        saved_data = read_json(USER_JSON_PATH)
-        saved_data["user"]["troop"]["squads"][str(request_data["squadId"])]["name"] = request_data["name"]
-        write_json(saved_data, USER_JSON_PATH)
-
-        return data
+    return data
 
 
 def questSquadFormation():
 
     data = request.data
     request_data = request.get_json()
+
+    secret = request.headers.get("secret")
+    squadId = request_data["squadId"]
+    server_config = read_json(CONFIG_PATH)
+    
+    if not server_config["server"]["enableServer"]:
+        data = {
+            "statusCode": 400,
+            "error": "Bad Request",
+            "message": "Server is close"
+        }
+        return data
+
+    result = userData.query_account_by_secret(secret)
+    
+    if len(result) != 1:
+        data ={
+            "result": 2,
+            "error": "此账户不存在"
+        }
+        return data
+    
+    accounts = Account(*result[0])
+    
+    if accounts.get_ban() == 1:
+        data = {
+            "statusCode": 403,
+            "error": "Bad Request",
+            "message": "Your account has been banned"
+        }
+        return data
+    
+    player_data = json.loads(accounts.get_user())
+    player_data["troop"]["squads"][str(squadId)]["slots"] = request_data["slots"]
+
+    userData.set_user_data(accounts.get_uid(), player_data)
+    
     data = {
         "playerDataDelta":{
+            "deleted":{},
             "modified":{
                 "troop":{
-                    "squads":{}
+                    "squads":{
+                        squadId: player_data["troop"]["squads"][str(squadId)]
+                    }
                 }
-            },
-            "deleted":{}
+            }
         }
     }
 
-    if request_data["squadId"] and request_data["slots"]:
-        data["playerDataDelta"]["modified"]["troop"]["squads"].update({
-            str(request_data["squadId"]): {
-                "slots": request_data["slots"]
-            }
-        })
-
-        saved_data = read_json(USER_JSON_PATH)
-        saved_data["user"]["troop"]["squads"][str(request_data["squadId"])]["slots"] = request_data["slots"]
-        write_json(saved_data, USER_JSON_PATH)
-
-        return data
+    return data
 
 
 def questGetAssistList():
 
     data = request.data
-    assist_unit_config = read_json(CONFIG_PATH)["charConfig"]["assistUnit"]
-    saved_data = read_json(USER_JSON_PATH)["user"]["troop"]["chars"]
-    assist_unit = {}
+    request_data = request.get_json()
 
-    for _, char in saved_data.items():
-        if char["charId"] == assist_unit_config["charId"]:
-            assist_unit.update({
-                "charId": char["charId"],
-                "skinId": assist_unit_config["skinId"],
-                "skills": char["skills"],
-                "mainSkillLvl": char["mainSkillLvl"],
-                "skillIndex": assist_unit_config["skillIndex"],
-                "evolvePhase": char["evolvePhase"],
-                "favorPoint": char["favorPoint"],
-                "potentialRank": char["potentialRank"],
-                "level": char["level"],
-                "crisisRecord": {},
-                "currentEquip": char["currentEquip"],
-                "equip": char["equip"]
-            })
+    secret = request.headers.get("secret")
+    profession = request_data["profession"]
+    server_config = read_json(CONFIG_PATH)
+    
+    if not server_config["server"]["enableServer"]:
+        data = {
+            "statusCode": 400,
+            "error": "Bad Request",
+            "message": "Server is close"
+        }
+        return data
+
+    result = userData.query_account_by_secret(secret)
+    
+    if len(result) != 1:
+        data ={
+            "result": 2,
+            "error": "此账户不存在"
+        }
+        return data
+    
+    accounts = Account(*result[0])
+    
+    if accounts.get_ban() == 1:
+        data = {
+            "statusCode": 403,
+            "error": "Bad Request",
+            "message": "Your account has been banned"
+        }
+        return data
+    
+    # TODO: Add friends
+    friend_list = json.loads(accounts.get_friend())["list"]
+    assist_char_array = []
+    assistList = []
+    friend_array = []
+    
+    random.shuffle(friend_list)
+
+    for index in range(len(friend_list)):
+        if len(assistList) == 6:
             break
+        
+        friendUid = friend_list[index]["uid"]
+        friendAlias = friend_list[index]["alias"]
+        
+        friend_array.append(friendUid)
+        
+        result = userData.query_user_info(friendUid)
+        userInfo = UserInfo(*result[0])
+        print(userInfo)
+
+        userSocialAssistCharList = json.loads(userInfo.get_social_assist_char_list())
+        print(userSocialAssistCharList)
+        userAssistCharList = json.loads(userInfo.get_social_assist_char_list())
+        print(userAssistCharList)
+        userStatus = json.loads(userInfo.get_status())
+        print(userStatus)
+        chars = json.loads(userInfo.get_chars())
+        print(chars)
+
+        if profession in userAssistCharList:
+            charList = userAssistCharList[profession]
+            random.shuffle(charList)
+            assistCharData = charList[0]
+
+            charId = assistCharData["charId"]
+            charInstId = assistCharData["charInstId"]
+            
+            if charId not in assist_char_array:
+                assist_char_array.append(charId)
+
+                assistCharList = []
+
+                assistInfo = {
+                    "uid": friendUid,
+                    "aliasName": friendAlias,
+                    "nickName": userStatus["nickName"],
+                    "nickNumber": userStatus["nickNumber"],
+                    "level": userStatus["level"],
+                    "avatarId": userStatus["avatarId"],
+                    "avatar": userStatus["avatar"],
+                    "lastOnlineTime": userStatus["lastOnlineTs"],
+                    "assistCharList": [],
+                    "powerScore": 140,
+                    "isFriend": True,
+                    "canRequestFriend": False,
+                    "assistSlotIndex": 0
+                }
+                
+                for char in range(len(userSocialAssistCharList)):
+                    if userSocialAssistCharList[char] is not None:
+                        charData = chars[userSocialAssistCharList[char]["charInstId"]]
+                        charData["skillIndex"] = userSocialAssistCharList[char]["skillIndex"]
+                        assistCharList.append(charData)
+                        if userSocialAssistCharList[char]["charInstId"] == charInstId:
+                            assistInfo["assistSlotIndex"] = char
+                    assistInfo["assistCharList"] = assistCharList
+                    assistList.append(assistInfo)
 
     data = {
-        "allowAskTs": int(time()),
-        "assistList": [
-            {
-                "uid": "88888888",
-                "aliasName": "",
-                "nickName": "ABCDEF",
-                "nickNumber": "8888",
-                "level": 200,
-                "avatarId": "0",
-                "avatar": {
-                    "type": "ASSISTANT",
-                    "id": "char_421_crow#1"
-                },
-                "lastOnlineTime": int(time()),
-                "assistCharList": [
-                    assist_unit
-                ],
-                "powerScore": 500,
-                "isFriend": True,
-                "canRequestFriend": False,
-                "assistSlotIndex": 0
-            }
-        ],
+        "allowAskTs": round(time()),
+        "assistList": assistList,
         "playerDataDelta": {
             "modified": {},
             "deleted": {}
         }
     }
 
+    return data
+
+
+def questFinishStoryStage():
+    
+    data = request.data
+    request_data = request.get_json()
+
+    secret = request.headers.get("secret")
+    stageId = request_data["stageId"]
+    server_config = read_json(CONFIG_PATH)
+    
+    if not server_config["server"]["enableServer"]:
+        data = {
+            "statusCode": 400,
+            "error": "Bad Request",
+            "message": "Server is close"
+        }
+        return data
+
+    result = userData.query_account_by_secret(secret)
+    
+    if len(result) != 1:
+        data ={
+            "result": 2,
+            "error": "此账户不存在"
+        }
+        return data
+    
+    accounts = Account(*result[0])
+    
+    if accounts.get_ban() == 1:
+        data = {
+            "statusCode": 403,
+            "error": "Bad Request",
+            "message": "Your account has been banned"
+        }
+        return data
+    
+    player_data = json.loads(accounts.get_user())
+    stage_state = player_data["dungeon"]["stages"][stageId]["state"]
+    dropRate = server_config["developer"]["dropRate"]
+
+    rewards = []
+    unlockStages = []
+    unlockStagesObject = []
+
+    if stage_state != 3:
+        player_data["dungeon"]["stages"][stageId]["state"] = 3
+
+        unlock_list = {}
+        for item in list(DataFile.STAGE_TABLE["stages"].keys()):
+            unlock_list[item] = DataFile.STAGE_TABLE["stages"][item]["unlockCondition"]
+
+        for item in list(unlock_list.keys()):
+            pass_condition = 0
+            if len(unlock_list[item]) != 0:
+                for condition in unlock_list[item]:
+                    if condition["stageId"] in list(player_data["dungeon"]["stages"].keys()):
+                        print(unlock_list[item])
+                        if player_data["dungeon"]["stages"][condition["stageId"]]["state"] >= condition["completeState"]:
+                            pass_condition += 1
+                if pass_condition == len(unlock_list[item]):
+                        
+                    unlockStage = {
+                        "hasBattleReplay": 0,
+                        "noCostCnt": 0,
+                        "practiceTimes": 0,
+                        "completeTimes": 0,
+                        "state": 0,
+                        "stageId": item,
+                        "startTimes": 0
+                    }
+                            
+                    if item not in list(player_data["dungeon"]["stages"].keys()):
+                        player_data["dungeon"]["stages"][item] = unlockStage
+                        unlockStages.append(item)
+                        unlockStagesObject.append(unlockStage)
+                        
+        reward = {
+            "type": "DIAMOND",
+            "id": "4002",
+            "count": 1 * dropRate
+        }
+
+        rewards.append(reward)
+
+        player_data["status"]["androidDiamond"] += 1 * dropRate
+        player_data["status"]["iosDiamond"] += 1 * dropRate
+
+    stages = {}
+    for index in range(len(unlockStagesObject)):
+        unlock_stageId = unlockStagesObject[index]["stageId"]
+        stages[unlock_stageId] = player_data["dungeon"]["stages"][unlock_stageId]
+    stages[stageId] = player_data["dungeon"]["stages"][stageId]
+    
+    data = {
+        "result": 0,
+        "alert": [],
+        "rewards": rewards,
+        "unlockStages": unlockStages,
+        "playerDataDelta": {
+            "deleted": {},
+            "modified": {
+                "dungeon": {
+                    "stages": stages
+                },
+                "status": {
+                    "androidDiamond": player_data["status"]["androidDiamond"],
+                    "iosDiamond": player_data["status"]["iosDiamond"]
+                }
+            }
+        }
+    }
+    
     return data

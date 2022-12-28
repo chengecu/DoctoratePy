@@ -2,6 +2,15 @@
     "focusAnnounceId": "1090",
     "announceList": [
         {
+            "announceId": "1106",
+            "title": "\u300c\u5c06\u8fdb\u9152\u300d\n\u590d\u523b\u5373\u5c06\u5f00\u542f",
+            "isWebUrl": true,
+            "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1106_1672122959.html",
+            "day": 27,
+            "month": 12,
+            "group": "ACTIVITY"
+        },
+        {
             "announceId": "1098",
             "title": "\u7279\u5b9a\u5e72\u5458\n\u9650\u65f6\u51fa\u7387\u4e0a\u5347",
             "isWebUrl": true,

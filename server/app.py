@@ -82,6 +82,7 @@ app.add_url_rule('/u8/pay/getAllProductList', methods=['POST'], view_func=auth.u
 
 app.add_url_rule('/quest/battleStart', methods=['POST'], view_func=quest.questBattleStart)
 app.add_url_rule('/quest/battleFinish', methods=['POST'], view_func=quest.questBattleFinish)
+app.add_url_rule('/quest/finishStoryStage', methods=['POST'], view_func=quest.questFinishStoryStage)
 app.add_url_rule('/quest/saveBattleReplay', methods=['POST'], view_func=quest.questSaveBattleReplay)
 app.add_url_rule('/quest/getBattleReplay', methods=['POST'], view_func=quest.questGetBattleReplay)
 app.add_url_rule('/quest/changeSquadName', methods=['POST'], view_func=quest.questChangeSquadName)

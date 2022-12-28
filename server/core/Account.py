@@ -49,10 +49,10 @@ class Account:
         self.mails = mails
 
     def get_assist_char_list(self):
-        return self.assistCharList
+        return self.assist_char_list
 
     def set_assist_char_list(self, assist_char_list):
-        self.assistCharList = assist_char_list
+        self.assist_char_list = assist_char_list
 
     def get_friend(self):
         return self.friend
@@ -65,3 +65,51 @@ class Account:
 
     def set_ban(self, ban):
         self.ban = ban
+
+
+class UserInfo:
+    
+    def __init__(self, uid: int, status: str, chars: str, social_assist_char_list: str,
+                 assist_char_list: str, friend: str):
+        self.uid = uid
+        self.status = status
+        self.chars = chars
+        self.social_assist_char_list = social_assist_char_list
+        self.assist_char_list = assist_char_list
+        self.friend = friend
+
+    def get_uid(self):
+        return self.uid
+
+    def set_uid(self, uid):
+        self.uid = uid
+
+    def get_status(self):
+        return self.status
+
+    def set_status(self, status):
+        self.status = status
+
+    def get_chars(self):
+        return self.chars
+
+    def set_chars(self, chars):
+        self.chars = chars
+
+    def get_social_assist_char_list(self):
+        return self.social_assist_char_list
+
+    def set_social_assist_char_list(self, social_assist_char_list):
+        self.social_assist_char_list = social_assist_char_list
+
+    def get_assist_char_list(self):
+        return self.assist_char_list
+
+    def set_assist_char_list(self, assist_char_list):
+        self.assist_char_list = assist_char_list
+
+    def get_friend(self):
+        return self.friend
+
+    def set_friend(self, friend):
+        self.friend = friend

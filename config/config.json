@@ -67,32 +67,5 @@
             "is2": false,
             "squadsAndFavs": false
         }
-    },
-    "charConfig": {
-        "favorPoint": 25570,
-        "potentialRank": 5,
-        "mainSkillLvl": 7,
-        "level": -1,
-        "evolvePhase": -1,
-        "skillsSpecializeLevel": 3,
-        "customUnitInfo": {
-            "char_421_crow": {
-                "favorPoint": 25570,
-                "potentialRank": 2,
-                "mainSkillLvl": 7,
-                "level": 50,
-                "evolvePhase": 1,
-                "skills": [
-                    1,
-                    0
-                ]
-            }
-        },
-        "duplicateUnits": [],
-        "assistUnit": {
-            "charId": "char_350_surtr",
-            "skinId": "char_350_surtr@it#1",
-            "skillIndex": 2
-        }
     }
 }

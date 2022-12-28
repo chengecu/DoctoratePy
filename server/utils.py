@@ -1,9 +1,11 @@
 import json
+import base64
 import socket
 import hashlib
-import binascii
 
 from datetime import datetime
+from io import BytesIO
+from zipfile import ZipFile
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import unpad
 
@@ -39,6 +41,25 @@ def decrypt_battle_data(data: str, login_time: int) -> dict:
     try:
         decrypt_data = unpad(aes_obj.decrypt(battle_data), AES.block_size)
         return json.loads(decrypt_data)
+    
+    except Exception as e:
+        writeLog("\033[1;31m" + str(e) + "\033[0;0m")
+        return None
+
+    
+def decrypt_battle_replay(battle_replay: str) -> dict:
+
+    data = base64.decodebytes(battle_replay.encode())
+    b = None
+    try:
+        bis = BytesIO(data)
+        zip = ZipFile(bis)
+        for zip_info in zip.infolist():
+            with zip.open(zip_info) as f:
+                b = f.read()
+        zip.close()
+        bis.close()
+        return json.loads(b.decode("utf-8"))
     
     except Exception as e:
         writeLog("\033[1;31m" + str(e) + "\033[0;0m")
