@@ -33,11 +33,10 @@ def questBattleStart():
 
     data = request.data
     request_data = request.get_json()
-    
+
     secret = request.headers.get("secret")
     assistFriend = request_data["assistFriend"]
     stageId = request_data["stageId"]
-    slots = request_data["squad"]["slots"]
     usePracticeTicket = request_data["usePracticeTicket"]
     server_config = read_json(CONFIG_PATH)
 
@@ -87,33 +86,35 @@ def questBattleStart():
             PassableParameters.suggestFriend = True
 
     notifyPowerScoreNotEnoughIfFailed = False
-    for char in slots:
-        if char is not None:
-            charInstId = str(char["charInstId"])
-            if charInstId in chars_data:
-                if dangerLevel == "-":
-                    break
+    if request_data["squad"] is not None:
+        slots = request_data["squad"]["slots"]
+        for char in slots:
+            if char is not None:
+                charInstId = str(char["charInstId"])
+                if charInstId in chars_data:
+                    if dangerLevel == "-":
+                        break
             
-                stageLevel = int(dangerLevel[-2:].replace(".", ""))
-                charLevel = chars_data[charInstId]["level"]
-                evolvePhase = chars_data[charInstId]["evolvePhase"]
+                    stageLevel = int(dangerLevel[-2:].replace(".", ""))
+                    charLevel = chars_data[charInstId]["level"]
+                    evolvePhase = chars_data[charInstId]["evolvePhase"]
             
-                if "精英1" in dangerLevel:
-                    if evolvePhase >= 1 and charLevel >= stageLevel:
-                        continue
+                    if "精英1" in dangerLevel:
+                        if evolvePhase >= 1 and charLevel >= stageLevel:
+                            continue
+                        else:
+                            notifyPowerScoreNotEnoughIfFailed = True
+                            break
+                    elif "精英2" in dangerLevel:
+                        if evolvePhase >= 2 and charLevel >= stageLevel:
+                            continue
+                        else:
+                            notifyPowerScoreNotEnoughIfFailed = True
+                            break
                     else:
-                        notifyPowerScoreNotEnoughIfFailed = True
-                        break
-                elif "精英2" in dangerLevel:
-                    if evolvePhase >= 2 and charLevel >= stageLevel:
-                        continue
-                    else:
-                        notifyPowerScoreNotEnoughIfFailed = True
-                        break
-                else:
-                    if evolvePhase == 0 and charLevel < stageLevel:
-                        notifyPowerScoreNotEnoughIfFailed = True
-                        break
+                        if evolvePhase == 0 and charLevel < stageLevel:
+                            notifyPowerScoreNotEnoughIfFailed = True
+                            break
     
     if not stageId in player_data['dungeon']['stages']:
         stagesData = {
@@ -125,13 +126,13 @@ def questBattleStart():
             "hasBattleReplay": 0,
             "noCostCnt": 1
         }
+        
+        if "guide" in stageId:
+            stagesData["noCostCnt"] = 0
 
         player_data['dungeon']['stages'][stageId] = stagesData
     else:
         player_data['dungeon']['stages'][stageId]["startTimes"] += 1
-    
-    if "guide" in stageId:
-        stagesData["noCostCnt"] = 0
         
     if usePracticeTicket == 1:
         player_data["status"]["practiceTicket"] -= 1
