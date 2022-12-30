@@ -49,6 +49,7 @@ def storyFinishStory():
     userData.set_user_data(accounts.get_uid(), player_data)
     
     data = {
+        "items": [],
         "playerDataDelta": {
             "deleted": {},
             "modified": {

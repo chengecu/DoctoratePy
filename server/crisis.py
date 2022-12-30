@@ -13,8 +13,8 @@ def crisisGetCrisisInfo():
 
     if selected_crisis:
         rune = read_json(f"{CRISIS_JSON_BASE_PATH}{selected_crisis}.json", encoding="utf-8")
-        current_time = round(time())
-        next_day = round(time()) + 86400
+        current_time = int(time())
+        next_day = int(time()) + 86400
 
         rune["ts"] = current_time
         rune["playerDataDelta"]["modified"]["crisis"]["lst"] = current_time
@@ -23,7 +23,7 @@ def crisisGetCrisisInfo():
    
     else:
         rune = {
-            "ts": round(time()),
+            "ts": int(time()),
             "data": {},
             "playerDataDelta": {}
         }

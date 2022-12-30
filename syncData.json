@@ -899,12 +899,22 @@
         "TYPE_ACT9D0": {
             "act22side": {
                 "coin": 0,
-                "favorList": [
-                    "char_297_hamoni",
-                    "char_4017_puzzle",
-                    "char_1020_reed2"
-                ],
+                "favorList": [],
                 "news": {}
+            },
+            "act15sre": {
+                "coin": 0,
+                "favorList": [],
+                "news": {}
+            }
+        },
+        "CHECKIN_ONLY": {
+            "act32sign": {
+                "lastTs": 1672344000,
+                "history": [
+                    1,
+                    1
+                ]
             }
         }
     },
@@ -934,11 +944,11 @@
         "diamondShard": 500,
         "gold": 10000,
         "practiceTicket": 30,
-        "lastRefreshTs": 1671281065,
+        "lastRefreshTs": 1672350993,
         "lastApAddTime": 1669282675,
         "mainStageProgress": "main_00-01",
         "registerTs": 1669282675,
-        "lastOnlineTs": 1671281064,
+        "lastOnlineTs": 1672350993,
         "serverName": "泰拉",
         "avatarId": "0",
         "avatar": {},
@@ -1250,7 +1260,7 @@
         "hasFriendRequest": 0,
         "hasClues": 0,
         "hasFreeLevelGP": 0,
-        "status": 1671281064
+        "status": 1672350993
     },
     "equipment": {
         "missions": {}
@@ -1345,7 +1355,7 @@
                 }
             },
             "DAILY": {
-                "daily_5101": {
+                "daily_5001": {
                     "state": 2,
                     "progress": [
                         {
@@ -1354,7 +1364,7 @@
                         }
                     ]
                 },
-                "daily_5102": {
+                "daily_5002": {
                     "state": 1,
                     "progress": [
                         {
@@ -1363,7 +1373,7 @@
                         }
                     ]
                 },
-                "daily_5103": {
+                "daily_5003": {
                     "state": 1,
                     "progress": [
                         {
@@ -1372,7 +1382,7 @@
                         }
                     ]
                 },
-                "daily_5104": {
+                "daily_5004": {
                     "state": 1,
                     "progress": [
                         {
@@ -1381,7 +1391,7 @@
                         }
                     ]
                 },
-                "daily_5105": {
+                "daily_5005": {
                     "state": 1,
                     "progress": [
                         {
@@ -1390,7 +1400,7 @@
                         }
                     ]
                 },
-                "daily_5106": {
+                "daily_5006": {
                     "state": 2,
                     "progress": [
                         {
@@ -1399,7 +1409,7 @@
                         }
                     ]
                 },
-                "daily_5107": {
+                "daily_5007": {
                     "state": 1,
                     "progress": [
                         {
@@ -1408,7 +1418,7 @@
                         }
                     ]
                 },
-                "daily_5108": {
+                "daily_5008": {
                     "state": 2,
                     "progress": [
                         {
@@ -1417,7 +1427,7 @@
                         }
                     ]
                 },
-                "daily_5109": {
+                "daily_5009": {
                     "state": 1,
                     "progress": [
                         {
@@ -1426,7 +1436,7 @@
                         }
                     ]
                 },
-                "daily_5110": {
+                "daily_5010": {
                     "state": 1,
                     "progress": [
                         {
@@ -1435,7 +1445,7 @@
                         }
                     ]
                 },
-                "daily_5111": {
+                "daily_5011": {
                     "state": 1,
                     "progress": [
                         {
@@ -1444,7 +1454,7 @@
                         }
                     ]
                 },
-                "daily_5112": {
+                "daily_5012": {
                     "state": 1,
                     "progress": [
                         {
@@ -1453,7 +1463,7 @@
                         }
                     ]
                 },
-                "daily_5113": {
+                "daily_5013": {
                     "state": 2,
                     "progress": [
                         {
@@ -1462,7 +1472,7 @@
                         }
                     ]
                 },
-                "daily_5114": {
+                "daily_5014": {
                     "state": 2,
                     "progress": [
                         {
@@ -1471,7 +1481,7 @@
                         }
                     ]
                 },
-                "daily_5115": {
+                "daily_5015": {
                     "state": 2,
                     "progress": [
                         {
@@ -1480,7 +1490,7 @@
                         }
                     ]
                 },
-                "daily_5116": {
+                "daily_5016": {
                     "state": 2,
                     "progress": [
                         {
@@ -1489,7 +1499,7 @@
                         }
                     ]
                 },
-                "daily_5117": {
+                "daily_5017": {
                     "state": 2,
                     "progress": [
                         {
@@ -1498,7 +1508,7 @@
                         }
                     ]
                 },
-                "daily_5118": {
+                "daily_5018": {
                     "state": 1,
                     "progress": [
                         {
@@ -1507,7 +1517,7 @@
                         }
                     ]
                 },
-                "daily_5119": {
+                "daily_5019": {
                     "state": 2,
                     "progress": [
                         {
@@ -1516,7 +1526,7 @@
                         }
                     ]
                 },
-                "daily_5120": {
+                "daily_5020": {
                     "state": 1,
                     "progress": [
                         {
@@ -1525,7 +1535,7 @@
                         }
                     ]
                 },
-                "daily_5121": {
+                "daily_5021": {
                     "state": 2,
                     "progress": [
                         {
@@ -1534,7 +1544,7 @@
                         }
                     ]
                 },
-                "daily_5122": {
+                "daily_5022": {
                     "state": 2,
                     "progress": [
                         {
@@ -1543,7 +1553,7 @@
                         }
                     ]
                 },
-                "daily_5123": {
+                "daily_5023": {
                     "state": 1,
                     "progress": [
                         {
@@ -1552,7 +1562,7 @@
                         }
                     ]
                 },
-                "daily_5124": {
+                "daily_5024": {
                     "state": 1,
                     "progress": [
                         {
@@ -1561,7 +1571,7 @@
                         }
                     ]
                 },
-                "daily_5125": {
+                "daily_5025": {
                     "state": 1,
                     "progress": [
                         {
@@ -1570,7 +1580,7 @@
                         }
                     ]
                 },
-                "daily_5126": {
+                "daily_5026": {
                     "state": 2,
                     "progress": [
                         {
@@ -1579,7 +1589,7 @@
                         }
                     ]
                 },
-                "daily_5127": {
+                "daily_5027": {
                     "state": 1,
                     "progress": [
                         {
@@ -1588,7 +1598,7 @@
                         }
                     ]
                 },
-                "daily_5128": {
+                "daily_5028": {
                     "state": 1,
                     "progress": [
                         {
@@ -1597,7 +1607,7 @@
                         }
                     ]
                 },
-                "daily_5129": {
+                "daily_5029": {
                     "state": 2,
                     "progress": [
                         {
@@ -14501,6 +14511,231 @@
                             "value": 0
                         }
                     ]
+                },
+                "15sreActivity_1": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "15sreActivity_2": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "15sreActivity_3": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "15sreActivity_4": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "15sreActivity_5": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "15sreActivity_6": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "15sreActivity_7": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "15sreActivity_8": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "15sreActivity_9": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "15sreActivity_10": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "15sreActivity_11": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "15sreActivity_12": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "15sreActivity_13": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "15sreActivity_14": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "15sreActivity_15": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "15sreActivity_16": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "15sreActivity_17": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "15sreActivity_18": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "15sreActivity_19": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "15sreActivity_20": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "15sreActivity_21": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "15sreActivity_22": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "15sreActivity_23": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 10,
+                            "value": 0
+                        }
+                    ]
+                },
+                "15sreActivity_24": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 25,
+                            "value": 0
+                        }
+                    ]
+                },
+                "15sreActivity_25": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 40,
+                            "value": 0
+                        }
+                    ]
                 }
             }
         },
@@ -14509,16 +14744,16 @@
             "weeklyPoint": 0,
             "rewards": {
                 "DAILY": {
-                    "reward_daily_462": 0,
-                    "reward_daily_463": 0,
-                    "reward_daily_464": 0,
-                    "reward_daily_465": 0,
-                    "reward_daily_466": 0,
-                    "reward_daily_467": 0,
-                    "reward_daily_468": 0,
-                    "reward_daily_469": 0,
-                    "reward_daily_470": 0,
-                    "reward_daily_471": 0
+                    "reward_daily_452": 0,
+                    "reward_daily_453": 0,
+                    "reward_daily_454": 0,
+                    "reward_daily_455": 0,
+                    "reward_daily_456": 0,
+                    "reward_daily_457": 0,
+                    "reward_daily_458": 0,
+                    "reward_daily_459": 0,
+                    "reward_daily_460": 0,
+                    "reward_daily_461": 0
                 },
                 "WEEKLY": {
                     "reward_weekly_401": 0,
@@ -14600,7 +14835,8 @@
             "act22side": 0,
             "act14sre": 0,
             "weekly_g_7": 0,
-            "daily_g_51": 0
+            "act15sre": 0,
+            "daily_g_50": 0
         }
     },
     "social": {
@@ -14621,7 +14857,7 @@
                 "buffSpeed": 0,
                 "processPoint": 0,
                 "value": 32,
-                "lastUpdateTime": 1671281065,
+                "lastUpdateTime": 1672350993,
                 "maxValue": 32
             },
             "workshop": {
@@ -14632,7 +14868,7 @@
         "chars": {
             "1": {
                 "charId": "char_002_amiya",
-                "lastApAddTime": 1671281065,
+                "lastApAddTime": 1672350993,
                 "ap": 8640000,
                 "roomSlotId": "",
                 "index": -1,
@@ -14651,7 +14887,7 @@
             },
             "2": {
                 "charId": "char_502_nblade",
-                "lastApAddTime": 1671281065,
+                "lastApAddTime": 1672350993,
                 "ap": 8640000,
                 "roomSlotId": "",
                 "index": -1,
@@ -14670,7 +14906,7 @@
             },
             "3": {
                 "charId": "char_500_noirc",
-                "lastApAddTime": 1671281065,
+                "lastApAddTime": 1672350993,
                 "ap": 8640000,
                 "roomSlotId": "",
                 "index": -1,
@@ -14689,7 +14925,7 @@
             },
             "4": {
                 "charId": "char_503_rang",
-                "lastApAddTime": 1671281065,
+                "lastApAddTime": 1672350993,
                 "ap": 8640000,
                 "roomSlotId": "",
                 "index": -1,
@@ -14777,7 +15013,7 @@
                         }
                     },
                     "apCost": -100,
-                    "lastUpdateTime": 1671281065
+                    "lastUpdateTime": 1672350993
                 }
             },
             "ELEVATOR": {
@@ -14842,8 +15078,8 @@
     },
     "crisis": {
         "current": "",
-        "lst": 1671281732,
-        "nst": 1671307200,
+        "lst": 1672351241,
+        "nst": 1672430400,
         "map": {
             "rune_11-01": {
                 "rank": 0,
@@ -14885,7 +15121,7 @@
         },
         "training": {
             "currentStage": [
-                "tr_level_rune_06-02"
+                "tr_level_rune_13-02"
             ],
             "stage": {
                 "tr_level_rune_10-02": {
@@ -14913,7 +15149,7 @@
                     "point": -1
                 }
             },
-            "nst": 1671307200
+            "nst": 1672430400
         },
         "season": {
             "rune_season_11_1": {
@@ -18324,7 +18560,8 @@
                     "chat": {
                         "month_chat_rogue_2_1": 0,
                         "month_chat_rogue_2_2": 0,
-                        "month_chat_rogue_2_3": 0
+                        "month_chat_rogue_2_3": 0,
+                        "month_chat_rogue_2_4": 0
                     },
                     "band": {
                         "rogue_2_band_1": {
@@ -18651,6 +18888,13 @@
                                 0,
                                 1
                             ]
+                        },
+                        "CHALLENGE": {
+                            "state": 0,
+                            "progress": [
+                                0,
+                                1
+                            ]
                         }
                     },
                     "recruitSet": {
@@ -18833,6 +19077,15 @@
                             }
                         },
                         "MONTH_TEAM": {
+                            "0": {
+                                "state": 0,
+                                "progress": [
+                                    0,
+                                    1
+                                ]
+                            }
+                        },
+                        "CHALLENGE": {
                             "0": {
                                 "state": 0,
                                 "progress": [
@@ -19688,6 +19941,8 @@
             "isAvailable": true,
             "history": [
                 1,
+                1,
+                1,
                 1
             ]
         },
@@ -19701,7 +19956,7 @@
         }
     },
     "event": {
-        "building": 1671307200
+        "building": 1672387200
     },
     "retro": {
         "coin": 2,
@@ -19766,6 +20021,10 @@
             "permanent_sidestory_11_Break_The_Ice": {
                 "locked": 1,
                 "open": 1
+            },
+            "permanent_sidestory_12_Invitation_To_Wine": {
+                "locked": 1,
+                "open": 0
             }
         },
         "trail": {
@@ -19821,8 +20080,8 @@
                 "trailReward_sidestory_6_6": 0
             }
         },
-        "lst": 1671281065,
-        "nst": 1671307200
+        "lst": 1672350993,
+        "nst": 1672430400
     },
     "charm": {
         "charms": {
@@ -20114,7 +20373,7 @@
             "exterminateActivity_3": 0,
             "exterminateActivity_4": 0
         },
-        "lastRefreshTs": 1671281065,
+        "lastRefreshTs": 1672350993,
         "sweepMaxKills": {}
     },
     "inventory": {}

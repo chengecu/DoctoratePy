@@ -1,8 +1,8 @@
 import json
-
 from flask import request
+
 from time import time
-from constants import CONFIG_PATH, USER_JSON_PATH
+from constants import CONFIG_PATH
 from utils import read_json
 from core.database import userData
 from core.Account import Account
@@ -198,8 +198,10 @@ def userChangeAvatar():
     data = {
         "playerDataDelta": {
             "deleted": {},
-            "status": {
-                "avatar": player_data["status"]["avatar"]
+            "modified": {
+                "status": {
+                    "avatar": player_data["status"]["avatar"]
+                }
             }
         }
     }
@@ -269,7 +271,6 @@ def userChangeSecretary():
 def userBuyAp():
     
     data = request.data
-    request_data = request.get_json()
     
     secret = request.headers.get('secret')
     server_config = read_json(CONFIG_PATH)
@@ -302,8 +303,8 @@ def userBuyAp():
         return data
     
     player_data = json.loads(accounts.get_user())
-    time_now = round(time())
-    addAp = (time_now - int(player_data["status"]["lastApAddTime"])) // 360
+    time_now = int(time())
+    addAp = int((time_now - int(player_data["status"]["lastApAddTime"])) / 360)
     
     if player_data["status"]["ap"] < player_data["status"]["maxAp"]:
         if (player_data["status"]["ap"] + addAp) >= player_data["status"]["maxAp"]:

@@ -1,7 +1,6 @@
 import hashlib
-from unittest import result
-
 from flask import request
+
 from utils import read_json
 from constants import CONFIG_PATH
 from core.database import userData

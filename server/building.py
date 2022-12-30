@@ -43,7 +43,7 @@ def buildingSync():
         return data
     
     # TODO: Improve the function
-    time_now = round(time.time())
+    time_now = int(time.time())
     today_4 = int(time.mktime(time.strptime(time.strftime('%Y-%m-%d', time.localtime(time.time())) + ' 04:00:00', '%Y-%m-%d %H:%M:%S')))
     today_16 = int(time.mktime(time.strptime(time.strftime('%Y-%m-%d', time.localtime(time.time())) + ' 16:00:00', '%Y-%m-%d %H:%M:%S')))
     tomorrow_4 = int(time.mktime(time.strptime(time.strftime('%Y-%m-%d', time.localtime(time.time() + 24 * 60 * 60)) + ' 04:00:00', '%Y-%m-%d %H:%M:%S')))
@@ -59,7 +59,7 @@ def buildingSync():
     userData.set_user_data(accounts.get_uid(), player_data)
     
     data = {
-        "ts": round(time.time()), # TODO: Add userTimeStamps
+        "ts": int(time.time()), # TODO: Add userTimeStamps
         "playerDataDelta": {
             "deleted": {},
             "modified": {

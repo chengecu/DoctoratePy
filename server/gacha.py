@@ -9,30 +9,33 @@ from re import sub
 from itertools import combinations
 from typing import Dict, List, Set
 from core.database import userData
-from constants import CONFIG_PATH
-from account import DataFile
+from constants import CONFIG_PATH, CHARACTER_TABLE_URL, \
+    CHARWORD_TABLE_URL, EQUIP_TABLE_URL, GACHA_TABLE_URL
+from core.function.update import updateData
 from core.Account import Account
 
 
-PROFESSION_TO_TAG = {
-    "MEDIC": 4,
-    "WARRIOR": 1,
-    "PIONEER": 8,
-    "TANK": 3,
-    "SNIPER": 2,
-    "CASTER": 6,
-    "SUPPORT": 5,
-    "SPECIAL": 7,
-}
-POSITION_TO_TAG = {
-    "MELEE": 9,
-    "RANGED": 10,
-}
-RARITY_TO_TAG = {
-    5: 11,
-    4: 14,
-}
-ROBOT_TAG = 28
+class PassableParameters:
+    
+    PROFESSION_TO_TAG = {
+        "MEDIC": 4,
+        "WARRIOR": 1,
+        "PIONEER": 8,
+        "TANK": 3,
+        "SNIPER": 2,
+        "CASTER": 6,
+        "SUPPORT": 5,
+        "SPECIAL": 7,
+    }
+    POSITION_TO_TAG = {
+        "MELEE": 9,
+        "RANGED": 10,
+    }
+    RARITY_TO_TAG = {
+        5: 11,
+        4: 14,
+    }
+    ROBOT_TAG = 28
     
 
 def gachaSyncNormalGacha():
@@ -70,7 +73,7 @@ def gachaSyncNormalGacha():
         return data
     
     player_data = json.loads(accounts.get_user())
-    if "recruitChar" not in list(player_data["status"].keys()):
+    if "recruitChar" not in player_data["status"]:
         player_data["status"]["recruitChar"] = ""
     
     data = {
@@ -139,10 +142,10 @@ def gachaNormalGacha():
 
     slot_data = {
         "durationInSec": duration,
-        "maxFinishTs": round(time()) + duration,
-        "realFinishTs": round(time()) + duration,
+        "maxFinishTs": int(time()) + duration,
+        "realFinishTs": int(time()) + duration,
         "selectTags": select_tags,
-        "startTs": round(time()),
+        "startTs": int(time()),
         "state": 2,
         "tags": refresh_tag_list()
     }
@@ -210,7 +213,7 @@ def gachaBoostNormalGacha():
         return data
     
     player_data = json.loads(accounts.get_user())
-    player_data["recruit"]["normal"]["slots"][str(slotId)]["realFinishTs"] = round(time())
+    player_data["recruit"]["normal"]["slots"][str(slotId)]["realFinishTs"] = int(time())
     player_data["status"]["instantFinishTicket"] -= 1
 
     userData.set_user_data(accounts.get_uid(), player_data)
@@ -301,6 +304,10 @@ def gachaFinishNormalGacha():
     slotId = request_data["slotId"]
     server_config = read_json(CONFIG_PATH)
     
+    CHARACTER_TABLE = updateData(CHARACTER_TABLE_URL, True)
+    CHARWORD_TABLE = updateData(CHARWORD_TABLE_URL, True)
+    EQUIP_TABLE = updateData(EQUIP_TABLE_URL, True)
+    
     if not server_config["server"]["enableServer"]:
         data = {
             "statusCode": 400,
@@ -345,7 +352,7 @@ def gachaFinishNormalGacha():
 
     if repeatCharId == 0:
         char_data = {}
-        skills_array = DataFile.CHARACTER_TABLE[random_char_id]["skills"]
+        skills_array = CHARACTER_TABLE[random_char_id]["skills"]
         skills = []
 
         for index in range(len(skills_array)):
@@ -373,9 +380,9 @@ def gachaFinishNormalGacha():
             "level": 1,
             "exp": 0,
             "evolvePhase": 0,
-            "gainTime": round(time()),
+            "gainTime": int(time()),
             "skills": skills,
-            "voiceLan": DataFile.CHARWORD_TABLE["charDefaultTypeDict"][random_char_id],
+            "voiceLan": CHARWORD_TABLE["charDefaultTypeDict"][random_char_id],
             "currentEquip": None,
             "equip": {},
             "starMark": 0
@@ -388,8 +395,8 @@ def gachaFinishNormalGacha():
         sub1 = random_char_id[random_char_id.index("_") + 1:]
         charName = sub1[sub1.index("_") + 1:]
 
-        if random_char_id in list(DataFile.EQUIP_TABLE["charEquip"].keys()):
-            for item in DataFile.EQUIP_TABLE["charEquip"][random_char_id]:
+        if random_char_id in EQUIP_TABLE["charEquip"]:
+            for item in EQUIP_TABLE["charEquip"][random_char_id]:
                 locked = 1
                 if "_001_" in item:
                     locked = 0
@@ -407,7 +414,7 @@ def gachaFinishNormalGacha():
         
         buildingChars[str(instId)] = {
             "charId": random_char_id,
-            "lastApAddTime": round(time()),
+            "lastApAddTime": int(time()),
             "ap": 8640000,
             "roomSlotId": "",
             "index": -1,
@@ -425,7 +432,7 @@ def gachaFinishNormalGacha():
     else:
         repatChar = player_data["troop"]["chars"][str(repeatCharId)]
         potentialRank = repatChar["potentialRank"]
-        rarity = DataFile.CHARACTER_TABLE[random_char_id]["rarity"]
+        rarity = CHARACTER_TABLE[random_char_id]["rarity"]
 
         itemName = None
         itemType = None
@@ -487,7 +494,7 @@ def gachaFinishNormalGacha():
             "count": 1
         }
         
-        new_char = DataFile.CHARACTER_TABLE[random_char_id]
+        new_char = CHARACTER_TABLE[random_char_id]
         teamList = [
             new_char["nationId"],
             new_char["groupId"],
@@ -622,6 +629,9 @@ def gachaTenAdvancedGacha():
 
 
 def refresh_tag_list():
+
+    CHARACTER_TABLE = updateData(CHARACTER_TABLE_URL, True)
+    GACHA_TABLE = updateData(GACHA_TABLE_URL, True)
     
     tag_list = []
     random_rank_object = []
@@ -643,11 +653,11 @@ def refresh_tag_list():
         5: []
     }
     
-    recruitable = parse_recruitable_chars(DataFile.GACHA_TABLE["recruitDetail"])
-    tag_to_name = {v["tagId"]: v["tagName"] for v in DataFile.GACHA_TABLE["gachaTags"][:-2]}
+    recruitable = parse_recruitable_chars(GACHA_TABLE["recruitDetail"])
+    tag_to_name = {v["tagId"]: v["tagName"] for v in GACHA_TABLE["gachaTags"][:-2]}
     name_to_tag = {v: k for k, v in tag_to_name.items()}
 
-    for k, v in DataFile.CHARACTER_TABLE.items():
+    for k, v in CHARACTER_TABLE.items():
         if v["tagList"] is None:
             continue
         name = v["name"]
@@ -659,12 +669,12 @@ def refresh_tag_list():
             "rarity": v["rarity"],
         }
         tags = [name_to_tag[tag_name] for tag_name in v["tagList"]]
-        tags.append(PROFESSION_TO_TAG[v["profession"]])
-        tags.append(POSITION_TO_TAG[v["position"]])
+        tags.append(PassableParameters.PROFESSION_TO_TAG[v["profession"]])
+        tags.append(PassableParameters.POSITION_TO_TAG[v["position"]])
         if v["displayNumber"].startswith("RCX"):
-            tags.append(ROBOT_TAG)
-        if v["rarity"] in RARITY_TO_TAG:
-            tags.append(RARITY_TO_TAG[v["rarity"]])
+            tags.append(PassableParameters.ROBOT_TAG)
+        if v["rarity"] in PassableParameters.RARITY_TO_TAG:
+            tags.append(PassableParameters.RARITY_TO_TAG[v["rarity"]])
         data["tags"] = tags
         char_data[k] = data
 
@@ -682,15 +692,18 @@ def refresh_tag_list():
 
 
 def generate_valid_tags(tagList: List, duration: int):
+
+    CHARACTER_TABLE = updateData(CHARACTER_TABLE_URL, True)
+    GACHA_TABLE = updateData(GACHA_TABLE_URL, True)
     
-    recruitable = parse_recruitable_chars(DataFile.GACHA_TABLE["recruitDetail"])
+    recruitable = parse_recruitable_chars(GACHA_TABLE["recruitDetail"])
     
-    tag_to_name = {v["tagId"]: v["tagName"] for v in DataFile.GACHA_TABLE["gachaTags"][:-2]}
+    tag_to_name = {v["tagId"]: v["tagName"] for v in GACHA_TABLE["gachaTags"][:-2]}
     name_to_tag = {v: k for k, v in tag_to_name.items()}
     tagIdToOpSet = {k: set() for k in tag_to_name}
     char_data = {}
 
-    for k, v in DataFile.CHARACTER_TABLE.items():
+    for k, v in CHARACTER_TABLE.items():
 
         if v["tagList"] is None:
             continue
@@ -703,12 +716,12 @@ def generate_valid_tags(tagList: List, duration: int):
             "rarity": v["rarity"],
         }
         tags = [name_to_tag[tag_name] for tag_name in v["tagList"]]
-        tags.append(PROFESSION_TO_TAG[v["profession"]])
-        tags.append(POSITION_TO_TAG[v["position"]])
+        tags.append(PassableParameters.PROFESSION_TO_TAG[v["profession"]])
+        tags.append(PassableParameters.POSITION_TO_TAG[v["position"]])
         if v["displayNumber"].startswith("RCX"):
-            tags.append(ROBOT_TAG)
-        if v["rarity"] in RARITY_TO_TAG:
-            tags.append(RARITY_TO_TAG[v["rarity"]])
+            tags.append(PassableParameters.ROBOT_TAG)
+        if v["rarity"] in PassableParameters.RARITY_TO_TAG:
+            tags.append(PassableParameters.RARITY_TO_TAG[v["rarity"]])
         data["tags"] = tags
         char_data[k] = data
 
@@ -737,7 +750,7 @@ def generate_valid_tags(tagList: List, duration: int):
     random_rank = random.choice(random_rank_object)
 
     for char_id, _char_data in char_data.items():
-        if DataFile.CHARACTER_TABLE[char_id]["rarity"] == random_rank:
+        if CHARACTER_TABLE[char_id]["rarity"] == random_rank:
             for tag_id in _char_data["tags"]:
                 tagIdToOpSet[tag_id].add(char_id)
 
@@ -800,6 +813,10 @@ def parse_recruitable_chars(s: str) -> Set[str]:
     
 def userGacha(type: str, diamondShard: int, secret: str, request_data: Dict):
     
+    CHARACTER_TABLE = updateData(CHARACTER_TABLE_URL, True)
+    CHARWORD_TABLE = updateData(CHARWORD_TABLE_URL, True)
+    EQUIP_TABLE = updateData(EQUIP_TABLE_URL, True)
+    
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
@@ -815,7 +832,7 @@ def userGacha(type: str, diamondShard: int, secret: str, request_data: Dict):
     PoolPath = './data/gacha/' + poolId + '.json'
     useTkt = request_data["useTkt"]
 
-    if "gachaCount" not in list(player_data["status"].keys()):
+    if "gachaCount" not in player_data["status"]:
         player_data["status"]["gachaCount"] = 0
     
     if not os.path.exists(PoolPath):
@@ -948,7 +965,7 @@ def userGacha(type: str, diamondShard: int, secret: str, request_data: Dict):
         if repeatCharId == 0:
             get_char = {}
             char_data = {}
-            skills_array = DataFile.CHARACTER_TABLE[random_char_id]["skills"]
+            skills_array = CHARACTER_TABLE[random_char_id]["skills"]
             skills = []
             
             for i in range(len(skills_array)):
@@ -975,9 +992,9 @@ def userGacha(type: str, diamondShard: int, secret: str, request_data: Dict):
                 "level": 1,
                 "exp": 0,
                 "evolvePhase": 0,
-                "gainTime": round(time()),
+                "gainTime": int(time()),
                 "skills": skills,
-                "voiceLan": DataFile.CHARWORD_TABLE["charDefaultTypeDict"][random_char_id],
+                "voiceLan": CHARWORD_TABLE["charDefaultTypeDict"][random_char_id],
                 "currentEquip": None,
                 "equip": {},
                 "starMark": 0
@@ -991,8 +1008,8 @@ def userGacha(type: str, diamondShard: int, secret: str, request_data: Dict):
             sub1 = random_char_id[random_char_id.index("_") + 1:]
             charName = sub1[sub1.index("_") + 1:]
 
-            if random_char_id in list(DataFile.EQUIP_TABLE["charEquip"].keys()):
-                for item in DataFile.EQUIP_TABLE["charEquip"][random_char_id]:
+            if random_char_id in EQUIP_TABLE["charEquip"]:
+                for item in EQUIP_TABLE["charEquip"][random_char_id]:
                     locked = 1
                     if "_001_" in item:
                         locked = 0
@@ -1010,7 +1027,7 @@ def userGacha(type: str, diamondShard: int, secret: str, request_data: Dict):
             buildingChars = {}
             buildingChars[str(instId)] = {
                 "charId": random_char_id,
-                "lastApAddTime": round(time()),
+                "lastApAddTime": int(time()),
                 "ap": 8640000,
                 "roomSlotId": "",
                 "index": -1,
@@ -1058,7 +1075,7 @@ def userGacha(type: str, diamondShard: int, secret: str, request_data: Dict):
 
             repatChar = player_data["troop"]["chars"][str(repeatCharId)]
             potentialRank = repatChar["potentialRank"]
-            rarity = DataFile.CHARACTER_TABLE[random_char_id]["rarity"]
+            rarity = CHARACTER_TABLE[random_char_id]["rarity"]
 
             itemName = None
             itemType = None
@@ -1140,7 +1157,7 @@ def userGacha(type: str, diamondShard: int, secret: str, request_data: Dict):
                 "count": 1
             }
 
-            new_char = DataFile.CHARACTER_TABLE[random_char_id]
+            new_char = CHARACTER_TABLE[random_char_id]
             teamList = [
                 new_char["nationId"],
                 new_char["groupId"],

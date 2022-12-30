@@ -16,6 +16,10 @@ DM_TABLE_URL = BASE_URL + "/excel/display_meta_table.json"
 RETRO_TABLE_URL = BASE_URL + "/excel/retro_table.json"
 HANDBOOK_INFO_TABLE_URL = BASE_URL + "/excel/handbook_info_table.json"
 ITEM_TABLE_URL = BASE_URL + "/excel/item_table.json"
+MEDAL_TABLE_URL = BASE_URL + "/excel/medal_table.json"
+
+# DATA Urls
+BUILDING_DATA_URL = BASE_URL + "/excel/building_data.json"
 
 # Config Data
 CONFIG_PATH = "config\\config.json"
@@ -30,6 +34,7 @@ RLV2_JSON_PATH = "data\\user\\rlv2.json"
 RLV2_TEMPBUFF_JSON_PATH = "data\\user\\rlv2TempBuffs.json"
 CRISIS_JSON_BASE_PATH = "data\\crisis\\"
 RUNE_JSON_PATH = "data\\user\\rune.json"
+STAGE_JSON_PATH = "data\\user\\stage.json"
 
 # RLV2 Options
 RLV2_CHOICEBUFFS = "data\\rlv2\\choiceBuffs.json"

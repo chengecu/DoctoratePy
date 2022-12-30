@@ -1,0 +1,233 @@
+{
+    "main_00-01": [
+        {
+          "stageId": "guide_02",
+          "completeState": 2
+        }
+    ],
+    "main_01-01": [
+        {
+          "stageId": "main_00-11",
+          "completeState": 2
+        }
+    ],
+    "tr_11": [
+        {
+          "stageId": "main_01-12",
+          "completeState": 2
+        }
+    ],
+    "main_03-01": [
+        {
+          "stageId": "main_02-10",
+          "completeState": 2
+        }
+    ],
+    "guide_01": [],
+    "guide_02": [
+        {
+          "stageId": "guide_01",
+          "completeState": 2
+        }
+    ],
+    "main_04-01": [
+        {
+          "stageId": "main_03-08",
+          "completeState": 2
+        }
+    ],
+    "main_05-01": [
+        {
+          "stageId": "main_04-10",
+          "completeState": 2
+        }
+    ],
+    "main_06-01": [
+        {
+          "stageId": "st_05-01",
+          "completeState": 2
+        }
+    ],
+    "st_07-01": [
+        {
+          "stageId": "st_06-03",
+          "completeState": 2
+        }
+    ],
+    "main_08-01": [
+        {
+          "stageId": "st_07-04",
+          "completeState": 2
+        }
+    ],
+    "st_09-01": [
+        {
+          "stageId": "main_03-08",
+          "completeState": 2
+        }
+    ],
+    "st_10-01": [
+        {
+          "stageId": "st_09-04",
+          "completeState": 2
+        }
+    ],
+    "wk_melee_1": [
+        {
+          "stageId": "main_00-10",
+          "completeState": 2
+        }
+    ],
+    "wk_armor_1": [
+        {
+          "stageId": "main_00-10",
+          "completeState": 2
+        }
+    ],
+    "wk_kc_1": [
+        {
+          "stageId": "main_00-10",
+          "completeState": 2
+        }
+    ],
+    "wk_toxic_1": [
+        {
+          "stageId": "main_00-10",
+          "completeState": 2
+        }
+    ],
+    "wk_fly_1": [
+        {
+          "stageId": "main_00-10",
+          "completeState": 2
+        }
+    ],
+    "pro_a_1": [
+        {
+          "stageId": "main_01-10",
+          "completeState": 2
+        }
+    ],
+    "pro_b_1": [
+        {
+          "stageId": "main_01-10",
+          "completeState": 2
+        }
+    ],
+    "pro_c_1": [
+        {
+          "stageId": "main_01-10",
+          "completeState": 2
+        }
+    ],
+    "pro_d_1": [
+        {
+          "stageId": "main_01-10",
+          "completeState": 2
+        }
+    ],
+    "act21side_01_m": [],
+    "act21side_01_t": [],
+    "act21side_02_m": [],
+    "act21side_02_t": [],
+    "act21side_03_m1": [],
+    "act21side_03_m2": [],
+    "act21side_04_m1": [],
+    "act21side_04_m2": [],
+    "act21side_05_m1": [],
+    "act21side_05_m2": [],
+    "act21side_05_t": [],
+    "act21side_06_m": [],
+    "act21side_06_t": [],
+    "act21side_09_t": [],
+    "act20side_sp01": [],
+    "act20side_sp02": [],
+    "act17side_01": [],
+    "act17side_02": [],
+    "act17side_tr01": [],
+    "act17side_03": [],
+    "act17side_04": [],
+    "act17side_05": [],
+    "act17side_06": [],
+    "act17side_07": [],
+    "act17side_08": [],
+    "act17side_09": [],
+    "act17side_10": [],
+    "act17side_ex01": [],
+    "act17side_ex02": [],
+    "act17side_ex03": [],
+    "act17side_ex04": [],
+    "act17side_ex05": [],
+    "act17side_ex06": [],
+    "act17side_ex07": [],
+    "act17side_ex08": [],
+    "act17side_s01_a": [],
+    "act17side_s01_b": [],
+    "act17side_s02_a": [],
+    "act17side_s02_b": [],
+    "act17side_s03_a": [],
+    "act17side_s03_b": [],
+    "act17side_s04_a": [],
+    "act17side_s04_b": [],
+    "act17side_s05": [],
+    "act17d7_01": [],
+    "lt_tr_01": [],
+    "lt_tr_02": [],
+    "lt_tr_03": [],
+    "lt_05_01": [],
+    "lt_05_02": [],
+    "lt_05_03": [],
+    "lt_05_04": [],
+    "lt_05_05": [],
+    "lt_05_06": [],
+    "lt_05_01_ex": [],
+    "lt_05_02_ex": [],
+    "lt_05_03_ex": [],
+    "lt_05_04_ex": [],
+    "lt_05_05_ex": [],
+    "lt_05_06_ex": [],
+    "lt_06_01": [],
+    "lt_06_02": [],
+    "lt_06_03": [],
+    "lt_06_04": [],
+    "lt_06_05": [],
+    "lt_06_06": [],
+    "lt_06_01_ex": [],
+    "lt_06_02_ex": [],
+    "lt_06_03_ex": [],
+    "lt_06_04_ex": [],
+    "lt_06_05_ex": [],
+    "lt_06_06_ex": [],
+    "lt_01_01": [],
+    "lt_01_02": [],
+    "lt_01_03": [],
+    "lt_01_04": [],
+    "lt_01_05": [],
+    "lt_01_06": [],
+    "lt_01_07": [],
+    "lt_01_08": [],
+    "lt_02_01": [],
+    "lt_02_02": [],
+    "lt_02_03": [],
+    "lt_02_04": [],
+    "lt_02_05": [],
+    "lt_02_06": [],
+    "lt_02_07": [],
+    "lt_02_08": [],
+    "lt_03_01": [],
+    "lt_03_02": [],
+    "lt_03_03": [],
+    "lt_03_04": [],
+    "lt_03_05": [],
+    "lt_03_06": [],
+    "lt_03_07": [],
+    "lt_03_08": [],
+    "lt_04_01": [],
+    "lt_04_02": [],
+    "lt_04_03": [],
+    "lt_04_04": [],
+    "lt_04_05": [],
+    "lt_04_06": [],
+    "lt_04_07": [],
+    "lt_04_08": []
+}

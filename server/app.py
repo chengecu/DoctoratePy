@@ -4,8 +4,8 @@ from flask import Flask
 from utils import read_json
 from constants import CONFIG_PATH
 
-import account, background, building, campaignV2, char, charBuild, charm, \
-        crisis, deepsea, gacha, mail, online, quest, pay, rlv2, shop, story, user, \
+import account, background, building, campaignV2, char, charBuild, charm, crisis, \
+        deepsea, gacha, mail, online, quest, pay, rlv2, shop, social, story, user, \
         asset.assetbundle, auth.user, auth.u8, config.prod, core.database.initDatabase
 
 server_config = read_json(CONFIG_PATH)
@@ -101,8 +101,18 @@ app.add_url_rule('/rlv2/moveAndBattleStart', methods=['POST'], view_func=rlv2.rl
 
 app.add_url_rule('/shop/getSkinGoodList', methods=['POST'], view_func=shop.shopGetSkinGoodList)
 
+app.add_url_rule('/social/deleteFriend', methods=['POST'], view_func=social.socialDeleteFriend)
+app.add_url_rule('/social/getSortListInfo', methods=['POST'], view_func=social.socialGetSortListInfo)
+app.add_url_rule('/social/getFriendList', methods=['POST'], view_func=social.socialGetFriendList)
+app.add_url_rule('/social/getFriendRequestList', methods=['POST'], view_func=social.socialGetFriendRequestList)
+app.add_url_rule('/social/processFriendRequest', methods=['POST'], view_func=social.socialProcessFriendRequest)
+app.add_url_rule('/social/searchPlayer', methods=['POST'], view_func=social.socialSearchPlayer)
+app.add_url_rule('/social/sendFriendRequest', methods=['POST'], view_func=social.socialSendFriendRequest)
+app.add_url_rule('/social/setAssistCharList', methods=['POST'], view_func=social.socialSetAssistCharList)
+app.add_url_rule('/social/setCardShowMedal', methods=['POST'], view_func=social.socialSetCardShowMedal)
+app.add_url_rule('/social/setFriendAlias', methods=['POST'], view_func=social.socialSetFriendAlias)
+
 app.add_url_rule('/story/finishStory', methods=['POST'], view_func=story.storyFinishStory)
-app.add_url_rule('/quest/finishStoryStage', methods=['POST'], view_func=story.storyFinishStory)
 
 app.add_url_rule('/user/auth', methods=['POST'], view_func=auth.user.userAuth)
 app.add_url_rule('/user/authenticateUserIdentity', methods=['POST'], view_func=auth.user.userAuthenticateUserIdentity)

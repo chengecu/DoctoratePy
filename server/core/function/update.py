@@ -1,13 +1,22 @@
 import os
+import socket
 import requests
 
+from datetime import datetime
 from utils import read_json, write_json
 from constants import CONFIG_PATH
 
 from . import loadMods
 
 
-def updateData(url):
+def writeLog(data):
+
+    time = datetime.now().strftime("%d/%b/%Y %H:%M:%S")
+    clientIp = socket.gethostbyname(socket.gethostname())
+    print(f'{clientIp} - - [{time}] {data}')
+
+
+def updateData(url: str, use_local: bool = False):
 
     BASE_URL_LIST = [
         ("https://raw.githubusercontent.com/Kengxxiao/ArknightsGameData/master/zh_CN/gamedata", './data'),
@@ -23,6 +32,14 @@ def updateData(url):
 
     if not os.path.isdir('./data/excel/'):
         os.makedirs('./data/excel/')
+
+    if use_local:
+        try:
+            data = read_json(localPath, encoding = "utf-8")
+            return data
+        
+        except:
+            writeLog(f' - \033[1;31mCould not find file "{os.path.basename(localPath)}"\033[0;0m')
 
     server_config = read_json(CONFIG_PATH)
     if "Android/version" in url:
@@ -43,10 +60,13 @@ def updateData(url):
         try:
             data = requests.get(url).json()
             write_json(data, localPath)
+            writeLog(f'Auto-update of file "{os.path.basename(localPath)}" - \033[1;32mSuccessful!\033[0;0m')
 
         except:
-            data = read_json(localPath, encoding = "utf-8")
-    else:
+            writeLog(f'Auto-update of file "{os.path.basename(localPath)}" - \033[1;31mFailed!\033[0;0m')
+            
+    if "announce_meta" in url:
         data = read_json(localPath, encoding = "utf-8")
+        return data
 
-    return data
+    return None

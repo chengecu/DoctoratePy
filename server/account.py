@@ -1,25 +1,14 @@
 import json
-from turtle import update
 from flask import request
 
 from time import time
 from core.function.update import updateData
 from constants import CONFIG_PATH, CHARACTER_TABLE_URL, CHARWORD_TABLE_URL, \
     EQUIP_TABLE_URL, GACHA_TABLE_URL, SYNC_DATA_TEMPLATE_PATH, ITEM_TABLE_URL, \
-    STAGE_TABLE_URL
+    STAGE_TABLE_URL, MEDAL_TABLE_URL, BUILDING_DATA_URL
 from utils import read_json
 from core.database import userData
 from core.Account import Account
-
-
-class DataFile:
-    
-    CHARWORD_TABLE = None
-    CHARACTER_TABLE = None
-    EQUIP_TABLE = None
-    GACHA_TABLE = None
-    ITEM_TABLE = None
-    STAGE_TABLE = None
 
 
 def accountLogin():
@@ -58,8 +47,8 @@ def accountLogin():
 
     if accounts.get_user() == "{}":
         syncData = read_json(SYNC_DATA_TEMPLATE_PATH, encoding='utf8')
-        syncData["status"]["registerTs"] = round(time())
-        syncData["status"]["lastApAddTime"] = round(time())
+        syncData["status"]["registerTs"] = int(time())
+        syncData["status"]["lastApAddTime"] = int(time())
         
         userData.set_user_data(accounts.get_uid(), syncData)
 
@@ -107,20 +96,22 @@ def accountSyncData():
         }
         return data
 
-    ts = round(time()) # TODO: Add userTimeStamps
+    ts = int(time()) # TODO: Add userTimeStamps
     player_data = json.loads(accounts.get_user())
     
-    player_data["status"]["lastOnlineTs"] = round(time())
+    player_data["status"]["lastOnlineTs"] = int(time())
     player_data["status"]["lastRefreshTs"] = ts # TODO: Add userTimeStamps
 
     userData.set_user_data(accounts.get_uid(), player_data)
-
-    DataFile.CHARACTER_TABLE = updateData(CHARACTER_TABLE_URL)
-    DataFile.CHARWORD_TABLE = updateData(CHARWORD_TABLE_URL)
-    DataFile.EQUIP_TABLE = updateData(EQUIP_TABLE_URL)
-    DataFile.GACHA_TABLE = updateData(GACHA_TABLE_URL)
-    DataFile.ITEM_TABLE = updateData(ITEM_TABLE_URL)
-    DataFile.STAGE_TABLE = updateData(STAGE_TABLE_URL)
+    
+    updateData(CHARACTER_TABLE_URL)
+    updateData(CHARWORD_TABLE_URL)
+    updateData(EQUIP_TABLE_URL)
+    updateData(GACHA_TABLE_URL)
+    updateData(ITEM_TABLE_URL)
+    updateData(STAGE_TABLE_URL)
+    updateData(MEDAL_TABLE_URL)
+    updateData(BUILDING_DATA_URL)
 
     data = {
         "result": 0,
@@ -166,8 +157,8 @@ def accountSyncStatus():
         return data
     
     player_data = json.loads(accounts.get_user())
-    player_data["status"]["lastOnlineTs"] = round(time())
-    player_data["status"]["lastRefreshTs"] = round(time()) # TODO: Add userTimeStamps
+    player_data["status"]["lastOnlineTs"] = int(time())
+    player_data["status"]["lastRefreshTs"] = int(time()) # TODO: Add userTimeStamps
     player_data["pushFlags"]["hasGifts"] = 0
     player_data["pushFlags"]["hasFriendRequest"] = 0
 
@@ -181,7 +172,7 @@ def accountSyncStatus():
     userData.set_user_data(accounts.get_uid(), player_data)
     
     data = {
-        "ts": round(time()), # TODO: Add userTimeStamps
+        "ts": int(time()), # TODO: Add userTimeStamps
         "result": {}, # TODO: Research the data that needs to be filled here
         "playerDataDelta": {
             "modified": {

@@ -19,7 +19,7 @@ def mailGetMetaInfoList():
             continue
 
         config = {
-            "createAt": round(time()),
+            "createAt": int(time()),
             "hasItem": 1,
             "mailId": mailId,
             "state": 1 if int(mailId) in mail_data["recievedIDs"] else 0,
@@ -55,8 +55,8 @@ def mailListMailBox():
             hasGift = 1
 
         config = {
-            "createAt": round(time()),
-            "expireAt": round(time()) + 31536000,
+            "createAt": int(time()),
+            "expireAt": int(time()) + 31536000,
             "mailId": mailId,
             "platform": -1,
             "state": 1 if int(mailId) in mail_data["recievedIDs"] else 0,
