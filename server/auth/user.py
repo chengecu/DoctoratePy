@@ -205,8 +205,8 @@ def userLoginBySmsCode():
             "result": 5
         }
         return data
-    
-    result = userData.login_account(account, hashlib.md5((account + LOG_TOKEN_KEY).encode()).hexdigest())
+
+    result = userData.query_account_by_secret(hashlib.md5((account + LOG_TOKEN_KEY).encode()).hexdigest())
 
     if len(result) != 1:
         data = {
