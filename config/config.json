@@ -2,7 +2,6 @@
     "server": {
         "host": "192.168.0.104",
         "port": 8443,
-        "enableCaptcha": true,
         "enableServer": true,
         "maintenanceMsg": "Server is currently under maintenance!"
     },
@@ -23,7 +22,7 @@
     },
     "version": {
         "android": {
-            "resVersion": "22-12-27-12-36-28-f56e4a",
+            "resVersion": "23-01-01-00-02-00-9b623e",
             "clientVersion": "1.9.42"
         }
     },

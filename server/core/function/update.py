@@ -1,6 +1,7 @@
 import os
 import socket
 import requests
+from flask import abort
 
 from datetime import datetime
 from utils import read_json, write_json
@@ -39,7 +40,8 @@ def updateData(url: str, use_local: bool = False):
             return data
         
         except:
-            writeLog(f' - \033[1;31mCould not find file "{os.path.basename(localPath)}"\033[0;0m')
+            writeLog(f'\033[1;31mCould not load file "{os.path.basename(localPath)}"\033[0;0m')
+            return abort(500)
 
     server_config = read_json(CONFIG_PATH)
     if "Android/version" in url:
@@ -64,6 +66,9 @@ def updateData(url: str, use_local: bool = False):
 
         except:
             writeLog(f'Auto-update of file "{os.path.basename(localPath)}" - \033[1;31mFailed!\033[0;0m')
+            if not os.path.exists(localPath):
+               writeLog(f'\033[1;31mCould not find file "{os.path.basename(localPath)}"\033[0;0m')
+               return abort(500)
             
     if "announce_meta" in url:
         data = read_json(localPath, encoding = "utf-8")

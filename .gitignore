@@ -1,7 +1,4 @@
 # User files
-TestLevel/
-developer/
-
 data/user/user.json
 data/crisis/test.json
 data/crisis/cccustom.json
@@ -20,6 +17,12 @@ platform-tools/
 # Mysql
 mysql-dev/
 
+# developer
+TestLevel/
+developer/
+server/admin/
+server/static/
+server/templates/
 
 # Data files
 data/excel/

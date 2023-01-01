@@ -156,23 +156,42 @@ def accountSyncStatus():
         }
         return data
     
+    ts = int(time()) # TODO: Add userTimeStamps
+    
     player_data = json.loads(accounts.get_user())
     player_data["status"]["lastOnlineTs"] = int(time())
-    player_data["status"]["lastRefreshTs"] = int(time()) # TODO: Add userTimeStamps
+    player_data["status"]["lastRefreshTs"] = ts
     player_data["pushFlags"]["hasGifts"] = 0
     player_data["pushFlags"]["hasFriendRequest"] = 0
+    
+    consumable = player_data["consumable"]
 
-    mailbox_list = json.loads(accounts.get_mails()) # TODO: Move mail system to mysql
+    for index in list(consumable.keys()):
+        for item in list(consumable[index].keys()):
+            tmp = consumable[index][item]
+            if tmp["ts"] != -1:
+                if tmp["ts"] <= int(time()) or tmp["count"] == 0:
+                    del consumable[index][item]
 
+    mailbox_list = json.loads(accounts.get_mails())
+
+    for index in range(len(mailbox_list)):
+        if mailbox_list[index]["state"] == 0:
+            if int(time()) <= mailbox_list[index]["expireAt"]:
+                player_data["pushFlags"]["hasGifts"] = 1
+                break
+            else:
+                mailbox_list[index]["remove"] = 1
+            
     friend_request = json.loads(accounts.get_friend())["request"]
     
     if len(friend_request) != 0:
         player_data["pushFlags"]["hasFriendRequest"] = 1
-
+        
     userData.set_user_data(accounts.get_uid(), player_data)
     
     data = {
-        "ts": int(time()), # TODO: Add userTimeStamps
+        "ts": ts, 
         "result": {}, # TODO: Research the data that needs to be filled here
         "playerDataDelta": {
             "modified": {
@@ -188,4 +207,3 @@ def accountSyncStatus():
     }
 
     return data
-

@@ -1,4 +1,5 @@
 import json
+import random
 from flask import request
 
 from time import time
@@ -78,13 +79,16 @@ def userBindNickName():
     return data
 
 
-def userRebindNickName():
-
+def userUseRenameCard():
+    
     data = request.data
     request_data = request.get_json()
-    
+
     secret = request.headers.get('secret')
+    itemId = request_data["itemId"]
+    instId = str(request_data["instId"])
     nickName = str(request_data["nickName"])
+    nickNumber = '{:04d}'.format(random.randint(1, 9999))
     server_config = read_json(CONFIG_PATH)
     
     if not server_config["server"]["enableServer"]:
@@ -116,24 +120,82 @@ def userRebindNickName():
 
     player_data = json.loads(accounts.get_user())
     player_data["status"]["nickName"] = nickName
-    player_data["inventory"]["renamingCard"] -= 1
+    player_data["status"]["nickNumber"] = nickNumber
+    renamingCard = player_data["consumable"][itemId][instId]
+    renamingCard["count"] -= 1
     
     userData.set_user_data(accounts.get_uid(), player_data)
-    
+        
     data = {
         "playerDataDelta": {
             "deleted": {},
             "modified": {
                 "status": {
-                    "nickName": nickName
+                    "nickName": nickName,
+                    "nickNumber": nickNumber
                 },
-                "inventory": {
-                    "renamingCard": player_data["inventory"]["renamingCard"]
+                "consumable": {
+                    itemId: player_data["consumable"][itemId]
                 }
             }
         }
     }
+
+    return data
+
+
+def userChangeResume():
     
+    data = request.data
+    request_data = request.get_json()
+
+    secret = request.headers.get('secret')
+    resume = str(request_data["resume"])
+    server_config = read_json(CONFIG_PATH)
+    
+    if not server_config["server"]["enableServer"]:
+        data = {
+            "statusCode": 400,
+            "error": "Bad Request",
+            "message": "Server is close"
+        }
+        return data
+    
+    result = userData.query_account_by_secret(secret)
+    
+    if len(result) != 1:
+        data = {
+            "result": 2,
+            "error": "此账户不存在"
+        }
+        return data
+    
+    accounts = Account(*result[0])
+
+    if accounts.get_ban() == 1:
+        data = {
+            "statusCode": 403,
+            "error": "Bad Request",
+            "message": "Your account has been banned"
+        }
+        return data
+
+    player_data = json.loads(accounts.get_user())
+    player_data["status"]["resume"] = resume
+
+    userData.set_user_data(accounts.get_uid(), player_data)
+
+    data = {
+        "playerDataDelta": {
+            "deleted": {},
+            "modified": {
+                "status": {
+                    "resume": player_data["status"]["resume"]
+                }
+            }
+        }
+    }
+
     return data
 
 
@@ -265,6 +327,73 @@ def userChangeSecretary():
         }
     }
     
+    return data
+
+
+def userExchangeDiamondShard():
+    
+    data = request.data
+    request_data = request.get_json()
+
+    secret = request.headers.get('secret')
+    count = request_data["count"]
+    server_config = read_json(CONFIG_PATH)
+    
+    if not server_config["server"]["enableServer"]:
+        data = {
+            "statusCode": 400,
+            "error": "Bad Request",
+            "message": "Server is close"
+        }
+        return data
+    
+    result = userData.query_account_by_secret(secret)
+    
+    if len(result) != 1:
+        data = {
+            "result": 2,
+            "error": "此账户不存在"
+        }
+        return data
+    
+    accounts = Account(*result[0])
+    
+    if accounts.get_ban() == 1:
+        data = {
+            "statusCode": 403,
+            "error": "Bad Request",
+            "message": "Your account has been banned"
+        }
+        return data
+    
+    player_data = json.loads(accounts.get_user())
+    
+    if player_data["status"]["androidDiamond"] < count:
+        data = {
+            "result": 1,
+            "errMsg": "至纯源石不足，是否前往商店购买至纯源石？"
+        }
+        return data
+    
+    player_data["status"]["androidDiamond"] -= count
+    player_data["status"]["iosDiamond"] -= count
+    player_data["status"]["diamondShard"] += count * 180
+
+    userData.set_user_data(accounts.get_uid(), player_data)
+
+    data = {
+        "playerDataDelta": {
+            "deleted": {},
+            "modified": {
+                "status": {
+                    "androidDiamond": player_data["status"]["androidDiamond"],
+                    "iosDiamond": player_data["status"]["iosDiamond"],
+                    "diamondShard": player_data["status"]["diamondShard"]
+                }
+            }
+        }
+    }
+
     return data
 
 

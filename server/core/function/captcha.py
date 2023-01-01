@@ -5,6 +5,7 @@ from datetime import datetime
  
 
 class AuthCode:
+    
     code = None
 
 

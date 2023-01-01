@@ -369,7 +369,9 @@ def gachaFinishNormalGacha():
             skills.append(new_skils)
             
         instId = len(player_data["troop"]["chars"]) + 1
+        player_data["troop"]["curCharInstId"] = instId + 1
         charinstId = instId
+        
         char_data = {
             "instId": instId,
             "charId": random_char_id,
@@ -982,6 +984,8 @@ def userGacha(type: str, diamondShard: int, secret: str, request_data: Dict):
                 skills.append(new_skills)
                 
             instId = len(player_data["troop"]["chars"]) + 1
+            player_data["troop"]["curCharInstId"] = instId + 1
+            
             char_data = {
                 "instId": instId,
                 "charId": random_char_id,

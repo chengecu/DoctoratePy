@@ -1,15 +1,17 @@
-from time import time
-
+import json
 from flask import request
 
-from constants import MAILLIST_PATH
+from time import time
+from core.database import userData
+from core.Account import Account
+from constants import CONFIG_PATH, MAILLIST_PATH
 from utils import read_json, write_json
 
 
 def mailGetMetaInfoList():
-
+    
     data = request.data
-
+    
     result = []
     mail_data = read_json(MAILLIST_PATH, encoding="utf-8")
     

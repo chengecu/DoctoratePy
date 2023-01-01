@@ -92,7 +92,7 @@ def questBattleStart():
             if char is not None:
                 charInstId = str(char["charInstId"])
                 if charInstId in chars_data:
-                    if dangerLevel == "-":
+                    if dangerLevel in ["-", None]:
                         break
             
                     stageLevel = int(dangerLevel[-2:].replace(".", ""))
@@ -496,6 +496,7 @@ def questBattleFinish():
                             skills.append(new_skills)
 
                         instId = len(player_data["troop"]["chars"]) + 1
+                        player_data["troop"]["curCharInstId"] = instId + 1
                         
                         char_data = {
                             "instId": instId,
@@ -1902,7 +1903,9 @@ def questGetAssistList():
                         if userSocialAssistCharList[char]["charInstId"] == charInstId:
                             assistInfo["assistSlotIndex"] = char
                     assistInfo["assistCharList"] = assistCharList
-                    assistList.append(assistInfo)
+                    
+                    if assistInfo not in assistList:
+                        assistList.append(assistInfo)
                     
     result = userData.search_assist_char_list(f"$.{profession}")
     search_array = []
@@ -1915,7 +1918,7 @@ def questGetAssistList():
             search_array.append({"tmp": searchAssist})
             
     random.shuffle(search_array)
-    
+
     for item in search_array:
         searchAssist = item["tmp"]
         friendUid = searchAssist.get_uid()
@@ -1937,7 +1940,6 @@ def questGetAssistList():
 
             if charId not in assist_char_array:
                 assist_char_array.append(charId)
-                
                 assistCharList = []
                 
                 assistInfo = {
@@ -1967,7 +1969,9 @@ def questGetAssistList():
                         if userSocialAssistCharList[index]["charInstId"] == charInstId:
                             assistInfo["assistSlotIndex"] = index
                     assistInfo["assistCharList"] = assistCharList
-                    assistList.append(assistInfo)
+                    
+                    if assistInfo not in assistList:
+                        assistList.append(assistInfo)
 
     data = {
         "allowAskTs": int(time()) + 3,

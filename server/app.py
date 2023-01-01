@@ -1,20 +1,29 @@
+import webbrowser
 from datetime import datetime
 
 from flask import Flask
+from flask_wtf.csrf import CSRFProtect
 from utils import read_json
 from constants import CONFIG_PATH
 
 import account, background, building, campaignV2, char, charBuild, charm, crisis, \
-        deepsea, gacha, mail, online, quest, pay, rlv2, shop, social, story, user, \
-        asset.assetbundle, auth.user, auth.u8, config.prod, core.database.initDatabase
+        deepsea, gacha, mail, online, quest, pay, rlv2, shop, social, story, storyreview, user, \
+        asset.assetbundle, auth.user, auth.u8, config.prod, core.database.initDatabase#, \
+        #admin.login, admin.index
 
 server_config = read_json(CONFIG_PATH)
 core.database.initDatabase.initDB()
 
 app = Flask(__name__)
+#app.config["SECRET_KEY"] = "HRMCwPonJLIB3WCl"
+#CSRFProtect(app)
+
 host = server_config["server"]["host"]
 port = server_config["server"]["port"]
 
+# TODO: Add Web-UI
+#app.add_url_rule('/', methods=['GET', 'POST'], view_func=admin.index.index)
+#app.add_url_rule('/login', methods=['GET', 'POST'], view_func=admin.login.login)
 
 app.add_url_rule('/account/login', methods=['POST'], view_func=account.accountLogin)
 app.add_url_rule('/account/syncData', methods=['POST'], view_func=account.accountSyncData)
@@ -114,22 +123,27 @@ app.add_url_rule('/social/setFriendAlias', methods=['POST'], view_func=social.so
 
 app.add_url_rule('/story/finishStory', methods=['POST'], view_func=story.storyFinishStory)
 
+app.add_url_rule('/storyreview/markStoryAcceKnown', methods=['POST'], view_func=storyreview.storyreviewMarkStoryAcceKnown)
+app.add_url_rule('/storyreview/readStory', methods=['POST'], view_func=storyreview.storyreviewReadStory)
+
 app.add_url_rule('/user/auth', methods=['POST'], view_func=auth.user.userAuth)
 app.add_url_rule('/user/authenticateUserIdentity', methods=['POST'], view_func=auth.user.userAuthenticateUserIdentity)
 app.add_url_rule('/user/bindNickName', methods=['POST'], view_func=user.userBindNickName)
 app.add_url_rule('/user/buyAp', methods=['POST'], view_func=user.userBuyAp)
 app.add_url_rule('/user/changeAvatar', methods=['POST'], view_func=user.userChangeAvatar)
+app.add_url_rule('/user/changeResume', methods=['POST'], view_func=user.userChangeResume)
 app.add_url_rule('/user/changeSecretary', methods=['POST'], view_func=user.userChangeSecretary)
 app.add_url_rule('/user/checkIdCard"', methods=['POST'], view_func=auth.user.userCheckIdCard)
 app.add_url_rule('/user/checkIn', methods=['POST'], view_func=user.userCheckIn)
+app.add_url_rule('/user/exchangeDiamondShard', methods=['POST'], view_func=user.userExchangeDiamondShard)
 app.add_url_rule('/user/info/v1/need_cloud_auth', methods=['POST'], view_func=auth.user.userV1NeedCloudAuth)
 app.add_url_rule('/user/login', methods=['POST'], view_func=auth.user.userLogin)
 app.add_url_rule('/user/loginBySmsCode', methods=['POST'], view_func=auth.user.userLoginBySmsCode)
 app.add_url_rule('/user/oauth2/v1/grant', methods=['POST'], view_func=auth.user.userOAuth2V1Grant)
-app.add_url_rule('/user/rebindNickName', methods=['POST'], view_func=user.userRebindNickName)
 app.add_url_rule('/user/register', methods=['POST'], view_func=auth.user.userRegister)
 app.add_url_rule('/user/sendSmsCode', methods=['POST'], view_func=auth.user.userSendSmsCode)
 app.add_url_rule('/user/updateAgreement', methods=['POST'], view_func=auth.user.userUpdateAgreement)
+app.add_url_rule('/user/useRenameCard', methods=['POST'], view_func=user.userUseRenameCard)
 app.add_url_rule('/user/v1/guestLogin', methods=['POST'], view_func=auth.user.userV1GuestLogin)
 app.add_url_rule('/u8/user/v1/getToken', methods=['POST'], view_func=auth.u8.userV1getToken)
 app.add_url_rule('/u8/user/verifyAccount', methods=['POST'], view_func=auth.u8.userV1getToken)
@@ -139,5 +153,6 @@ def writeLog(data):
     print(f'[{datetime.utcnow()}] {data}')
 
 if __name__ == "__main__":
-    writeLog('[SERVER] Server started at http://' + host + ":" + str(port))
+    writeLog(f'[SERVER] Server started at http://{host}:{str(port)}')
+    # webbrowser.open(f'http://{host}:{str(port)}/login') # TODO: Add Web-UI
     app.run(host=host, port=port, debug=True)

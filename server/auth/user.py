@@ -83,22 +83,14 @@ def userSendSmsCode():
     data = request.data
     request_data = request.get_json()
 
-    server_config = read_json(CONFIG_PATH)
     account = request_data["account"]
 
-    if not server_config["server"]["enableCaptcha"]:
+    if account:
+        sentSmsCode()
         data = {
-            "result": 4
+            "result": 0
         }
         return data
-    
-    else:
-        if account:
-            sentSmsCode()
-            data = {
-                "result": 0
-            }
-            return data
 
 
 def userRegister():
@@ -119,15 +111,12 @@ def userRegister():
         }
         return data
     
-    server_config = read_json(CONFIG_PATH)
-    
-    if server_config["server"]["enableCaptcha"]:
-        if not verifySmsCode(smsCode):
-            data = {
-                "result": 5,
-                "errMsg": "验证码错误"
-            }
-            return data
+    if not verifySmsCode(smsCode):
+        data = {
+            "result": 5,
+            "errMsg": "验证码错误"
+        }
+        return data
     
     if userData.register_account(account, hashlib.md5((password + LOG_TOKEN_KEY).encode()).hexdigest(), secret) != 1:
         data = {

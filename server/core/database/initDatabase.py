@@ -21,9 +21,10 @@ def initDB():
         cursor.execute(r"CREATE DATABASE IF NOT EXISTS DoctoratePy")
         cursor.execute(r"USE DoctoratePy")
         cursor.execute(r"SHOW TABLES")
-        tables = [cursor.fetchall()]
         if len(table_exists("account")) != 1:
             insertUserTable()
+        if len(table_exists("mail")) != 1:
+            insertMailTable()
         
     finally:
         cursor.close()
@@ -31,6 +32,7 @@ def initDB():
     
     
 def insertUserTable():
+
     cursor = connection.cursor()
     cursor.execute("SET NAMES utf8mb4")
     cursor.execute("SET FOREIGN_KEY_CHECKS = 0")
@@ -53,4 +55,18 @@ def insertUserTable():
     SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;""")
     cursor.execute("SET FOREIGN_KEY_CHECKS = 1")
     cursor.execute("ALTER TABLE account auto_increment=100000000")
+    cursor.close()
+
+
+def insertMailTable():
+
+    cursor = connection.cursor()
+    cursor.execute("""CREATE TABLE mail (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name TEXT NULL,
+        `from` TEXT NULL,
+        subject TEXT NULL,
+        content TEXT NULL,
+        items JSON NULL
+    );""")
     cursor.close()

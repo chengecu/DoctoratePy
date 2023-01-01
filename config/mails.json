@@ -1,5 +1,8 @@
 {
-    "recievedIDs": [],
+    "recievedIDs": [
+        1,
+        2
+    ],
     "deletedIDs": [],
     "mailList": {
         "1": {
@@ -42,7 +45,7 @@
                 {
                     "id": "7004",
                     "type": "TKT_GACHA_10",
-                    "count": 9
+                    "count": 10
                 }
             ]
         }

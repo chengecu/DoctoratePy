@@ -249,7 +249,12 @@ def socialGetFriendList():
             custom = friend_data["social"]["medalBoard"]["custom"]
             if custom is not None:
                 medalBoard["custom"] = friend_data["medal"]["custom"]["customs"][custom]
-            medalBoard["template"] = friend_data["social"]["medalBoard"]["template"]
+                medalBoard["template"] = None
+            else:
+                medalBoard["template"] = {
+                    "groupId": friend_data["social"]["medalBoard"]["template"],
+                    "medalList": friend_data["social"]["medalBoard"]["templateMedalList"]
+            }
             medalBoard["type"] = friend_data["social"]["medalBoard"]["type"]
 
         userAssistCharList = json.loads(userInfo.get_social_assist_char_list())
@@ -369,8 +374,15 @@ def socialSearchPlayer():
         friend_data = json.loads(friendAccounts.get_user())
             
         if "medalBoard" in friend_data["social"]:
-            medalBoard["custom"] = friend_data["social"]["medalBoard"]["custom"]
-            medalBoard["template"] = friend_data["social"]["medalBoard"]["template"]
+            custom = friend_data["social"]["medalBoard"]["custom"]
+            if custom is not None:
+                medalBoard["custom"] = friend_data["medal"]["custom"]["customs"][custom]
+                medalBoard["template"] = None
+            else:
+                medalBoard["template"] = {
+                    "groupId": friend_data["social"]["medalBoard"]["template"],
+                    "medalList": friend_data["social"]["medalBoard"]["templateMedalList"]
+            }
             medalBoard["type"] = friend_data["social"]["medalBoard"]["type"]
 
         userAssistCharList = json.loads(userInfo.get_social_assist_char_list())
@@ -505,7 +517,12 @@ def socialGetFriendRequestList():
             custom = friend_data["social"]["medalBoard"]["custom"]
             if custom is not None:
                 medalBoard["custom"] = friend_data["medal"]["custom"]["customs"][custom]
-            medalBoard["template"] = friend_data["social"]["medalBoard"]["template"]
+                medalBoard["template"] = None
+            else:
+                medalBoard["template"] = {
+                    "groupId": friend_data["social"]["medalBoard"]["template"],
+                    "medalList": friend_data["social"]["medalBoard"]["templateMedalList"]
+            }
             medalBoard["type"] = friend_data["social"]["medalBoard"]["type"]
 
         userAssistCharList = json.loads(userInfo.get_social_assist_char_list())
