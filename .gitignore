@@ -16,6 +16,7 @@ platform-tools/
 
 # Mysql
 mysql-dev/
+mysql/
 
 # developer
 TestLevel/
