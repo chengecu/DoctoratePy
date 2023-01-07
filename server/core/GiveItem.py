@@ -374,7 +374,7 @@ def giveItems(player_data: Dict,
         items.append(item)
     
     if status == "GET_BATTLE_CHAR":
-        return charGet
+        return charGet, troop
     elif status == "GET_SHOP_ITEM":
         return items
     else:
