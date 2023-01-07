@@ -1,7 +1,7 @@
 import os
 import json
 import random
-from flask import request
+from flask import Response, request, abort
 
 from time import time
 from utils import read_json
@@ -15,7 +15,7 @@ from core.function.update import updateData
 from core.Account import Account
 
 
-class PassableParameters:
+class TemporaryData:
     
     PROFESSION_TO_TAG = {
         "MEDIC": 4,
@@ -38,7 +38,7 @@ class PassableParameters:
     ROBOT_TAG = 28
     
 
-def gachaSyncNormalGacha():
+def gachaSyncNormalGacha() -> Response:
     
     data = request.data
 
@@ -46,33 +46,16 @@ def gachaSyncNormalGacha():
     server_config = read_json(CONFIG_PATH)
     
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
 
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
-        data ={
-            "result": 2,
-            "error": "此账户不存在"
-        }
-        return data
+        return abort(500)
     
     accounts = Account(*result[0])
-    
-    if accounts.get_ban() == 1:
-        data = {
-            "statusCode": 403,
-            "error": "Bad Request",
-            "message": "Your account has been banned"
-        }
-        return data
-    
     player_data = json.loads(accounts.get_user())
+    
     if "recruitChar" not in player_data["status"]:
         player_data["status"]["recruitChar"] = ""
     
@@ -88,7 +71,7 @@ def gachaSyncNormalGacha():
     return data
 
 
-def gachaNormalGacha():
+def gachaNormalGacha() -> Response:
     
     data = request.get_json()
     request_data = request.get_json()
@@ -100,32 +83,14 @@ def gachaNormalGacha():
     server_config = read_json(CONFIG_PATH)
     
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
     
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
-        data ={
-            "result": 2,
-            "error": "此账户不存在"
-        }
-        return data
+        return abort(500)
     
     accounts = Account(*result[0])
-    
-    if accounts.get_ban() == 1:
-        data = {
-            "statusCode": 403,
-            "error": "Bad Request",
-            "message": "Your account has been banned"
-        }
-        return data
-    
     player_data = json.loads(accounts.get_user())
     select_tags = []
     tag_data = generate_valid_tags(tagList, duration)
@@ -176,7 +141,7 @@ def gachaNormalGacha():
     return data
 
 
-def gachaBoostNormalGacha():
+def gachaBoostNormalGacha() -> Response:
     
     data = request.get_json()
     request_data = request.get_json()
@@ -186,32 +151,14 @@ def gachaBoostNormalGacha():
     server_config = read_json(CONFIG_PATH)
 
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
     
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
-        data ={
-            "result": 2,
-            "error": "此账户不存在"
-        }
-        return data
+        return abort(500)
     
     accounts = Account(*result[0])
-    
-    if accounts.get_ban() == 1:
-        data = {
-            "statusCode": 403,
-            "error": "Bad Request",
-            "message": "Your account has been banned"
-        }
-        return data
-    
     player_data = json.loads(accounts.get_user())
     player_data["recruit"]["normal"]["slots"][str(slotId)]["realFinishTs"] = int(time())
     player_data["status"]["instantFinishTicket"] -= 1
@@ -231,7 +178,7 @@ def gachaBoostNormalGacha():
     return data
 
 
-def gachaCancelNormalGacha():
+def gachaCancelNormalGacha() -> Response:
     
     data = request.get_json()
     request_data = request.get_json()
@@ -241,32 +188,14 @@ def gachaCancelNormalGacha():
     server_config = read_json(CONFIG_PATH)
 
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
     
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
-        data ={
-            "result": 2,
-            "error": "此账户不存在"
-        }
-        return data
+        return abort(500)
     
     accounts = Account(*result[0])
-    
-    if accounts.get_ban() == 1:
-        data = {
-            "statusCode": 403,
-            "error": "Bad Request",
-            "message": "Your account has been banned"
-        }
-        return data
-    
     player_data = json.loads(accounts.get_user())
 
     slot_data = {
@@ -295,7 +224,7 @@ def gachaCancelNormalGacha():
     return data
 
 
-def gachaFinishNormalGacha():
+def gachaFinishNormalGacha() -> Response:
     
     data = request.data
     request_data = request.get_json()
@@ -309,32 +238,14 @@ def gachaFinishNormalGacha():
     EQUIP_TABLE = updateData(EQUIP_TABLE_URL, True)
     
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
     
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
-        data ={
-            "result": 2,
-            "error": "此账户不存在"
-        }
-        return data
+        return abort(500)
     
     accounts = Account(*result[0])
-
-    if accounts.get_ban() == 1:
-        data = {
-            "statusCode": 403,
-            "error": "Bad Request",
-            "message": "Your account has been banned"
-        }
-        return data
-    
     player_data = json.loads(accounts.get_user())
     chars = player_data["troop"]["chars"]
     buildingChars = player_data["building"]["chars"]
@@ -540,7 +451,7 @@ def gachaFinishNormalGacha():
     return data
 
 
-def gachaGetPoolDetail():
+def gachaGetPoolDetail() -> Response:
     
     data = request.data
     request_data = request.get_json()
@@ -550,12 +461,7 @@ def gachaGetPoolDetail():
     server_config = read_json(CONFIG_PATH)
 
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
     
     if not os.path.exists(PoolPath):
         data = {
@@ -584,9 +490,8 @@ def gachaGetPoolDetail():
     return read_json(PoolPath, encoding="utf-8")
 
 
-def gachaAdvancedGacha():
+def gachaAdvancedGacha() -> Response:
     
-    data = request.data
     request_data = request.get_json()
     
     secret = request.headers.get('secret')
@@ -594,22 +499,16 @@ def gachaAdvancedGacha():
     server_config = read_json(CONFIG_PATH)
 
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
     
     if str(poolId) == "BOOT_0_1_1":
         return userGacha("gachaTicket", 380, secret, request_data)
     else:
         return userGacha("gachaTicket", 600, secret, request_data)
-
-
-def gachaTenAdvancedGacha():
     
-    data = request.data
+
+def gachaTenAdvancedGacha() -> Response:
+    
     request_data = request.get_json()
     
     secret = request.headers.get('secret')
@@ -617,20 +516,15 @@ def gachaTenAdvancedGacha():
     server_config = read_json(CONFIG_PATH)
 
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
-    
+        return abort(400)
+
     if str(poolId) == "BOOT_0_1_1":
         return userGacha("tenGachaTicket", 3800, secret, request_data)
     else:
         return userGacha("tenGachaTicket", 6000, secret, request_data)
 
 
-def refresh_tag_list():
+def refresh_tag_list() -> List:
 
     CHARACTER_TABLE = updateData(CHARACTER_TABLE_URL, True)
     GACHA_TABLE = updateData(GACHA_TABLE_URL, True)
@@ -671,12 +565,12 @@ def refresh_tag_list():
             "rarity": v["rarity"],
         }
         tags = [name_to_tag[tag_name] for tag_name in v["tagList"]]
-        tags.append(PassableParameters.PROFESSION_TO_TAG[v["profession"]])
-        tags.append(PassableParameters.POSITION_TO_TAG[v["position"]])
+        tags.append(TemporaryData.PROFESSION_TO_TAG[v["profession"]])
+        tags.append(TemporaryData.POSITION_TO_TAG[v["position"]])
         if v["displayNumber"].startswith("RCX"):
-            tags.append(PassableParameters.ROBOT_TAG)
-        if v["rarity"] in PassableParameters.RARITY_TO_TAG:
-            tags.append(PassableParameters.RARITY_TO_TAG[v["rarity"]])
+            tags.append(TemporaryData.ROBOT_TAG)
+        if v["rarity"] in TemporaryData.RARITY_TO_TAG:
+            tags.append(TemporaryData.RARITY_TO_TAG[v["rarity"]])
         data["tags"] = tags
         char_data[k] = data
 
@@ -693,7 +587,7 @@ def refresh_tag_list():
     return tag_list
 
 
-def generate_valid_tags(tagList: List, duration: int):
+def generate_valid_tags(tagList: List, duration: int) -> tuple[str, List]:
 
     CHARACTER_TABLE = updateData(CHARACTER_TABLE_URL, True)
     GACHA_TABLE = updateData(GACHA_TABLE_URL, True)
@@ -718,12 +612,12 @@ def generate_valid_tags(tagList: List, duration: int):
             "rarity": v["rarity"],
         }
         tags = [name_to_tag[tag_name] for tag_name in v["tagList"]]
-        tags.append(PassableParameters.PROFESSION_TO_TAG[v["profession"]])
-        tags.append(PassableParameters.POSITION_TO_TAG[v["position"]])
+        tags.append(TemporaryData.PROFESSION_TO_TAG[v["profession"]])
+        tags.append(TemporaryData.POSITION_TO_TAG[v["position"]])
         if v["displayNumber"].startswith("RCX"):
-            tags.append(PassableParameters.ROBOT_TAG)
-        if v["rarity"] in PassableParameters.RARITY_TO_TAG:
-            tags.append(PassableParameters.RARITY_TO_TAG[v["rarity"]])
+            tags.append(TemporaryData.ROBOT_TAG)
+        if v["rarity"] in TemporaryData.RARITY_TO_TAG:
+            tags.append(TemporaryData.RARITY_TO_TAG[v["rarity"]])
         data["tags"] = tags
         char_data[k] = data
 
@@ -813,7 +707,7 @@ def parse_recruitable_chars(s: str) -> Set[str]:
     return ret
 
     
-def userGacha(type: str, diamondShard: int, secret: str, request_data: Dict):
+def userGacha(type: str, diamondShard: int, secret: str, request_data: Dict) -> Dict:
     
     CHARACTER_TABLE = updateData(CHARACTER_TABLE_URL, True)
     CHARWORD_TABLE = updateData(CHARWORD_TABLE_URL, True)
@@ -822,11 +716,7 @@ def userGacha(type: str, diamondShard: int, secret: str, request_data: Dict):
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
-        data = {
-            "result": 2,
-            "error": "此账户不存在"
-        }
-        return data
+        return abort(500)
 
     accounts = Account(*result[0])
     player_data = json.loads(accounts.get_user())
@@ -840,7 +730,7 @@ def userGacha(type: str, diamondShard: int, secret: str, request_data: Dict):
     if not os.path.exists(PoolPath):
         data = {
             "result": 1,
-            "errMsg": "该当前干员寻访无法使用，详情请关注官方公告"
+            "errMsg": "当前干员寻访暂无法使用，详情请关注官方公告"
         }
         return data
 
@@ -943,7 +833,7 @@ def userGacha(type: str, diamondShard: int, secret: str, request_data: Dict):
         if random_rank["rarityRank"] == 5:
             player_data["status"]["gachaCount"] = 0
 
-        random_char_array = availCharInfo[random_rank["index"]]["charIdList"]
+        random_char_array = availCharInfo[random_rank["index"]]["charIdList"] # TODO: There is a problem here and needs to be modified [ATTAIN&Limited]
         
         for index in range(len(upCharInfo)):
             if upCharInfo[index]["rarityRank"] == random_rank["rarityRank"]:

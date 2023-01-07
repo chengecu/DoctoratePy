@@ -1,7 +1,9 @@
+import os
 import webbrowser
 from datetime import datetime
 
 from flask import Flask
+from wsgiref.simple_server import make_server
 from flask_wtf.csrf import CSRFProtect
 from utils import read_json
 from constants import CONFIG_PATH
@@ -20,6 +22,7 @@ app = Flask(__name__)
 
 host = server_config["server"]["host"]
 port = server_config["server"]["port"]
+WSGIServer = False
 
 # TODO: Add Web-UI
 #app.add_url_rule('/', methods=['GET', 'POST'], view_func=admin.index.index)
@@ -29,7 +32,7 @@ app.add_url_rule('/account/login', methods=['POST'], view_func=account.accountLo
 app.add_url_rule('/account/syncData', methods=['POST'], view_func=account.accountSyncData)
 app.add_url_rule('/account/syncStatus', methods=['POST'], view_func=account.accountSyncStatus)
 
-app.add_url_rule('/assetbundle/official/Android/assets/<string:assetsHash>/<string:fileName>', methods=['GET'], view_func=asset.assetbundle.getFile)
+app.add_url_rule('/assetbundle/official/Android/assets/<string:assetsHash>/<string:fileName>', methods=['GET', 'POST'], view_func=asset.assetbundle.getFile)
 
 app.add_url_rule('/background/setBackground', methods=['POST'], view_func=background.backgroundSetBackground)
 
@@ -94,7 +97,7 @@ app.add_url_rule('/quest/battleFinish', methods=['POST'], view_func=quest.questB
 app.add_url_rule('/quest/finishStoryStage', methods=['POST'], view_func=quest.questFinishStoryStage)
 app.add_url_rule('/quest/saveBattleReplay', methods=['POST'], view_func=quest.questSaveBattleReplay)
 app.add_url_rule('/quest/getBattleReplay', methods=['POST'], view_func=quest.questGetBattleReplay)
-app.add_url_rule('/quest/changeSquadName', methods=['POST'], view_func=quest.questChangeSquadName)
+app.add_url_rule('/quest/changeSquadName2', methods=['POST'], view_func=quest.questChangeSquadName)
 app.add_url_rule('/quest/squadFormation', methods=['POST'], view_func=quest.questSquadFormation)
 app.add_url_rule('/quest/getAssistList', methods=['POST'], view_func=quest.questGetAssistList)
 
@@ -108,6 +111,11 @@ app.add_url_rule('/rlv2/closeRecruitTicket', methods=['POST'], view_func=rlv2.rl
 app.add_url_rule('/rlv2/finishEvent', methods=['POST'], view_func=rlv2.rlv2FinishEvent)
 app.add_url_rule('/rlv2/moveAndBattleStart', methods=['POST'], view_func=rlv2.rlv2MoveAndBattleStart)
 
+app.add_url_rule('/shop/buyLowGood', methods=['POST'], view_func=shop.shopBuyLowGood)
+app.add_url_rule('/shop/buySkinGood', methods=['POST'], view_func=shop.shopBuySkinGood)
+app.add_url_rule('/shop/getGoodPurchaseState', methods=['POST'], view_func=shop.shopGetGoodPurchaseState)
+# app.add_url_rule('/shop/getHighGoodList', methods=['POST'], view_func=shop.shopGetHighGoodList) # TODO
+app.add_url_rule('/shop/getLowGoodList', methods=['POST'], view_func=shop.shopGetLowGoodList)
 app.add_url_rule('/shop/getSkinGoodList', methods=['POST'], view_func=shop.shopGetSkinGoodList)
 
 app.add_url_rule('/social/deleteFriend', methods=['POST'], view_func=social.socialDeleteFriend)
@@ -132,27 +140,37 @@ app.add_url_rule('/user/bindNickName', methods=['POST'], view_func=user.userBind
 app.add_url_rule('/user/buyAp', methods=['POST'], view_func=user.userBuyAp)
 app.add_url_rule('/user/changeAvatar', methods=['POST'], view_func=user.userChangeAvatar)
 app.add_url_rule('/user/changeResume', methods=['POST'], view_func=user.userChangeResume)
+app.add_url_rule('/user/changePassword', methods=['POST'], view_func=auth.user.userChangePassword)
+app.add_url_rule('/user/changePhone', methods=['POST'], view_func=auth.user.userChangePhone)
+app.add_url_rule('/user/changePhoneCheck', methods=['POST'], view_func=auth.user.userChangePhoneCheck)
 app.add_url_rule('/user/changeSecretary', methods=['POST'], view_func=user.userChangeSecretary)
-app.add_url_rule('/user/checkIdCard"', methods=['POST'], view_func=auth.user.userCheckIdCard)
+app.add_url_rule('/user/checkIdCard', methods=['POST'], view_func=auth.user.userCheckIdCard)
 app.add_url_rule('/user/checkIn', methods=['POST'], view_func=user.userCheckIn)
 app.add_url_rule('/user/exchangeDiamondShard', methods=['POST'], view_func=user.userExchangeDiamondShard)
 app.add_url_rule('/user/info/v1/need_cloud_auth', methods=['POST'], view_func=auth.user.userV1NeedCloudAuth)
 app.add_url_rule('/user/login', methods=['POST'], view_func=auth.user.userLogin)
 app.add_url_rule('/user/loginBySmsCode', methods=['POST'], view_func=auth.user.userLoginBySmsCode)
 app.add_url_rule('/user/oauth2/v1/grant', methods=['POST'], view_func=auth.user.userOAuth2V1Grant)
+app.add_url_rule('/user/oauth2/v1/unbind_grant', methods=['POST'], view_func=auth.user.userOauth2V1UnbindGrant)
 app.add_url_rule('/user/register', methods=['POST'], view_func=auth.user.userRegister)
 app.add_url_rule('/user/sendSmsCode', methods=['POST'], view_func=auth.user.userSendSmsCode)
 app.add_url_rule('/user/updateAgreement', methods=['POST'], view_func=auth.user.userUpdateAgreement)
 app.add_url_rule('/user/useRenameCard', methods=['POST'], view_func=user.userUseRenameCard)
 app.add_url_rule('/user/v1/guestLogin', methods=['POST'], view_func=auth.user.userV1GuestLogin)
+app.add_url_rule('/user/info/v1/send_phone_code', methods=['POST'], view_func=auth.user.userInfoV1SendPhoneCode)
 app.add_url_rule('/u8/user/v1/getToken', methods=['POST'], view_func=auth.u8.userV1getToken)
 app.add_url_rule('/u8/user/verifyAccount', methods=['POST'], view_func=auth.u8.userV1getToken)
 
 
-def writeLog(data):
-    print(f'[{datetime.utcnow()}] {data}')
+def writeLog(data: str) -> None:
+    os.system("")
+    print(f'[{datetime.now().strftime("%d/%b/%Y %H:%M:%S")}] {data}')
 
 if __name__ == "__main__":
-    writeLog(f'[SERVER] Server started at http://{host}:{str(port)}')
+    writeLog(f'\033[1;35m[SERVER]\033[0;0m Server started at \033[1;32mhttp://{host}:{str(port)}\033[0;0m')
     # webbrowser.open(f'http://{host}:{str(port)}/login') # TODO: Add Web-UI
-    app.run(host=host, port=port, debug=True)
+    if WSGIServer:
+        server = make_server(host, port, app)
+        server.serve_forever()
+    else:
+        app.run(host=host, port=port, debug=True)

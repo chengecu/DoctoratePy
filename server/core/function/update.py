@@ -10,20 +10,20 @@ from constants import CONFIG_PATH
 from . import loadMods
 
 
-def writeLog(data):
+def writeLog(data: str) -> None:
 
     time = datetime.now().strftime("%d/%b/%Y %H:%M:%S")
     clientIp = socket.gethostbyname(socket.gethostname())
     print(f'{clientIp} - - [{time}] {data}')
 
 
-def updateData(url: str, use_local: bool = False):
+def updateData(url: str, use_local: bool = False) -> None:
 
     BASE_URL_LIST = [
         ("https://raw.githubusercontent.com/Kengxxiao/ArknightsGameData/master/zh_CN/gamedata", './data'),
         ("https://ak-conf.hypergryph.com/config/prod/announce_meta/Android", './data/announce')
     ]
-
+    
     for index in BASE_URL_LIST:
         if index[0] in url:
             if not os.path.isdir(index[1]):

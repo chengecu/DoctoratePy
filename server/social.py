@@ -1,5 +1,5 @@
 import json
-from flask import request
+from flask import Response, request, abort
 
 from constants import CONFIG_PATH, CHARACTER_TABLE_URL, MEDAL_TABLE_URL
 from utils import read_json
@@ -9,7 +9,7 @@ from core.Account import Account, UserInfo
 from core.Search import SearchUidList
 
 
-def socialSetAssistCharList():
+def socialSetAssistCharList() -> Response:
     
     data = request.data
     request_data = request.get_json()
@@ -21,33 +21,15 @@ def socialSetAssistCharList():
     CHARACTER_TABLE = updateData(CHARACTER_TABLE_URL, True)
     
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
     
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
-        data ={
-            "result": 2,
-            "error": "此账户不存在"
-        }
-        return data
-    
-    accounts = Account(*result[0])
-    
-    if accounts.get_ban() == 1:
-        data = {
-            "statusCode": 403,
-            "error": "Bad Request",
-            "message": "Your account has been banned"
-        }
-        return data
+        return abort(500)
     
     assistChar = {}
+    accounts = Account(*result[0])
     player_data = json.loads(accounts.get_user())
     player_data["social"]["assistCharList"] = assistCharList
 
@@ -80,7 +62,7 @@ def socialSetAssistCharList():
     return data
 
 
-def socialGetSortListInfo():
+def socialGetSortListInfo() -> Response:
     
     data = request.data
     request_data = request.get_json()
@@ -90,34 +72,32 @@ def socialGetSortListInfo():
     server_config = read_json(CONFIG_PATH)
     
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
     
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
-        data ={
-            "result": 2,
-            "error": "此账户不存在"
-        }
-        return data
-    
-    accounts = Account(*result[0])
-    
-    if accounts.get_ban() == 1:
-        data = {
-            "statusCode": 403,
-            "error": "Bad Request",
-            "message": "Your account has been banned"
-        }
-        return data
-    
+        return abort(500)
+
     resultList = []
     infoShare = 0
+    accounts = Account(*result[0])
+    friend_data = json.loads(accounts.get_friend())
+    friend_request = friend_data["request"]
+    friend_list = friend_data["list"]
+    
+    for friend in friend_request:
+        result = userData.query_account_by_uid(friend["uid"])
+        if len(result) == 0:
+            friend_request.remove(friend)
+            
+    for friend in friend_list:
+        result = userData.query_account_by_uid(friend["uid"])
+        if len(result) == 0:
+            friend_list.remove(friend)
+
+    accounts.set_friend(json.dumps(friend_data))
+    userData.set_friend_data(accounts.get_uid(), friend_data)
 
     if type == 0:
         nickNumber = request_data["param"]["nickNumber"]
@@ -135,10 +115,10 @@ def socialGetSortListInfo():
                     resultList.append(friendInfo)
 
     if type == 1:
-        FriendList = json.loads(accounts.get_friend())["list"]
+        friendList = json.loads(accounts.get_friend())["list"]
 
-        for index in range(len(FriendList)):
-            friendUid = str(FriendList[index]["uid"])
+        for index in range(len(friendList)):
+            friendUid = str(friendList[index]["uid"])
             result = userData.query_user_info(friendUid)
             userInfo = UserInfo(*result[0])
             userStatus = json.loads(userInfo.get_status())
@@ -176,7 +156,7 @@ def socialGetSortListInfo():
     return data
 
 
-def socialGetFriendList():
+def socialGetFriendList() -> Response:
     
     data = request.data
     request_data = request.get_json()
@@ -186,34 +166,16 @@ def socialGetFriendList():
     server_config = read_json(CONFIG_PATH)
     
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
     
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
-        data ={
-            "result": 2,
-            "error": "此账户不存在"
-        }
-        return data
+        return abort(500)
     
-    accounts = Account(*result[0])
-    
-    if accounts.get_ban() == 1:
-        data = {
-            "statusCode": 403,
-            "error": "Bad Request",
-            "message": "Your account has been banned"
-        }
-        return data
-
     friends = []
     friendAlias = []
+    accounts = Account(*result[0])
     
     for index in range(len(idList)):
         board = []
@@ -319,7 +281,7 @@ def socialGetFriendList():
     return data
     
 
-def socialSearchPlayer():
+def socialSearchPlayer() -> Response:
     
     data = request.data
     request_data = request.get_json()
@@ -329,34 +291,16 @@ def socialSearchPlayer():
     server_config = read_json(CONFIG_PATH)
     
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
     
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
-        data ={
-            "result": 2,
-            "error": "此账户不存在"
-        }
-        return data
-    
-    accounts = Account(*result[0])
-    
-    if accounts.get_ban() == 1:
-        data = {
-            "statusCode": 403,
-            "error": "Bad Request",
-            "message": "Your account has been banned"
-        }
-        return data
+        return abort(500)
     
     friends = []
     friendStatusList = []
+    accounts = Account(*result[0])
 
     for index in range(len(idList)):
         friendUid = idList[index]
@@ -445,7 +389,7 @@ def socialSearchPlayer():
     return data
 
 
-def socialGetFriendRequestList():
+def socialGetFriendRequestList() -> Response:
     
     data = request.data
     request_data = request.get_json()
@@ -455,32 +399,13 @@ def socialGetFriendRequestList():
     server_config = read_json(CONFIG_PATH)
     
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
     
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
-        data ={
-            "result": 2,
-            "error": "此账户不存在"
-        }
-        return data
+        return abort(500)
     
-    accounts = Account(*result[0])
-    
-    if accounts.get_ban() == 1:
-        data = {
-            "statusCode": 403,
-            "error": "Bad Request",
-            "message": "Your account has been banned"
-        }
-        return data
-
     friends = []
     
     for index in range(len(idList)):
@@ -579,7 +504,7 @@ def socialGetFriendRequestList():
     return data
 
 
-def socialProcessFriendRequest():
+def socialProcessFriendRequest() -> Response:
     
     data = request.data
     request_data = request.get_json()
@@ -590,32 +515,14 @@ def socialProcessFriendRequest():
     server_config = read_json(CONFIG_PATH)
     
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
     
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
-        data ={
-            "result": 2,
-            "error": "此账户不存在"
-        }
-        return data
+        return abort(500)
     
     accounts = Account(*result[0])
-    
-    if accounts.get_ban() == 1:
-        data = {
-            "statusCode": 403,
-            "error": "Bad Request",
-            "message": "Your account has been banned"
-        }
-        return data
-
     player_data = json.loads(accounts.get_user())
     friend_data = json.loads(accounts.get_friend())
     friendRequest = friend_data["request"]
@@ -684,7 +591,7 @@ def socialProcessFriendRequest():
     return data
 
 
-def socialSendFriendRequest():
+def socialSendFriendRequest() -> Response:
     
     data = request.data
     request_data = request.get_json()
@@ -694,32 +601,14 @@ def socialSendFriendRequest():
     server_config = read_json(CONFIG_PATH)
     
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
     
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
-        data ={
-            "result": 2,
-            "error": "此账户不存在"
-        }
-        return data
+        return abort(500)
     
     accounts = Account(*result[0])
-    
-    if accounts.get_ban() == 1:
-        data = {
-            "statusCode": 403,
-            "error": "Bad Request",
-            "message": "Your account has been banned"
-        }
-        return data
-
     player_data = json.loads(accounts.get_user())
     result = userData.query_user_info(friendId)
     userInfo = UserInfo(*result[0])
@@ -741,8 +630,8 @@ def socialSendFriendRequest():
     for index in range(len(friendList)):
         if friendList[index]["uid"] == accounts.get_uid():
             data = {
-                "result": 2,
-                "error": "已添加该好友"
+                "result": 3,
+                "error": "好友已添加"
             }
             return data
 
@@ -773,7 +662,7 @@ def socialSendFriendRequest():
     return data
 
 
-def socialSetFriendAlias():
+def socialSetFriendAlias() -> Response:
     
     data = request.data
     request_data = request.get_json()
@@ -784,32 +673,14 @@ def socialSetFriendAlias():
     server_config = read_json(CONFIG_PATH)
     
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
     
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
-        data ={
-            "result": 2,
-            "error": "此账户不存在"
-        }
-        return data
+        return abort(500)
     
     accounts = Account(*result[0])
-    
-    if accounts.get_ban() == 1:
-        data = {
-            "statusCode": 403,
-            "error": "Bad Request",
-            "message": "Your account has been banned"
-        }
-        return data
-
     player_data = json.loads(accounts.get_user())
     result = userData.query_user_info(accounts.get_uid())
     userInfo = UserInfo(*result[0])
@@ -837,7 +708,7 @@ def socialSetFriendAlias():
     return data
 
 
-def socialDeleteFriend():
+def socialDeleteFriend() -> Response:
     
     data = request.data
     request_data = request.get_json()
@@ -847,32 +718,14 @@ def socialDeleteFriend():
     server_config = read_json(CONFIG_PATH)
     
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
     
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
-        data ={
-            "result": 2,
-            "error": "此账户不存在"
-        }
-        return data
+        return abort(500)
     
     accounts = Account(*result[0])
-    
-    if accounts.get_ban() == 1:
-        data = {
-            "statusCode": 403,
-            "error": "Bad Request",
-            "message": "Your account has been banned"
-        }
-        return data
-
     player_data = json.loads(accounts.get_user())
     result = userData.query_user_info(accounts.get_uid())
     userInfo = UserInfo(*result[0])
@@ -914,7 +767,7 @@ def socialDeleteFriend():
     return data
 
 
-def socialSetCardShowMedal():
+def socialSetCardShowMedal() -> Response:
     
     data = request.data
     request_data = request.get_json()
@@ -928,32 +781,14 @@ def socialSetCardShowMedal():
     MEDAL_TABLE = updateData(MEDAL_TABLE_URL, True)
     
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
     
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
-        data ={
-            "result": 2,
-            "error": "此账户不存在"
-        }
-        return data
+        return abort(500)
     
     accounts = Account(*result[0])
-    
-    if accounts.get_ban() == 1:
-        data = {
-            "statusCode": 403,
-            "error": "Bad Request",
-            "message": "Your account has been banned"
-        }
-        return data
-    
     player_data = json.loads(accounts.get_user())
     medal_data = MEDAL_TABLE
     medalBoard = player_data["social"]["medalBoard"]

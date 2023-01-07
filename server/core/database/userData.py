@@ -8,11 +8,11 @@ from core.Account import Account, UserInfo
 from core.Search import SearchUidList, SearchAssistCharList
 
         
-def getConnection():
+def getConnection() -> pymysql.connections.Connection:
 
     database_config = read_json(CONFIG_PATH)["database"]
     
-    connection =pymysql.connect(
+    connection = pymysql.connect(
         host=database_config["host"],
         port=database_config["port"],
         db="DoctoratePy",
@@ -134,7 +134,7 @@ def search_assist_char_list(profession: str) -> List[SearchAssistCharList]:
         return result
     
 
-def register_account(phone: str, password: str, secret: str) -> int:
+def register_account(phone: str, password: str, secret: str) -> tuple:
     
     try:
         sql = "INSERT INTO account (`phone`, `password`, `secret`, `user`, `mails`, `assistCharList`, `friend`, `ban`) VALUES (%s, %s, %s, '{}', '[]', '{}', '{\"list\":[],\"request\":[]}', 0)"
@@ -160,6 +160,38 @@ def login_account(phone: str, password: str) -> List[Account]:
         cursor = connection.cursor()
         cursor.execute(sql, params)
         result = cursor.fetchall()
+        
+    finally:
+        cursor.close()
+        connection.close()
+        return result
+    
+
+def set_password(secret: str, password: str) -> int:
+    
+    try:
+        sql = "UPDATE account SET password = %s WHERE secret = %s"
+        params = (password, secret)
+        connection = getConnection()
+        cursor = connection.cursor()
+        result = cursor.execute(sql, params)
+        connection.commit()
+        
+    finally:
+        cursor.close()
+        connection.close()
+        return result
+
+    
+def set_phone(secret: str, phone: str, new_secret: str) -> int:
+    
+    try:
+        sql = "UPDATE account SET phone = %s, secret = %s WHERE secret = %s"
+        params = (phone, new_secret, secret)
+        connection = getConnection()
+        cursor = connection.cursor()
+        result = cursor.execute(sql, params)
+        connection.commit()
         
     finally:
         cursor.close()
@@ -215,6 +247,38 @@ def set_assist_char_list_data(uid: int, assist_char_list: dict) -> int:
         return result
 
 
+def set_user_status(uid: int, ban: int) -> int:
+    
+    try:
+        sql = "UPDATE account SET ban = %s WHERE uid = %s"
+        params = (ban, uid)
+        connection = getConnection()
+        cursor = connection.cursor()
+        result = cursor.execute(sql, params)
+        connection.commit()
+        
+    finally:
+        cursor.close()
+        connection.close()
+        return result
+
+
+def delete_account(uid: int) -> int:
+
+    try:
+        sql = "DELETE FROM account WHERE uid = %s"
+        params = (uid,)
+        connection = getConnection()
+        cursor = connection.cursor()
+        result = cursor.execute(sql, params)
+        connection.commit()
+        
+    finally:
+        cursor.close()
+        connection.close()
+        return result
+    
+
 def table_exists(table_name: str) -> bool:
     
     try:
@@ -229,6 +293,3 @@ def table_exists(table_name: str) -> bool:
         cursor.close()
         connection.close()
         return result
-
-
-#### TODO: Add more functions ####

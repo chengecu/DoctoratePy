@@ -1,5 +1,6 @@
 import re
 import json
+from flask import Response
 
 from random import shuffle
 from constants import CONFIG_PATH
@@ -7,7 +8,7 @@ from utils import read_json, write_json
 from core.function.update import updateData
 
 
-def randomHash():
+def randomHash() -> str:
 
     hash  = list("abcdef")
     shuffle(hash)
@@ -15,7 +16,7 @@ def randomHash():
     return ''.join(hash)
 
 
-def prodRefreshConfig():
+def prodRefreshConfig() -> Response:
 
     data = {
         "resVersion": None
@@ -24,7 +25,7 @@ def prodRefreshConfig():
     return data, 200
 
 
-def prodAndroidVersion():
+def prodAndroidVersion() -> Response:
 
     server_config = read_json(CONFIG_PATH)
     version = server_config["version"]["android"]
@@ -35,7 +36,7 @@ def prodAndroidVersion():
     return version
 
 
-def prodNetworkConfig():
+def prodNetworkConfig() -> Response:
 
     server_config = read_json(CONFIG_PATH)
 
@@ -59,21 +60,21 @@ def prodNetworkConfig():
     return json.dumps(network_config)
 
 
-def prodRemoteConfig():
+def prodRemoteConfig() -> Response:
 
     remote = read_json(CONFIG_PATH)["remote"]
 
     return json.dumps(remote)
 
 
-def prodPreAnnouncement():
+def prodPreAnnouncement() -> Response:
 
     data = updateData("https://ak-conf.hypergryph.com/config/prod/announce_meta/Android/preannouncement.meta.json")
 
     return data
 
 
-def prodAnnouncement():
+def prodAnnouncement() -> Response:
 
     data = updateData("https://ak-conf.hypergryph.com/config/prod/announce_meta/Android/announcement.meta.json")
 

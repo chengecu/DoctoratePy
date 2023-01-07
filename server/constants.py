@@ -20,12 +20,18 @@ MEDAL_TABLE_URL = BASE_URL + "/excel/medal_table.json"
 
 # DATA Urls
 BUILDING_DATA_URL = BASE_URL + "/excel/building_data.json"
+GAMEDATA_CONST_URL = BASE_URL + "/excel/gamedata_const.json"
 
 # Config Data
 CONFIG_PATH = "config\\config.json"
 MAILLIST_PATH = "config\\mails.json"
 RLV2_CONFIG_PATH = "config\\rlv2Config.json"
 SYNC_DATA_TEMPLATE_PATH = "syncData.json"
+
+# Shop Data
+ALLPRODUCT_LIST_PATH = "data\\shop\\AllProductList.json"
+LOWGOODPRICE_LIST_PATH = "data\\shop\\LowGoodConfig.json"
+SKINPRICE_LIST_PATH = "data\\shop\\SkinConfig.json"
 
 # User Data
 USER_JSON_PATH = "data\\user\\user.json"

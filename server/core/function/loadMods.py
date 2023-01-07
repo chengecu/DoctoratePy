@@ -4,16 +4,17 @@ import zipfile
 import hashlib
 
 from datetime import datetime
+from typing import List
 
 
-def writeLog(data):
+def writeLog(data: str) -> None:
 
     time = datetime.now().strftime("%d/%b/%Y %H:%M:%S")
     clientIp = socket.gethostbyname(socket.gethostname())
     print(f'{clientIp} - - [{time}] {data}')
 
 
-def loadMods(log: bool = True):
+def loadMods(log: bool = True) -> List:
 
     fileList = []
     loadedModList = {

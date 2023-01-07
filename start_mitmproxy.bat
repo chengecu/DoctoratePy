@@ -1,4 +1,5 @@
 @echo off
 @title Doctorate - mitmdump
 
-mitmdump.exe -s mitmproxy-cn.py
+call env\scripts\activate.bat
+py start_mitmproxy.py

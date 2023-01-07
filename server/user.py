@@ -1,6 +1,6 @@
 import json
 import random
-from flask import request
+from flask import Response, request, abort
 
 from time import time
 from constants import CONFIG_PATH
@@ -9,7 +9,14 @@ from core.database import userData
 from core.Account import Account
 
 
-def userBindNickName():
+def userBindNickName() -> Response:
+    '''
+    result:
+        1：昵称长度超过限制
+        2：昵称中不允许使用特殊符号。请使用汉字、英文字母或数字
+        3：这个昵称不允许被使用
+        4：嗯...不好意思，能再说一遍吗？
+    '''
 
     data = request.data
     request_data = request.get_json()
@@ -19,31 +26,14 @@ def userBindNickName():
     server_config = read_json(CONFIG_PATH)
     
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
     
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
-        data = {
-            "result": 2,
-            "error": "此账户不存在"
-        }
-        return data
+        return abort(500)
     
     accounts = Account(*result[0])
-    
-    if accounts.get_ban() == 1:
-        data = {
-            "statusCode": 403,
-            "error": "Bad Request",
-            "message": "Your account has been banned"
-        }
-        return data
 
     if len(nickName) > 16:
         data = {
@@ -54,6 +44,18 @@ def userBindNickName():
     if any(char in nickName for char in '~!@#$%^&*()_+{}|:"<>?[]\;\',./'):
         data = {
             "result": 2
+        }
+        return data
+
+    if nickName.casefold() in ["admin", "ban", "banned", "forbidden", "root"]:
+        data = {
+            "result": 3
+        }
+        return data
+
+    if "doctoratepy" in nickName.casefold():
+        data = {
+            "result": 4
         }
         return data
     
@@ -79,7 +81,7 @@ def userBindNickName():
     return data
 
 
-def userUseRenameCard():
+def userUseRenameCard() -> Response:
     
     data = request.data
     request_data = request.get_json()
@@ -92,32 +94,14 @@ def userUseRenameCard():
     server_config = read_json(CONFIG_PATH)
     
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
     
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
-        data = {
-            "result": 2,
-            "error": "此账户不存在"
-        }
-        return data
+        return abort(500)
     
     accounts = Account(*result[0])
-
-    if accounts.get_ban() == 1:
-        data = {
-            "statusCode": 403,
-            "error": "Bad Request",
-            "message": "Your account has been banned"
-        }
-        return data
-
     player_data = json.loads(accounts.get_user())
     player_data["status"]["nickName"] = nickName
     player_data["status"]["nickNumber"] = nickNumber
@@ -144,7 +128,7 @@ def userUseRenameCard():
     return data
 
 
-def userChangeResume():
+def userChangeResume() -> Response:
     
     data = request.data
     request_data = request.get_json()
@@ -154,32 +138,14 @@ def userChangeResume():
     server_config = read_json(CONFIG_PATH)
     
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
     
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
-        data = {
-            "result": 2,
-            "error": "此账户不存在"
-        }
-        return data
+        return abort(500)
     
     accounts = Account(*result[0])
-
-    if accounts.get_ban() == 1:
-        data = {
-            "statusCode": 403,
-            "error": "Bad Request",
-            "message": "Your account has been banned"
-        }
-        return data
-
     player_data = json.loads(accounts.get_user())
     player_data["status"]["resume"] = resume
 
@@ -199,7 +165,7 @@ def userChangeResume():
     return data
 
 
-def userCheckIn(): # TODO: Add CheckIn
+def userCheckIn() -> Response: # TODO: Add CheckIn
 
     data = request.data
     data = {
@@ -213,7 +179,7 @@ def userCheckIn(): # TODO: Add CheckIn
     return data
 
 
-def userChangeAvatar():
+def userChangeAvatar() -> Response:
     
     data = request.data
     request_data = request.get_json()
@@ -222,12 +188,7 @@ def userChangeAvatar():
     server_config = read_json(CONFIG_PATH)
     
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
     
     avatar_id = str(request_data["id"])
     avatar_type = str(request_data["type"])
@@ -235,22 +196,9 @@ def userChangeAvatar():
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
-        data = {
-            "result": 2,
-            "error": "此账户不存在"
-        }
-        return data
+        return abort(500)
     
     accounts = Account(*result[0])
-    
-    if accounts.get_ban() == 1:
-        data = {
-            "statusCode": 403,
-            "error": "Bad Request",
-            "message": "Your account has been banned"
-        }
-        return data
-    
     player_data = json.loads(accounts.get_user())
     player_data["status"]["avatar"]["id"] = avatar_id
     player_data["status"]["avatar"]["type"] = avatar_type
@@ -271,7 +219,7 @@ def userChangeAvatar():
     return data
 
 
-def userChangeSecretary():
+def userChangeSecretary() -> Response:
 
     data = request.data
     request_data = request.get_json()
@@ -280,12 +228,7 @@ def userChangeSecretary():
     server_config = read_json(CONFIG_PATH)
     
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
 
     charInstId = request_data["charInstId"]
     skinId = request_data["skinId"]
@@ -293,22 +236,9 @@ def userChangeSecretary():
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
-        data = {
-            "result": 2,
-            "error": "此账户不存在"
-        }
-        return data
+        return abort(500)
     
     accounts = Account(*result[0])
-    
-    if accounts.get_ban() == 1:
-        data = {
-            "statusCode": 403,
-            "error": "Bad Request",
-            "message": "Your account has been banned"
-        }
-        return data
-    
     player_data = json.loads(accounts.get_user())
     player_data["status"]["secretary"] = player_data["troop"]["chars"][str(charInstId)]["charId"]
     player_data["status"]["secretarySkinId"] = skinId
@@ -330,7 +260,7 @@ def userChangeSecretary():
     return data
 
 
-def userExchangeDiamondShard():
+def userExchangeDiamondShard() -> Response:
     
     data = request.data
     request_data = request.get_json()
@@ -340,32 +270,14 @@ def userExchangeDiamondShard():
     server_config = read_json(CONFIG_PATH)
     
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
     
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
-        data = {
-            "result": 2,
-            "error": "此账户不存在"
-        }
-        return data
+        return abort(500)
     
     accounts = Account(*result[0])
-    
-    if accounts.get_ban() == 1:
-        data = {
-            "statusCode": 403,
-            "error": "Bad Request",
-            "message": "Your account has been banned"
-        }
-        return data
-    
     player_data = json.loads(accounts.get_user())
     
     if player_data["status"]["androidDiamond"] < count:
@@ -397,7 +309,7 @@ def userExchangeDiamondShard():
     return data
 
 
-def userBuyAp():
+def userBuyAp() -> Response:
     
     data = request.data
     
@@ -405,32 +317,14 @@ def userBuyAp():
     server_config = read_json(CONFIG_PATH)
     
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
     
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
-        data = {
-            "result": 2,
-            "error": "此账户不存在"
-        }
-        return data
+        return abort(500)
     
     accounts = Account(*result[0])
-
-    if accounts.get_ban() == 1:
-        data = {
-            "statusCode": 403,
-            "error": "Bad Request",
-            "message": "Your account has been banned"
-        }
-        return data
-    
     player_data = json.loads(accounts.get_user())
     time_now = int(time())
     addAp = int((time_now - int(player_data["status"]["lastApAddTime"])) / 360)
@@ -466,5 +360,5 @@ def userBuyAp():
             }
         }
     }
-
+    
     return data

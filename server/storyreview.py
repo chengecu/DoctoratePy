@@ -1,5 +1,5 @@
 import json
-from flask import request
+from flask import Response, request, abort
 
 from constants import CONFIG_PATH
 from utils import read_json
@@ -7,7 +7,7 @@ from core.database import userData
 from core.Account import Account
 
 
-def storyreviewReadStory():
+def storyreviewReadStory() -> Response:
     
     data = request.data
     request_data = request.get_json()
@@ -17,39 +17,20 @@ def storyreviewReadStory():
     server_config = read_json(CONFIG_PATH)
     
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
 
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
-        data ={
-            "result": 2,
-            "error": "此账户不存在"
-        }
-        return data
+        return abort(500)
     
     accounts = Account(*result[0])
-    
-    if accounts.get_ban() == 1:
-        data = {
-            "statusCode": 403,
-            "error": "Bad Request",
-            "message": "Your account has been banned"
-        }
-        return data
-    
     player_data = json.loads(accounts.get_user())
     storyGroups = player_data["storyreview"]["groups"]
     groupId = storyId.split('_')[0]
     readCount = 1
 
-    if "min" in groupId and "mini" not in groupId:
-        groupId += "i"
+    if "min" in groupId and "mini" not in groupId: groupId += "i"
     
     if len(storyGroups[groupId]["stories"]) != 0:
         for story in storyGroups[groupId]["stories"]:
@@ -77,7 +58,7 @@ def storyreviewReadStory():
     return data
 
 
-def storyreviewMarkStoryAcceKnown():
+def storyreviewMarkStoryAcceKnown() -> Response:
     
     data = request.data
 
@@ -85,32 +66,14 @@ def storyreviewMarkStoryAcceKnown():
     server_config = read_json(CONFIG_PATH)
     
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
 
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
-        data ={
-            "result": 2,
-            "error": "此账户不存在"
-        }
-        return data
+        return abort(500)
     
     accounts = Account(*result[0])
-    
-    if accounts.get_ban() == 1:
-        data = {
-            "statusCode": 403,
-            "error": "Bad Request",
-            "message": "Your account has been banned"
-        }
-        return data
-
     player_data = json.loads(accounts.get_user())
     player_data["storyreview"]["tags"]["knownStoryAcceleration"] = 1
 

@@ -24,11 +24,11 @@ developer/
 server/admin/
 server/static/
 server/templates/
+account-test.py
 
 # Data files
 data/excel/
 data/announce/
-data/gacha/data_format.py
 assets/
 
 # Byte-compiled / optimized / DLL files

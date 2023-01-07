@@ -2,11 +2,12 @@ import random
 
 from flask import request
 
-from constants import RLV2_CONFIG_PATH, RLV2_JSON_PATH, \
+from constants import RLV2_CONFIG_PATH, RLV2_JSON_PATH, RL_TABLE_URL, \
                     RLV2_CHOICEBUFFS, RLV2_RECRUITGROUPS
-from rlUtils import RL_TABLE, process_buff, update_recruit, generate_recruit_list, \
+from rlUtils import process_buff, update_recruit, generate_recruit_list, \
                     generate_zone_map
 from utils import read_json, write_json
+from core.function.update import updateData
 
 
 def rlv2CreateGame():
@@ -15,6 +16,8 @@ def rlv2CreateGame():
     request_data = request.get_json()
     rlv2_config = read_json(RLV2_CONFIG_PATH)
     start_options = {}
+
+    RL_TABLE = updateData(RL_TABLE_URL, True)
     
     for init_detail in RL_TABLE["details"][request_data["theme"]]["init"]:
         if (

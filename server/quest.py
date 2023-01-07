@@ -3,33 +3,36 @@ import uuid
 import base64
 import random
 import socket
-from flask import request
+import difflib
+from flask import Response, request, abort
 
 from time import time
 from datetime import datetime
-from constants import CONFIG_PATH, CHARACTER_TABLE_URL, CHARWORD_TABLE_URL, \
-    EQUIP_TABLE_URL, ITEM_TABLE_URL, STAGE_JSON_PATH, STAGE_TABLE_URL, BUILDING_DATA_URL
+from constants import CONFIG_PATH, ITEM_TABLE_URL, STAGE_JSON_PATH, STAGE_TABLE_URL,\
+    BUILDING_DATA_URL
 from utils import read_json, decrypt_battle_data, decrypt_battle_replay
 from core.function.update import updateData
 from core.database import userData
+from core.GiveItem import giveItems
 from core.Account import Account, UserInfo
 from core.Search import SearchAssistCharList
 
 
-class PassableParameters:
+class TemporaryData:
     
-    PracticeTicket = False
+    practiceTicket = False
     suggestFriend = False
-
+    specialEvent = []
     
-def writeLog(data):
+
+def writeLog(data: str) -> None:
 
     time = datetime.now().strftime("%d/%b/%Y %H:%M:%S")
     clientIp = socket.gethostbyname(socket.gethostname())
     print(f'{clientIp} - - [{time}] {data}')
 
 
-def questBattleStart():
+def questBattleStart() -> Response:
 
     data = request.data
     request_data = request.get_json()
@@ -43,32 +46,14 @@ def questBattleStart():
     STAGE_TABLE = updateData(STAGE_TABLE_URL, True)
     
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
     
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
-        data ={
-            "result": 2,
-            "error": "此账户不存在"
-        }
-        return data
+        return abort(500)
     
     accounts = Account(*result[0])
-
-    if accounts.get_ban() == 1:
-        data = {
-            "statusCode": 403,
-            "error": "Bad Request",
-            "message": "Your account has been banned"
-        }
-        return data
-
     player_data = json.loads(accounts.get_user())
     player_data["status"]["battleId"] = str(base64.b64encode(stageId.encode('utf-8')), 'utf-8')
     chars_data = player_data["troop"]["chars"]
@@ -83,7 +68,7 @@ def questBattleStart():
             friendList.append(str(friend["uid"]))
             
         if assistFriend["uid"] not in friendList:
-            PassableParameters.suggestFriend = True
+            TemporaryData.suggestFriend = True
 
     notifyPowerScoreNotEnoughIfFailed = False
     if request_data["squad"] is not None:
@@ -137,15 +122,22 @@ def questBattleStart():
     if usePracticeTicket == 1:
         player_data["status"]["practiceTicket"] -= 1
         player_data["dungeon"]["stages"][stageId]["practiceTimes"] += 1
-        PassableParameters.PracticeTicket = True
+        TemporaryData.practiceTicket = True
+
+    inApProtectPeriod, isApProtect = False, 0
+    for item in TemporaryData.specialEvent:
+        match = difflib.SequenceMatcher(None, item, stageId)
+        if match.ratio() >= 0.6:
+            inApProtectPeriod, isApProtect = True, 1
         
     userData.set_user_data(accounts.get_uid(), player_data)
 
     data = {
+        "result": 0,
         "apFailReturn": stage_table["apFailReturn"],
         "battleId": str(uuid.uuid1()),
-        "inApProtectPeriod": False,
-        "isApProtect": 0,
+        "inApProtectPeriod": inApProtectPeriod,
+        "isApProtect": isApProtect,
         "notifyPowerScoreNotEnoughIfFailed": notifyPowerScoreNotEnoughIfFailed,
         "playerDataDelta": {
             "deleted": {},
@@ -157,8 +149,7 @@ def questBattleStart():
                 },
                 "status": player_data["status"]
             }
-        },
-        "result": 0
+        }
     }
     
     if player_data["dungeon"]["stages"][stageId]["noCostCnt"] == 1:
@@ -172,7 +163,7 @@ def questBattleStart():
     return data
 
 
-def questBattleFinish():
+def questBattleFinish() -> Response:
 
     data = request.data
     request_data = request.get_json()
@@ -180,40 +171,19 @@ def questBattleFinish():
     secret = request.headers.get("secret")
     server_config = read_json(CONFIG_PATH)
 
-    CHARACTER_TABLE = updateData(CHARACTER_TABLE_URL, True)
-    CHARWORD_TABLE = updateData(CHARWORD_TABLE_URL, True)
-    EQUIP_TABLE = updateData(EQUIP_TABLE_URL, True)
     STAGE_TABLE = updateData(STAGE_TABLE_URL, True)
     ITEM_TABLE = updateData(ITEM_TABLE_URL, True)
     BUILDING_DATA = updateData(BUILDING_DATA_URL, True)
     
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
     
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
-        data ={
-            "result": 2,
-            "error": "此账户不存在"
-        }
-        return data
+        return abort(500)
     
     accounts = Account(*result[0])
-
-    if accounts.get_ban() == 1:
-        data = {
-            "statusCode": 403,
-            "error": "Bad Request",
-            "message": "Your account has been banned"
-        }
-        return data
-
     player_data = json.loads(accounts.get_user())
     BattleData = decrypt_battle_data(request_data["data"], player_data["pushFlags"]["status"])
     dexNav = player_data["dexNav"]
@@ -223,10 +193,10 @@ def questBattleFinish():
     if server_config["developer"]["debugMode"]:
         writeLog("\033[1;33mBattleData: " + str(BattleData) + "\033[0;0m")
     
-    if PassableParameters.PracticeTicket:
+    if TemporaryData.practiceTicket:
         if player_data["dungeon"]["stages"][stageId]["state"] == 0:
             player_data["dungeon"]["stages"][stageId]["state"] = 1
-        PassableParameters.PracticeTicket = False
+        TemporaryData.practiceTicket = False
         
         userData.set_user_data(accounts.get_uid(), player_data)
 
@@ -246,7 +216,6 @@ def questBattleFinish():
         }
         return data
 
-    chars = player_data["troop"]["chars"]
     troop = {}
     
     completeState = BattleData["completeState"]
@@ -352,7 +321,7 @@ def questBattleFinish():
         
     if stages_data["state"] == 1:
         if completeState == 3 or completeState == 2:
-            # For sword Amiya
+            # For guard Amiya
             if stageId == "main_08-16":
                 for char_id, char_data in player_data["troop"]["chars"].items():
                     if char_data["charId"] == "char_002_amiya":
@@ -466,212 +435,8 @@ def questBattleFinish():
 
             if dropType in [1, 8]:
                 if reward_type == "CHAR":
-                    charGet = {}
-                    random_char_id = reward_id
-                    repeatCharId = 0
                     
-                    for n in range(len(player_data["troop"]["chars"])):
-                        if player_data["troop"]["chars"][str(n + 1)]["charId"] == random_char_id:
-                            repeatCharId = n + 1
-                            break
-
-                    if repeatCharId == 0:
-                        # Add new character
-                        get_char = {}
-                        char_data = {}
-                        skills_array = CHARACTER_TABLE[random_char_id]["skills"]
-                        skills = []
-                        
-                        for m in range(len(skills_array)):
-                            new_skills = {
-                                "skillId": skills_array[m]["skillId"],
-                                "state": 0,
-                                "specializeLevel": 0,
-                                "completeUpgradeTime": -1
-                            }
-                            if skills_array[m]["unlockCond"]["phase"] == 0:
-                                new_skills["unlock"] = 1
-                            else:
-                                new_skills["unlock"] = 0
-                            skills.append(new_skills)
-
-                        instId = len(player_data["troop"]["chars"]) + 1
-                        player_data["troop"]["curCharInstId"] = instId + 1
-                        
-                        char_data = {
-                            "instId": instId,
-                            "charId": random_char_id,
-                            "favorPoint": 0,
-                            "potentialRank": 0,
-                            "mainSkillLvl": 1,
-                            "skin": f"{random_char_id}#1",
-                            "level": 1,
-                            "exp": 0,
-                            "evolvePhase": 0,
-                            "gainTime": int(time()),
-                            "skills": skills,
-                            "voiceLan": CHARWORD_TABLE["charDefaultTypeDict"][random_char_id],
-                            "currentEquip": None,
-                            "equip": {},
-                            "starMark": 0
-                        }
-                        
-                        if skills == []:
-                            char_data["defaultSkillIndex"] = -1
-                        else:
-                            char_data["defaultSkillIndex"] = 0
-
-                        sub1 = random_char_id[random_char_id.index("_") + 1:]
-                        charName = sub1[sub1.index("_") + 1:]
-
-                        if random_char_id in EQUIP_TABLE["charEquip"]:
-                            for item in EQUIP_TABLE["charEquip"][random_char_id]:
-                                locked = 1
-                                if "_001_" in item:
-                                    locked = 0
-                                char_data["equip"].update({
-                                    item: {
-                                        "hide": 1,
-                                        "locked": locked,
-                                        "level": 1
-                                    }
-                                })
-                            char_data["currentEquip"] = f"uniequip_001_{charName}"
-
-                        player_data["troop"]["chars"][str(instId)] = char_data
-                        player_data["troop"]["charGroup"][random_char_id] = {"favorPoint": 0}
-
-                        get_char = {
-                            "charInstId": instId,
-                            "charId": random_char_id,
-                            "isNew": 1
-                        }
-
-                        item_get = []
-                        new_item_get = {
-                            "type": "HGG_SHD",
-                            "id": "4004",
-                            "count": 1
-                        }
-                        item_get.append(new_item_get)
-                        player_data["status"]["hggShard"] += 1
-
-                        get_char["itemGet"] = item_get
-                        player_data["inventory"][f"p_{random_char_id}"] = 0
-                        charGet = get_char
-
-                        charinstId = {
-                            str(instId): char_data
-                        }
-                        chars[str(instId)] = char_data
-                        troop["chars"] = charinstId
-                    else:
-                        # Already has this character
-                        get_char = {
-                            "charInstId": repeatCharId,
-                            "charId": random_char_id,
-                            "isNew": 0
-                        }
-
-                        repatChar = player_data["troop"]["chars"][str(repeatCharId)]
-                        potentialRank = repatChar["potentialRank"]
-                        rarity = CHARACTER_TABLE[random_char_id]["rarity"]
-
-                        itemName = None
-                        itemType = None
-                        itemId = None
-                        itemCount = 0
-        
-                        if rarity == 0:
-                            itemName = "lggShard"
-                            itemType = "LGG_SHD"
-                            itemId = "4005"
-                            itemCount = 1
-                        elif rarity == 1:
-                            itemName = "lggShard"
-                            itemType = "LGG_SHD"
-                            itemId = "4005"
-                            itemCount = 1
-                        elif rarity == 2:
-                            itemName = "lggShard"
-                            itemType = "LGG_SHD"
-                            itemId = "4005"
-                            itemCount = 5
-                        elif rarity == 3:
-                            itemName = "lggShard"
-                            itemType = "LGG_SHD"
-                            itemId = "4005"
-                            itemCount = 30
-                        elif rarity == 4:
-                            itemName = "hggShard"
-                            itemType = "HGG_SHD"
-                            itemId = "4004"
-                            if potentialRank != 5:
-                                itemCount = 5
-                            else:
-                                itemCount = 8
-                        else:
-                            itemName = "hggShard"
-                            itemType = "HGG_SHD"
-                            itemId = "4004"
-                            if potentialRank != 5:
-                                itemCount = 10
-                            else:
-                                itemCount = 15
-
-                        item_get = []
-                        new_item_get_1 = {
-                            "type": itemType,
-                            "id": itemId,
-                            "count": itemCount
-                        }
-                        item_get.append(new_item_get_1)
-            
-                        player_data["status"][itemName] += itemCount
-
-                        new_item_get_2 = {
-                            "type": "MATERIAL",
-                            "id": f"p_{random_char_id}",
-                            "count": 1
-                        }
-                        item_get.append(new_item_get_2)
-                        get_char["itemGet"] = item_get
-                        try:
-                            player_data["inventory"]["p_" + random_char_id] += 1
-                        except:
-                            player_data["inventory"]["p_" + random_char_id] = 1
-
-                        charGet = get_char
-
-                        charinstId = {
-                            str(repeatCharId): player_data["troop"]["chars"][str(repeatCharId)]
-                        }
-                        chars[str(repeatCharId)] = player_data["troop"]["chars"][str(repeatCharId)]
-                        troop["chars"] = charinstId
-                        
-                    # Unlock character dexNav
-                    characterList = list(dexNav["character"].keys())
-                    if random_char_id not in characterList:
-                        dexNav["character"][random_char_id] = {
-                            "charInstId": instId,
-                            "count": 1
-                        }
-                        
-                        new_char = CHARACTER_TABLE[random_char_id]
-                        teamList = [
-                            new_char["nationId"],
-                            new_char["groupId"],
-                            new_char["teamId"]
-                        ]
-                        
-                        for team in teamList:
-                            if team is not None:
-                                try:
-                                    dexNav["teamV2"][team].update({str(instId): 1})
-                                except:
-                                    dexNav["teamV2"][team] = {str(instId): 1}
-                    else:
-                        dexNav["character"][random_char_id]["count"] += 1
+                    charGet, troop = giveItems(player_data, reward_id , reward_type, status="GET_BATTLE_CHAR")
                         
                     first_reward = {
                         "count": 1,
@@ -681,31 +446,8 @@ def questBattleFinish():
                     }
                     firstRewards.append(first_reward)
                 else:
-                    if reward_type == "MATERIAL":
-                        try:
-                            player_data["inventory"][reward_id] += reward_count
-                        except:
-                            player_data["inventory"][reward_id] = reward_count
-                    if reward_type == "CARD_EXP":
-                        try:
-                            player_data["inventory"][reward_id] += reward_count
-                        except:
-                            player_data["inventory"][reward_id] = reward_count
-                    if reward_type == "DIAMOND":
-                        player_data["status"]["androidDiamond"] += reward_count
-                        player_data["status"]["iosDiamond"] += reward_count
-                    if reward_type == "GOLD":
-                        player_data["status"]["gold"] += reward_count
-                    if reward_type == "TKT_RECRUIT":
-                        player_data["status"]["recruitLicense"] += reward_count
-                    if reward_type == "FURN":
-                        if reward_id not in player_data["building"]["furniture"]:
-                            furniture = {
-                                "count": 1,
-                                "inUse": 0
-                            }
-                            player_data["building"]["furniture"][reward_id] = furniture
-                        player_data["building"]["furniture"][reward_id]["count"] += 1
+                    giveItems(player_data, reward_id , reward_type, reward_count)
+                    
                     first_reward = {
                         "count": reward_count,
                         "id": reward_id,
@@ -720,74 +462,6 @@ def questBattleFinish():
         player_data["dungeon"]["stages"][stageId]["state"] = completeState
 
     player_data["dungeon"]["stages"][stageId]["completeTimes"] += 1
-
-    player_exp_map = [
-        500,800,1240,1320,
-        1400,1480,1560,1640,
-        1720,1800,1880,1960,
-        2040,2120,2200,2280,
-        2360,2440,2520,2600,
-        2680,2760,2840,2920,
-        3000,3080,3160,3240,
-        3350,3460,3570,3680,
-        3790,3900,4200,4500,
-        4800,5100,5400,5700,
-        6000,6300,6600,6900,
-        7200,7500,7800,8100,
-        8400,8700,9000,9500,
-        10000,10500,11000,11500,
-        12000,12500,13000,13500,
-        14000,14500,15000,15500,
-        16000,17000,18000,19000,
-        20000,21000,22000,23000,
-        24000,25000,26000,27000,
-        28000,29000,30000,31000,
-        32000,33000,34000,35000,
-        36000,37000,38000,39000,
-        40000,41000,42000,43000,
-        44000,45000,46000,47000,
-        48000,49000,50000,51000,
-        52000,54000,56000,58000,
-        60000,62000,64000,66000,
-        68000,70000,73000,76000,
-        79000,82000,85000,88000,
-        91000,94000,97000,100000
-    ]
-    player_ap_map = [
-        82,84,86,88,
-        90,91,92,93,
-        94,95,96,97,
-        98,99,100,101,
-        102,103,104,105,
-        106,107,108,109,
-        110,111,112,113,
-        114,115,116,117,
-        118,119,120,120,
-        120,120,120,121,
-        121,121,121,121,
-        122,122,122,122,
-        122,123,123,123,
-        123,123,124,124,
-        124,124,124,125,
-        125,125,125,125,
-        126,126,126,126,
-        126,127,127,127,
-        127,127,128,128,
-        128,128,128,129,
-        129,129,129,129,
-        130,130,130,130,
-        130,130,130,130,
-        130,130,130,130,
-        130,130,130,130,
-        131,131,131,131,
-        132,132,132,132,
-        133,133,133,133,
-        134,134,134,134,
-        135,135,135,135
-    ]
-    gold = player_data["status"]["gold"]
-    exp = player_data["status"]["exp"]
-    level = player_data["status"]["level"]
     
     # LMD drops
     SpecialGold = {
@@ -828,7 +502,9 @@ def questBattleFinish():
         # Cargo Escort - LMD
         if "wk_melee" in stageId:
             goldGain = round(goldGain, -2)
-        player_data["status"]["gold"] = gold + goldGain
+        
+        giveItems(player_data, None , "GOLD", goldGain)
+            
         rewards_gold = {
             "count": goldGain,
             "id": "4001",
@@ -837,23 +513,7 @@ def questBattleFinish():
         rewards.append(rewards_gold)
 
     # Exp drops & Level Up
-    if level < 120 and expGain != 0:
-        player_data["status"]["exp"] = exp + expGain
-        for index in range(len(player_exp_map)):
-            if level == index + 1:
-                if (int(player_exp_map[index]) - player_data["status"]["exp"]) <= 0:
-                    if (index + 2) == 120:
-                        player_data["status"]["level"] = 120
-                        player_data["status"]["exp"] = 0
-                        player_data["status"]["maxAp"] = player_ap_map[index + 1]
-                        player_data["status"]["ap"] += player_data["status"]["maxAp"]
-                    else:
-                        player_data["status"]["level"] = (index + 2)
-                        player_data["status"]["exp"] -= int(player_exp_map[index])
-                        player_data["status"]["maxAp"] = player_ap_map[index + 1]
-                        player_data["status"]["ap"] += player_data["status"]["maxAp"]
-                    player_data["status"]["lastApAddTime"] = int(time())
-                break
+    giveItems(player_data, reward_type="EXP_PLAYER", reward_count=expGain)
         
     # Drops reward
     displayDetailRewards = stage_table["stageDropInfo"]["displayDetailRewards"]
@@ -884,11 +544,11 @@ def questBattleFinish():
                 if reward_rarity == 0:
                     drop_array = []
 
-                    for n in range(70):
+                    for _ in range(70):
                         drop_array.append(0)
-                    for n in range(20):
+                    for _ in range(20):
                         drop_array.append(1)
-                    for n in range(10):
+                    for _ in range(10):
                         drop_array.append(2)
 
                     random.shuffle(drop_array)
@@ -901,11 +561,11 @@ def questBattleFinish():
                 if reward_rarity == 1:
                     drop_array = []
 
-                    for n in range(70):
+                    for _ in range(70):
                         drop_array.append(0)
-                    for n in range(10):
+                    for _ in range(10):
                         drop_array.append(1)
-                    for n in range(5):
+                    for _ in range(5):
                         drop_array.append(2)
 
                     random.shuffle(drop_array)
@@ -930,11 +590,11 @@ def questBattleFinish():
                 if reward_rarity == 0:
                     drop_array = []
 
-                    for n in range(90 + percent):
+                    for _ in range(90 + percent):
                         drop_array.append(0)
-                    for n in range(12 + percent):
+                    for _ in range(12 + percent):
                         drop_array.append(1)
-                    for n in range(8 + addPercent):
+                    for _ in range(8 + addPercent):
                         drop_array.append(2)
 
                     random.shuffle(drop_array)
@@ -947,11 +607,11 @@ def questBattleFinish():
                 if reward_rarity == 1:
                     drop_array = []
 
-                    for n in range(110 + percent):
+                    for _ in range(110 + percent):
                         drop_array.append(0)
-                    for n in range(8 + percent):
+                    for _ in range(8 + percent):
                         drop_array.append(1)
-                    for n in range(2 + addPercent):
+                    for _ in range(2 + addPercent):
                         drop_array.append(2)
 
                     random.shuffle(drop_array)
@@ -1029,10 +689,7 @@ def questBattleFinish():
                             if reward_id != "3401":
                                 j = ResourceSearch[stageId][-1]
                             reward_count = round(j / (1.5 * 1.2))
-                try:
-                    player_data["inventory"][reward_id] += reward_count
-                except:
-                    player_data["inventory"][reward_id] = reward_count
+                            
             if reward_type == "CARD_EXP":
                 # Tactical Drill - Card EXP
                 random_value = random.choice([1, 0])
@@ -1068,16 +725,7 @@ def questBattleFinish():
                                 reward_count = j
                         else:
                             reward_count = round(j / (1.5 * 1.2))
-                try:
-                    player_data["inventory"][reward_id] += reward_count
-                except:
-                    player_data["inventory"][reward_id] = reward_count
-            if reward_type == "DIAMOND":
-                player_data["status"]["androidDiamond"] +=  reward_count
-                player_data["status"]["iosDiamond"] +=  reward_count
-            if reward_type == "TKT_RECRUIT":
-                player_data["status"]["recruitLicense"] += reward_count
-
+                            
             if reward_type == "GOLD":
                 if stageId in SpecialGold:
                     if completeState == 3:
@@ -1085,7 +733,7 @@ def questBattleFinish():
                     else:
                         reward_count = round(SpecialGold[stageId] / 1.2)
                         
-                player_data["status"]["gold"] += reward_count
+            giveItems(player_data, reward_id , reward_type, reward_count)
 
             normal_reward = {
                 "count": reward_count,
@@ -1100,9 +748,9 @@ def questBattleFinish():
                 writeLog("- Regular Drops: Common -")
             drop_array = []
             
-            for n in range(80 + percent):
+            for _ in range(80 + percent):
                 drop_array.append(1)
-            for n in range(20 + addPercent):
+            for _ in range(20 + addPercent):
                 drop_array.append(0)
 
             random.shuffle(drop_array)
@@ -1110,23 +758,8 @@ def questBattleFinish():
             cur = random.choice(drop_array)
 
             if cur == 1:
-                if reward_type == "MATERIAL":
-                    try:
-                        player_data["inventory"][reward_id] += reward_count
-                    except:
-                        player_data["inventory"][reward_id] = reward_count
-                if reward_type == "CARD_EXP":
-                    try:
-                        player_data["inventory"][reward_id] += reward_count
-                    except:
-                        player_data["inventory"][reward_id] = reward_count
-                if reward_type == "DIAMOND":
-                    player_data["status"]["androidDiamond"] += reward_count
-                    player_data["status"]["iosDiamond"] += reward_count
-                if reward_type == "GOLD":
-                    player_data["status"]["gold"] += reward_count
-                if reward_type == "TKT_RECRUIT":
-                    player_data["status"]["recruitLicense"] += reward_count
+                
+                giveItems(player_data, reward_id , reward_type, reward_count)
                     
                 normal_reward = {
                     "count": reward_count,
@@ -1142,9 +775,9 @@ def questBattleFinish():
             if "pro_" in stageId:
                 drop_array = []
                 
-                for n in range(5):
+                for _ in range(5):
                     drop_array.append(1)
-                for n in range(5):
+                for _ in range(5):
                     drop_array.append(0)
 
                 random.shuffle(drop_array)
@@ -1153,11 +786,7 @@ def questBattleFinish():
                 reward_id = displayDetailRewards[cur]["id"]
                 reward_type = displayDetailRewards[cur]["type"]
 
-                if reward_type == "MATERIAL":
-                    try:
-                        player_data["inventory"][reward_id] += reward_count
-                    except:
-                        player_data["inventory"][reward_id] = reward_count
+                giveItems(player_data, reward_id , reward_type, reward_count)
 
                 normal_reward = {
                     "count": reward_count,
@@ -1170,9 +799,9 @@ def questBattleFinish():
             
             drop_array = []
             
-            for n in range(50 + percent):
+            for _ in range(50 + percent):
                 drop_array.append(1)
-            for n in range(50 + addPercent):
+            for _ in range(50 + addPercent):
                 drop_array.append(0)
 
             random.shuffle(drop_array)
@@ -1180,23 +809,8 @@ def questBattleFinish():
             cur = random.choice(drop_array)
 
             if cur == 1:
-                if reward_type == "MATERIAL":
-                    try:
-                        player_data["inventory"][reward_id] += reward_count
-                    except:
-                        player_data["inventory"][reward_id] = reward_count
-                if reward_type == "CARD_EXP":
-                    try:
-                        player_data["inventory"][reward_id] += reward_count
-                    except:
-                        player_data["inventory"][reward_id] = reward_count
-                if reward_type == "DIAMOND":
-                    player_data["status"]["androidDiamond"] += reward_count
-                    player_data["status"]["iosDiamond"] += reward_count
-                if reward_type == "GOLD":
-                    player_data["status"]["gold"] += reward_count
-                if reward_type == "TKT_RECRUIT":
-                    player_data["status"]["recruitLicense"] += reward_count
+                
+                giveItems(player_data, reward_id , reward_type, reward_count)
 
                 normal_reward = {
                     "count": reward_count,
@@ -1211,9 +825,9 @@ def questBattleFinish():
                 writeLog("- Regular Drops: Rare -")
             drop_array = []
 
-            for n in range(15 + percent):
+            for _ in range(15 + percent):
                 drop_array.append(1)
-            for n in range(90 + addPercent):
+            for _ in range(90 + addPercent):
                 drop_array.append(0)
 
             random.shuffle(drop_array)
@@ -1221,31 +835,8 @@ def questBattleFinish():
             cur = random.choice(drop_array)
 
             if cur == 1:
-                if reward_type == "MATERIAL":
-                    try:
-                        player_data["inventory"][reward_id] += reward_count
-                    except:
-                        player_data["inventory"][reward_id] = reward_count
-                if reward_type == "CARD_EXP":
-                    try:
-                        player_data["inventory"][reward_id] += reward_count
-                    except:
-                        player_data["inventory"][reward_id] = reward_count
-                if reward_type == "DIAMOND":
-                    player_data["status"]["androidDiamond"] += reward_count
-                    player_data["status"]["iosDiamond"] += reward_count
-                if reward_type == "GOLD":
-                    player_data["status"]["gold"] += reward_count
-                if reward_type == "TKT_RECRUIT":
-                    player_data["status"]["recruitLicense"] += reward_count
-                if reward_type == "FURN":
-                    if reward_id not in player_data["building"]["furniture"]:
-                        furniture = {
-                            "count": 1,
-                            "inUse": 0
-                        }
-                        player_data["building"]["furniture"][reward_id] = furniture
-                    player_data["building"]["furniture"][reward_id]["count"] += 1
+                
+                giveItems(player_data, reward_id , reward_type, reward_count)
 
                 normal_reward = {
                     "count": reward_count,
@@ -1264,9 +855,9 @@ def questBattleFinish():
                 writeLog("- Regular Drops: Very Rare -")
             drop_array = []
             
-            for n in range(10 + percent):
+            for _ in range(10 + percent):
                 drop_array.append(1)
-            for n in range(90 + addPercent):
+            for _ in range(90 + addPercent):
                 drop_array.append(0)
 
             random.shuffle(drop_array)
@@ -1274,31 +865,8 @@ def questBattleFinish():
             cur = random.choice(drop_array)
 
             if cur == 1:
-                if reward_type == "MATERIAL":
-                    try:
-                        player_data["inventory"][reward_id] += reward_count
-                    except:
-                        player_data["inventory"][reward_id] = reward_count
-                if reward_type == "CARD_EXP":
-                    try:
-                        player_data["inventory"][reward_id] += reward_count
-                    except:
-                        player_data["inventory"][reward_id] = reward_count
-                if reward_type == "DIAMOND":
-                    player_data["status"]["androidDiamond"] += reward_count
-                    player_data["status"]["iosDiamond"] += reward_count
-                if reward_type == "GOLD":
-                    player_data["status"]["gold"] += reward_count
-                if reward_type == "TKT_RECRUIT":
-                    player_data["status"]["recruitLicense"] += reward_count
-                if reward_type == "FURN":
-                    if reward_id not in player_data["building"]["furniture"]:
-                        furniture = {
-                            "count": 1,
-                            "inUse": 0
-                        }
-                        player_data["building"]["furniture"][reward_id] = furniture
-                    player_data["building"]["furniture"][reward_id]["count"] += 1
+                
+                giveItems(player_data, reward_id , reward_type, reward_count)
 
                 normal_reward = {
                     "count": reward_count,
@@ -1315,23 +883,8 @@ def questBattleFinish():
         if occPercent == 0 and dropType == 3:
             if server_config["developer"]["debugMode"]:
                 writeLog("- Special Drops: Guaranteed -")
-            if reward_type == "MATERIAL":
-                try:
-                    player_data["inventory"][reward_id] += reward_count
-                except:
-                    player_data["inventory"][reward_id] = reward_count
-            if reward_type == "CARD_EXP":
-                try:
-                    player_data["inventory"][reward_id] += reward_count
-                except:
-                    player_data["inventory"][reward_id] = reward_count
-            if reward_type == "DIAMOND":
-                player_data["status"]["androidDiamond"] += reward_count
-                player_data["status"]["iosDiamond"] += reward_count
-            if reward_type == "GOLD":
-                player_data["status"]["gold"] += reward_count
-            if reward_type == "TKT_RECRUIT":
-                player_data["status"]["recruitLicense"] += reward_count
+                
+            giveItems(player_data, reward_id , reward_type, reward_count)
 
             normal_reward = {
                 "count": reward_count,
@@ -1347,9 +900,9 @@ def questBattleFinish():
                 writeLog("- Special Drops: Rare -")
             drop_array = []
             
-            for n in range(5 + percent):
+            for _ in range(5 + percent):
                 drop_array.append(1)
-            for n in range(95 + addPercent):
+            for _ in range(95 + addPercent):
                 drop_array.append(0)
                 
             random.shuffle(drop_array)
@@ -1357,23 +910,8 @@ def questBattleFinish():
             cur = random.choice(drop_array)
             
             if cur == 1:
-                if reward_type == "MATERIAL":
-                    try:
-                        player_data["inventory"][reward_id] += reward_count
-                    except:
-                        player_data["inventory"][reward_id] = reward_count
-                if reward_type == "CARD_EXP":
-                    try:
-                        player_data["inventory"][reward_id] += reward_count
-                    except:
-                        player_data["inventory"][reward_id] = reward_count
-                if reward_type == "DIAMOND":
-                    player_data["status"]["androidDiamond"] += reward_count
-                    player_data["status"]["iosDiamond"] += reward_count
-                if reward_type == "GOLD":
-                    player_data["status"]["gold"] += reward_count
-                if reward_type == "TKT_RECRUIT":
-                    player_data["status"]["recruitLicense"] += reward_count
+                
+                giveItems(player_data, reward_id , reward_type, reward_count)
 
                 normal_reward = {
                     "count": reward_count,
@@ -1389,9 +927,9 @@ def questBattleFinish():
                 writeLog("- Special Drops: Very Rare -")
             drop_array = []
 
-            for n in range(5 + percent):
+            for _ in range(5 + percent):
                 drop_array.append(1)
-            for n in range(95 + addPercent):
+            for _ in range(95 + addPercent):
                 drop_array.append(0)
 
             random.shuffle(drop_array)
@@ -1399,23 +937,8 @@ def questBattleFinish():
             cur = random.choice(drop_array)
 
             if cur == 1:
-                if reward_type == "MATERIAL":
-                    try:
-                        player_data["inventory"][reward_id] += reward_count
-                    except:
-                        player_data["inventory"][reward_id] = reward_count
-                if reward_type == "CARD_EXP":
-                    try:
-                        player_data["inventory"][reward_id] += reward_count
-                    except:
-                        player_data["inventory"][reward_id] = reward_count
-                if reward_type == "DIAMOND":
-                    player_data["status"]["androidDiamond"] += reward_count
-                    player_data["status"]["iosDiamond"] += reward_count
-                if reward_type == "GOLD":
-                    player_data["status"]["gold"] += reward_count
-                if reward_type == "TKT_RECRUIT":
-                    player_data["status"]["recruitLicense"] += reward_count
+                
+                giveItems(player_data, reward_id , reward_type, reward_count)
                     
                 normal_reward = {
                     "count": reward_count,
@@ -1431,9 +954,9 @@ def questBattleFinish():
                 writeLog("- Extra Drops: Rare -")
             drop_array = []
 
-            for n in range(25 + percent):
+            for _ in range(25 + percent):
                 drop_array.append(1)
-            for n in range(75 + addPercent):
+            for _ in range(75 + addPercent):
                 drop_array.append(0)
 
             random.shuffle(drop_array)
@@ -1441,23 +964,8 @@ def questBattleFinish():
             cur = random.choice(drop_array)
 
             if cur == 1:
-                if reward_type == "MATERIAL":
-                    try:
-                        player_data["inventory"][reward_id] += reward_count
-                    except:
-                        player_data["inventory"][reward_id] = reward_count
-                if reward_type == "CARD_EXP":
-                    try:
-                        player_data["inventory"][reward_id] += reward_count
-                    except:
-                        player_data["inventory"][reward_id] = reward_count
-                if reward_type == "DIAMOND":
-                    player_data["status"]["androidDiamond"] += reward_count
-                    player_data["status"]["iosDiamond"] += reward_count
-                if reward_type == "GOLD":
-                    player_data["status"]["gold"] += reward_count
-                if reward_type == "TKT_RECRUIT":
-                    player_data["status"]["recruitLicense"] += reward_count
+                
+                giveItems(player_data, reward_id , reward_type, reward_count)
                     
                 normal_reward = {
                     "count": reward_count,
@@ -1473,9 +981,9 @@ def questBattleFinish():
                 writeLog("- Extra Drops: Very Rare -")
             drop_array = []
             
-            for n in range(5 + percent):
+            for _ in range(5 + percent):
                 drop_array.append(1)
-            for n in range(95 + addPercent):
+            for _ in range(95 + addPercent):
                 drop_array.append(0)
 
             random.shuffle(drop_array)
@@ -1483,23 +991,8 @@ def questBattleFinish():
             cur = random.choice(drop_array)
 
             if cur == 1:
-                if reward_type == "MATERIAL":
-                    try:
-                        player_data["inventory"][reward_id] += reward_count
-                    except:
-                        player_data["inventory"][reward_id] = reward_count
-                if reward_type == "CARD_EXP":
-                    try:
-                        player_data["inventory"][reward_id] += reward_count
-                    except:
-                        player_data["inventory"][reward_id] = reward_count
-                if reward_type == "DIAMOND":
-                    player_data["status"]["androidDiamond"] += reward_count
-                    player_data["status"]["iosDiamond"] += reward_count
-                if reward_type == "GOLD":
-                    player_data["status"]["gold"] += reward_count
-                if reward_type == "TKT_RECRUIT":
-                    player_data["status"]["recruitLicense"] += reward_count
+                
+                giveItems(player_data, reward_id , reward_type, reward_count)
                     
                 normal_reward = {
                     "count": reward_count,
@@ -1554,7 +1047,7 @@ def questBattleFinish():
         "additionalRewards": additionalRewards,
         "furnitureRewards": furnitureRewards,
         "alert": [],
-        "suggestFriend": PassableParameters.suggestFriend,
+        "suggestFriend": TemporaryData.suggestFriend,
         "pryResult": [],
         "playerDataDelta": {
             "deleted": {},
@@ -1575,7 +1068,7 @@ def questBattleFinish():
     return data
 
 
-def questSaveBattleReplay():
+def questSaveBattleReplay() -> Response:
 
     data = request.data
     request_data = request.get_json()
@@ -1587,32 +1080,14 @@ def questSaveBattleReplay():
         writeLog("\033[1;33mBattleReplay: " + str(battleReplay) + "\033[0;0m")
     
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
 
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
-        data ={
-            "result": 2,
-            "error": "此账户不存在"
-        }
-        return data
+        return abort(500)
     
     accounts = Account(*result[0])
-    
-    if accounts.get_ban() == 1:
-        data = {
-            "statusCode": 403,
-            "error": "Bad Request",
-            "message": "Your account has been banned"
-        }
-        return data
-    
     player_data = json.loads(accounts.get_user())
     stageId = battleReplay["journal"]["metadata"]["stageId"]
     stages_data = player_data["dungeon"]["stages"][stageId]
@@ -1621,7 +1096,6 @@ def questSaveBattleReplay():
     stages_data["battleReplay"] = request_data["battleReplay"]
 
     userData.set_user_data(accounts.get_uid(), player_data)
-
 
     data = {
         "playerDataDelta": {
@@ -1639,7 +1113,7 @@ def questSaveBattleReplay():
     return data
 
 
-def questGetBattleReplay():
+def questGetBattleReplay() -> Response:
 
     data = request.data
     request_data = request.get_json()
@@ -1649,32 +1123,14 @@ def questGetBattleReplay():
     server_config = read_json(CONFIG_PATH)
     
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
 
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
-        data ={
-            "result": 2,
-            "error": "此账户不存在"
-        }
-        return data
+        return abort(500)
     
     accounts = Account(*result[0])
-    
-    if accounts.get_ban() == 1:
-        data = {
-            "statusCode": 403,
-            "error": "Bad Request",
-            "message": "Your account has been banned"
-        }
-        return data
-    
     player_data = json.loads(accounts.get_user())
     
     data = {
@@ -1688,7 +1144,7 @@ def questGetBattleReplay():
     return data
 
 
-def questChangeSquadName():
+def questChangeSquadName() -> Response:
 
     data = request.data
     request_data = request.get_json()
@@ -1699,32 +1155,14 @@ def questChangeSquadName():
     server_config = read_json(CONFIG_PATH)
     
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
 
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
-        data ={
-            "result": 2,
-            "error": "此账户不存在"
-        }
-        return data
+        return abort(500)
     
     accounts = Account(*result[0])
-    
-    if accounts.get_ban() == 1:
-        data = {
-            "statusCode": 403,
-            "error": "Bad Request",
-            "message": "Your account has been banned"
-        }
-        return data
-    
     player_data = json.loads(accounts.get_user())
     player_data["troop"]["squads"][squadId]["name"] = name
 
@@ -1746,7 +1184,7 @@ def questChangeSquadName():
     return data
 
 
-def questSquadFormation():
+def questSquadFormation() -> Response:
 
     data = request.data
     request_data = request.get_json()
@@ -1756,32 +1194,14 @@ def questSquadFormation():
     server_config = read_json(CONFIG_PATH)
     
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
 
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
-        data ={
-            "result": 2,
-            "error": "此账户不存在"
-        }
-        return data
+        return abort(500)
     
     accounts = Account(*result[0])
-    
-    if accounts.get_ban() == 1:
-        data = {
-            "statusCode": 403,
-            "error": "Bad Request",
-            "message": "Your account has been banned"
-        }
-        return data
-    
     player_data = json.loads(accounts.get_user())
     player_data["troop"]["squads"][str(squadId)]["slots"] = request_data["slots"]
 
@@ -1803,7 +1223,7 @@ def questSquadFormation():
     return data
 
 
-def questGetAssistList():
+def questGetAssistList() -> Response:
 
     data = request.data
     request_data = request.get_json()
@@ -1813,33 +1233,24 @@ def questGetAssistList():
     server_config = read_json(CONFIG_PATH)
     
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
 
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
-        data ={
-            "result": 2,
-            "error": "此账户不存在"
-        }
-        return data
+        return abort(500)
     
     accounts = Account(*result[0])
+    friend_data = json.loads(accounts.get_friend())
+    friend_list = friend_data["list"]
     
-    if accounts.get_ban() == 1:
-        data = {
-            "statusCode": 403,
-            "error": "Bad Request",
-            "message": "Your account has been banned"
-        }
-        return data
-    
-    friend_list = json.loads(accounts.get_friend())["list"]
+    for friend in friend_list:
+        result = userData.query_account_by_uid(friend["uid"])
+        if len(result) == 0:
+            friend_list.remove(friend)
+            
+    userData.set_friend_data(accounts.get_uid(), friend_data)
+
     assist_char_array = []
     assistList = []
     friend_array = []
@@ -1985,7 +1396,7 @@ def questGetAssistList():
     return data
 
 
-def questFinishStoryStage():
+def questFinishStoryStage() -> Response:
     
     data = request.data
     request_data = request.get_json()
@@ -1997,32 +1408,14 @@ def questFinishStoryStage():
     STAGE_TABLE = updateData(STAGE_TABLE_URL, True)
     
     if not server_config["server"]["enableServer"]:
-        data = {
-            "statusCode": 400,
-            "error": "Bad Request",
-            "message": "Server is close"
-        }
-        return data
+        return abort(400)
 
     result = userData.query_account_by_secret(secret)
     
     if len(result) != 1:
-        data ={
-            "result": 2,
-            "error": "此账户不存在"
-        }
-        return data
+        return abort(500)
     
     accounts = Account(*result[0])
-    
-    if accounts.get_ban() == 1:
-        data = {
-            "statusCode": 403,
-            "error": "Bad Request",
-            "message": "Your account has been banned"
-        }
-        return data
-    
     player_data = json.loads(accounts.get_user())
     stage_state = player_data["dungeon"]["stages"][stageId]["state"]
     dropRate = server_config["developer"]["dropRate"]

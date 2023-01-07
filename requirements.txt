@@ -4,6 +4,7 @@ requests
 mitmproxy
 frida
 pycryptodome
+pure-python-adb
 pymysql
 wtforms
 tqdm

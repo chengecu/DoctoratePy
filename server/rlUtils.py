@@ -6,8 +6,6 @@ from constants import RL_TABLE_URL, CHARACTER_TABLE_URL, USER_JSON_PATH, \
 from utils import read_json
 from core.function.update import updateData
 
-RL_TABLE = updateData(RL_TABLE_URL)
-CHARACTER_TABLE = updateData(CHARACTER_TABLE_URL)
 
 POPULATION_RECRUIT_MAP = {
     "0": 0,
@@ -48,6 +46,8 @@ def process_buff(rl_data: dict, buff_data: dict):
     return rl_data
 
 def process_relic(rl_data: dict, relics: list):
+    
+    RL_TABLE = updateData(RL_TABLE_URL, True)
 
     relic_dict = RL_TABLE["details"]["rogue_1"]["relics"]
 
@@ -144,6 +144,9 @@ def generate_recruit_list(rl_data: dict, recruit_ticket_key: str):
     cnt = 0
     recruit_char_list = []
     recruited_dict = {}
+
+    RL_TABLE = updateData(RL_TABLE_URL, True)
+    CHARACTER_TABLE = updateData(CHARACTER_TABLE_URL, True)
 
     user_data = read_json(USER_JSON_PATH)["user"]["troop"]["chars"]
     rlv2_temp_buff = read_json(RLV2_TEMPBUFF_JSON_PATH)

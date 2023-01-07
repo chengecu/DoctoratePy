@@ -14,7 +14,7 @@ connection = pymysql.connect(
 )
 
 
-def initDB():
+def initDB() -> None:
 
     try:
         cursor = connection.cursor()
@@ -31,7 +31,7 @@ def initDB():
         connection.close()
     
     
-def insertUserTable():
+def insertUserTable() -> None:
 
     cursor = connection.cursor()
     cursor.execute("SET NAMES utf8mb4")
@@ -58,7 +58,7 @@ def insertUserTable():
     cursor.close()
 
 
-def insertMailTable():
+def insertMailTable() -> None:
 
     cursor = connection.cursor()
     cursor.execute("""CREATE TABLE mail (

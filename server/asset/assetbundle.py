@@ -9,7 +9,9 @@ from constants import CONFIG_PATH
 from core.function.loadMods import loadMods
 from utils import read_json, write_json
 
-header = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36 Edg/105.0.1343.53"}
+header = {
+    "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36 Edg/105.0.1343.53"
+}
 MODS_LIST = {
     "mods": [],
     "name": [],
@@ -18,15 +20,15 @@ MODS_LIST = {
 }
 
 
-def writeLog(data):
+def writeLog(data: str) -> None:
 
     time = datetime.now().strftime("%d/%b/%Y %H:%M:%S")
     clientIp = socket.gethostbyname(socket.gethostname())
     print(f'{clientIp} - - [{time}] {data}')
-
-
-def getFile(assetsHash, fileName):
-
+        
+    
+def getFile(assetsHash: str, fileName: str) -> bytes:
+    
     global MODS_LIST
     server_config = read_json(CONFIG_PATH)
     version = server_config["version"]["android"]["resVersion"]
@@ -49,10 +51,11 @@ def getFile(assetsHash, fileName):
         temp_hot_update_path = os.path.join(basePath, "hot_update_list.json")
         hot_update = read_json(temp_hot_update_path)
         if os.path.exists(filePath):
-            for pack in hot_update["packInfos"]:
-                if pack["name"] == fileName.rsplit(".", 1)[0]:
-                    wrongSize = os.path.getsize(filePath) != pack["totalSize"]
-                    break
+            for type in [hot_update["packInfos"], hot_update["abInfos"]]:
+                for pack in type:
+                    if pack["name"] == fileName.rsplit(".", 1)[0]:
+                        wrongSize = os.path.getsize(filePath) != pack["totalSize"]
+                        break
 
     if server_config["assets"]["enableMods"] and fileName in MODS_LIST["download"]:
         for mod, path in zip(MODS_LIST["download"], MODS_LIST["path"]):
@@ -61,22 +64,22 @@ def getFile(assetsHash, fileName):
                 filePath = path
 
     writeLog('/{}/{}'.format(version, fileName))
-
+    
     return export('https://ak.hycdn.cn/assetbundle/official/Android/assets/{}/{}'.format(version, fileName), filePath, assetsHash, wrongSize)
 
 
-def downloadFile(url, filePath):
+def downloadFile(url: str, filePath: str) -> None:
 
     writeLog('\033[1;33mDownload {}\033[0;0m'.format(os.path.basename(filePath)))
-    file = requests.get(url, headers=header, stream=True)
-
+    res = requests.get(url, headers=header, stream=True)
     with open(filePath, 'wb') as f:
-        for chunk in file.iter_content(chunk_size=512):
-            f.write(chunk)
-            yield chunk
+        for chunk in res.iter_content(chunk_size=512):
+            if chunk:
+                f.write(chunk)
+                yield chunk
 
 
-def export(url, filePath, assetsHash, redownload = False):
+def export(url: str, filePath: str, assetsHash: str, redownload: bool = False) -> Response:
 
     server_config = read_json(CONFIG_PATH)
 
