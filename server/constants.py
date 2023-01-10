@@ -17,6 +17,7 @@ RETRO_TABLE_URL = BASE_URL + "/excel/retro_table.json"
 HANDBOOK_INFO_TABLE_URL = BASE_URL + "/excel/handbook_info_table.json"
 ITEM_TABLE_URL = BASE_URL + "/excel/item_table.json"
 MEDAL_TABLE_URL = BASE_URL + "/excel/medal_table.json"
+TOWER_TABLE_URL = BASE_URL + "/excel/climb_tower_table.json"
 
 # DATA Urls
 BUILDING_DATA_URL = BASE_URL + "/excel/building_data.json"
