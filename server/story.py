@@ -1,3 +1,4 @@
+import re
 import json
 from flask import Response, request, abort
 
@@ -27,6 +28,10 @@ def storyFinishStory() -> Response:
     accounts = Account(*result[0])
     player_data = json.loads(accounts.get_user())
     player_data["status"]["flags"][storyId] = 1
+    
+    # TODO
+    #if "obt" in storyId and not re.match(r"obt/.*main_0[9]|obt/.*main_[1-9][0-9]", storyId):
+        #player_data["status"]["progress"] += 200
 
     userData.set_user_data(accounts.get_uid(), player_data)
     
@@ -35,7 +40,10 @@ def storyFinishStory() -> Response:
         "playerDataDelta": {
             "deleted": {},
             "modified": {
-                "status": player_data["status"]
+                "status": {
+                    "flags": player_data["status"]["flags"],
+                    #"progress": player_data["status"]["progress"]
+                }
             }
         }
     }

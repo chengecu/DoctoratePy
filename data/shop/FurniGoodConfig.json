@@ -1,0 +1,22 @@
+{
+    "items": {
+        "groups": [
+            {
+                "tagName": "近卫局休息室",
+                "param1": "s2_01_2019",
+                "hasDia": true
+            },
+            {
+                "tagName": "仿龙门式休息室",
+                "param1": "s2_02_2019",
+                "hasDia": true
+            },
+            {
+                "tagName": "哥伦比亚咖啡馆",
+                "param1": "cafe_2020",
+                "hasDia": false
+            }
+        ]
+    },
+    "thash": "cbe4d610-3908-517b-8133-5e5246f9b83d"
+}

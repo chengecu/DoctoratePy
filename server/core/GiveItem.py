@@ -1,5 +1,5 @@
 from time import time
-from typing import Union, Dict, List
+from typing import Union, Dict, List, Tuple
 from constants import CHARACTER_TABLE_URL, CHARWORD_TABLE_URL, EQUIP_TABLE_URL, \
     GAMEDATA_CONST_URL
 from core.function.update import updateData
@@ -10,22 +10,21 @@ def giveItems(player_data: Dict,
               reward_type: str = None,
               reward_count: int = 0,
               time_limit : int = -1,
-              status: str = "OTHERS") -> Union[List, Dict]:
+              status: str = "OTHERS") -> Union[List, Dict, Tuple]:
     '''
     status: 
-        "GET_BATTLE_CHAR" -> [charGet troop] - List
+        "GET_BATTLE_CHAR" -> charGet, troop - Tuple
         "GET_SHOP_ITEM" -> items - List
         "OTHERS" -> player_data - Dict
     '''
     
-    CHARACTER_TABLE = updateData(CHARACTER_TABLE_URL, True)
-    CHARWORD_TABLE = updateData(CHARWORD_TABLE_URL, True)
-    EQUIP_TABLE = updateData(EQUIP_TABLE_URL, True)
-    GAMEDATA_CONST = updateData(GAMEDATA_CONST_URL, True)
-    
     items = []
 
     if reward_type == "CHAR":
+        CHARACTER_TABLE = updateData(CHARACTER_TABLE_URL, True)
+        CHARWORD_TABLE = updateData(CHARWORD_TABLE_URL, True)
+        EQUIP_TABLE = updateData(EQUIP_TABLE_URL, True)
+
         item = {}
         troop = {}
         charGet = {}
@@ -202,10 +201,7 @@ def giveItems(player_data: Dict,
             }
             item_get.append(new_item_get_2)
             get_char["itemGet"] = item_get
-            try:
-                player_data["inventory"][f"p_{random_char_id}"] += 1
-            except:
-                player_data["inventory"][f"p_{random_char_id}"] = 1
+            player_data["inventory"][f"p_{random_char_id}"] = player_data["inventory"].get(f"p_{random_char_id}", 0) + 1
 
             charGet = get_char
 
@@ -303,15 +299,15 @@ def giveItems(player_data: Dict,
         player_data["status"]["socialPoint"] += reward_count
 
     if reward_type == "FURN":
-        if reward_id not in player_data["building"]["furniture"]:
-            furniture = {
-                "count": 1,
-                "inUse": 0
-            }
-            player_data["building"]["furniture"][reward_id] = furniture
-        player_data["building"]["furniture"][reward_id]["count"] += 1
+        furniture = player_data["building"]["furniture"].setdefault(reward_id, {"count": 0, "inUse": 0})
+        furniture["count"] += reward_count
+        player_data["building"]["solution"]["furnitureTs"].update({
+            reward_id: int(time())
+        })
 
     if reward_type == "EXP_PLAYER":
+        GAMEDATA_CONST = updateData(GAMEDATA_CONST_URL, True)
+
         playerExpMap = GAMEDATA_CONST["playerExpMap"]
         playerApMap = GAMEDATA_CONST["playerApMap"]
         maxPlayerLevel = GAMEDATA_CONST["maxPlayerLevel"]
@@ -340,25 +336,18 @@ def giveItems(player_data: Dict,
                        "LMTGS_COIN", "LIMITED_TKT_GACHA_10", "LINKAGE_TKT_GACHA_10", "VOUCHER_PICK",
                        "VOUCHER_LEVELMAX_6", "VOUCHER_LEVELMAX_5", "VOUCHER_ELITE_II_5", "VOUCHER_SKIN",
                        "VOUCHER_CGACHA", "OPTIONAL_VOUCHER_PICK", "VOUCHER_MGACHA", "ACTIVITY_POTENTIAL"]:
-        if reward_id not in player_data["consumable"]:
-            num_set = []
-            for _, value in player_data["consumable"].items():
-                if value != {}:
-                    num_set.append(int(list(value.keys())[0]))
-            consumableId = str(max(num_set)+ 1) if len(num_set) != 0 else "1"
-            player_data["consumable"][reward_id] = {
-                consumableId: {
-                    "ts": time_limit,
-                    "count": reward_count
-                }
+        consumable_set = set(int(list(item.keys())[0]) for item in player_data["consumable"].values() if item!={})
+        consumableId = str(max(consumable_set) + 1) if consumable_set else '1'
+        player_data["consumable"][reward_id] = {
+            consumableId: {
+                "ts": time_limit,
+                "count": reward_count
             }
+        }
         
     if reward_type in ["CARD_EXP", "EPGS_COIN", "REP_COIN", "RETRO_COIN",
                        "MATERIAL", "VOUCHER_FULL_POTENTIAL"]:
-        try:
-            player_data["inventory"][reward_id] += reward_count
-        except:
-            player_data["inventory"][reward_id] = reward_count
+        player_data["inventory"][reward_id] = player_data["inventory"].get(reward_id, 0) + reward_count
             
     if reward_type in ["CRS_SHOP_COIN", "CRS_RUNE_COIN", "UNI_COLLECTION",
                        "ACTIVITY_COIN", "ACTIVITY_ITEM", "ET_STAGE", "RL_COIN",
@@ -374,7 +363,7 @@ def giveItems(player_data: Dict,
         items.append(item)
     
     if status == "GET_BATTLE_CHAR":
-        return charGet
+        return charGet, troop
     elif status == "GET_SHOP_ITEM":
         return items
     else:

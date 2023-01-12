@@ -1,0 +1,121 @@
+{
+    "items": {
+        "common": [
+            {
+                "goodId": "good_REP_1",
+                "goodType": "NORMAL",
+                "startTime": 1597132800,
+                "item": {
+                    "id": "4003",
+                    "count": 100,
+                    "type": "DIAMOND_SHD"
+                },
+                "price": 20,
+                "sortId": 1,
+                "availCount": 300
+            },
+            {
+                "goodId": "good_REP_101",
+                "goodType": "NORMAL",
+                "startTime": 1597132800,
+                "item": {
+                    "id": "4001",
+                    "count": 2000,
+                    "type": "GOLD"
+                },
+                "price": 15,
+                "sortId": 18,
+                "availCount": 225
+            },
+            {
+                "goodId": "good_REP_102",
+                "goodType": "NORMAL",
+                "startTime": 1597132800,
+                "item": {
+                    "id": "2004",
+                    "count": 1,
+                    "type": "CARD_EXP"
+                },
+                "price": 15,
+                "sortId": 19,
+                "availCount": 300
+            },
+            {
+                "goodId": "good_REP_103",
+                "goodType": "NORMAL",
+                "startTime": 1597132800,
+                "item": {
+                    "id": "3303",
+                    "count": 1,
+                    "type": "MATERIAL"
+                },
+                "price": 20,
+                "sortId": 20,
+                "availCount": 300
+            }
+        ],
+        "materials": {
+            "30064": {
+                "startTime": 1597132800,
+                "price": 85
+            },
+            "30014": {
+                "startTime": 1597132800,
+                "price": 50
+            },
+            "30054": {
+                "startTime": 1601539200,
+                "price": 65
+            },
+            "30024": {
+                "startTime": 1601539200,
+                "price": 60
+            },
+            "30044": {
+                "startTime": 1606809600,
+                "price": 70
+            },
+            "30034": {
+                "startTime": 1606809600,
+                "price": 60
+            },
+            "30094": {
+                "startTime": 1617091200,
+                "price": 60
+            },
+            "30084": {
+                "startTime": 1617091200,
+                "price": 60
+            },
+            "31024": {
+                "startTime": 1623916800,
+                "price": 60
+            },
+            "31014": {
+                "startTime": 1623916800,
+                "price": 50
+            },
+            "30104": {
+                "startTime": 1626768000,
+                "price": 65
+            },
+            "31034": {
+                "startTime": 1626768000,
+                "price": 70
+            },
+            "30074": {
+                "startTime": 1633075200,
+                "price": 50
+            },
+            "31044": {
+                "startTime": 1638864000,
+                "price": 55
+            },
+            "31054": {
+                "startTime": 1638864000,
+                "price": 55
+            }
+        }
+    },
+    "thash": "f956ab9a-c1df-56b8-a314-e082aba5bf10"
+}

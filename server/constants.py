@@ -11,6 +11,7 @@ BATTLEEQUIP_TABLE_URL = BASE_URL + "/excel/battle_equip_table.json"
 EQUIP_TABLE_URL = BASE_URL + "/excel/uniequip_table.json"
 STORY_TABLE_URL = BASE_URL + "/excel/story_table.json"
 STAGE_TABLE_URL = BASE_URL + "/excel/stage_table.json"
+SHOP_CLIENT_TABLE_URL = BASE_URL + "/excel/shop_client_table.json"
 RL_TABLE_URL = BASE_URL + "/excel/roguelike_topic_table.json"
 DM_TABLE_URL = BASE_URL + "/excel/display_meta_table.json"
 RETRO_TABLE_URL = BASE_URL + "/excel/retro_table.json"
@@ -30,8 +31,17 @@ SYNC_DATA_TEMPLATE_PATH = "syncData.json"
 
 # Shop Data
 ALLPRODUCT_LIST_PATH = "data\\shop\\AllProductList.json"
-LOWGOODPRICE_LIST_PATH = "data\\shop\\LowGoodConfig.json"
-SKINPRICE_LIST_PATH = "data\\shop\\SkinConfig.json"
+EPGSGOOD_CONFIG_PATH = "data\\shop\\EPGSGoodConfig.json"
+EXTRAGOOD_LIST_PATH = "data\\shop\\ExtraGoodList.json"
+LOWGOOD_CONFIG_PATH = "data\\shop\\LowGoodConfig.json"
+HIGHGOOD_CONFIG_PATH = "data\\shop\\HighGoodConfig.json"
+SKIN_CONFIG_PATH = "data\\shop\\SkinConfig.json"
+REPGOOD_CONFIG_PATH = "data\\shop\\RepGoodConfig.json"
+FURNIOOD_CONFIG_PATH = "data\\shop\\FurniGoodConfig.json"
+
+# Announce Meta
+ANNOUNCEMENT_META_PATH = "data\\announce\\announcement.meta.json"
+PREANNOUNCEMENT_META_PATH = "data\\announce\\preannouncement.meta.json"
 
 # User Data
 USER_JSON_PATH = "data\\user\\user.json"

@@ -354,12 +354,17 @@ def userRegister() -> Response:
         }
         return data
     
-    if len(userData.query_account_by_phone(account)) != 0:
-        data = {
-            "result": 5,
-            "errMsg": "该账户已存在，请检查注册信息"
-        }
-        return data
+    result = userData.query_account_by_phone(account)
+
+    if len(result) != 0:
+        if Account(*result[0]).get_user() != "{}": 
+            data = {
+                "result": 5,
+                "errMsg": "该账户已存在，请检查注册信息"
+            }
+            return data
+        else:
+            userData.delete_account(Account(*result[0]).get_uid())
 
     if captcha == "" and not verifySmsCode(smsCode):
         data = {
@@ -707,6 +712,9 @@ def userAuth() -> Response:
         return abort(500)
     
     accounts = Account(*result[0])
+
+    if accounts.get_user() == "{}":
+        return abort(500)
         
     data = {
         "uid": accounts.get_uid(),

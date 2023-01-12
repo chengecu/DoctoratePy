@@ -1,191 +1,185 @@
 {
     "items": {
-        "7003": {
-            "originPrice": 240,
-            "price": 240,
-            "availCount": 2,
-            "count": 1
+        "group_1": {
+            "7003": {
+                "originPrice": 240,
+                "price": 240,
+                "availCount": 2,
+                "count": 1
+            },
+            "7001": {
+                "originPrice": 8,
+                "price": 8,
+                "availCount": 15,
+                "count": 1
+            },
+            "4003": {
+                "originPrice": 40,
+                "price": 40,
+                "availCount": 6,
+                "count": 100
+            },
+            "2003": {
+                "originPrice": 10,
+                "price": 10,
+                "availCount": 15,
+                "count": 4
+            },
+            "4001": {
+                "originPrice": 10,
+                "price": 10,
+                "availCount": 15,
+                "count": 4000
+            },
+            "3003": {
+                "originPrice": 10,
+                "price": 10,
+                "availCount": 15,
+                "count": 8
+            },
+            "3401": {
+                "originPrice": 40,
+                "price": 40,
+                "availCount": 5,
+                "count": 100
+            }
         },
-        "7001": {
-            "originPrice": 8,
-            "price": 8,
-            "availCount": 15,
-            "count": 1
+        "group_2": {
+            "voucher_recruitR3_1": {
+                "originPrice": 200,
+                "price": 200,
+                "availCount": 1,
+                "count": 1
+            },
+            "voucher_recruitR4_1": {
+                "originPrice": 750,
+                "price": 750,
+                "availCount": 1,
+                "count": 1
+            },
+            "7003": {
+                "originPrice": 450,
+                "price": 450,
+                "availCount": 2,
+                "count": 1
+            },
+            "7001": {
+                "originPrice": 15,
+                "price": 15,
+                "availCount": 20,
+                "count": 1
+            },
+            "30013": {
+                "originPrice": 25,
+                "price": 25,
+                "availCount": 15,
+                "count": 1
+            },
+            "30023": {
+                "originPrice": 30,
+                "price": 30,
+                "availCount": 15,
+                "count": 1
+            },
+            "30033": {
+                "originPrice": 30,
+                "price": 30,
+                "availCount": 15,
+                "count": 1
+            },
+            "30043": {
+                "originPrice": 35,
+                "price": 35,
+                "availCount": 15,
+                "count": 1
+            },
+            "30053": {
+                "originPrice": 35,
+                "price": 35,
+                "availCount": 15,
+                "count": 1
+            },
+            "30063": {
+                "originPrice": 45,
+                "price": 45,
+                "availCount": 10,
+                "count": 1
+            },
+            "30073": {
+                "originPrice": 30,
+                "price": 30,
+                "availCount": 15,
+                "count": 1
+            },
+            "30083": {
+                "originPrice": 35,
+                "price": 35,
+                "availCount": 15,
+                "count": 1
+            },
+            "30093": {
+                "originPrice": 40,
+                "price": 40,
+                "availCount": 15,
+                "count": 1
+            },
+            "30103": {
+                "originPrice": 45,
+                "price": 45,
+                "availCount": 10,
+                "count": 1
+            },
+            "31013": {
+                "originPrice": 40,
+                "price": 40,
+                "availCount": 15,
+                "count": 1
+            },
+            "31023": {
+                "originPrice": 35,
+                "price": 35,
+                "availCount": 10,
+                "count": 1
+            },
+            "31033": {
+                "originPrice": 30,
+                "price": 30,
+                "availCount": 10,
+                "count": 1
+            },
+            "31043": {
+                "originPrice": 40,
+                "price": 40,
+                "availCount": 10,
+                "count": 1
+            },
+            "31053": {
+                "originPrice": 40,
+                "price": 40,
+                "availCount": 10,
+                "count": 1
+            },
+            "31063": {
+                "originPrice": 45,
+                "price": 45,
+                "availCount": 10,
+                "count": 1
+            }
         },
-        "4003": {
-            "originPrice": 40,
-            "price": 40,
-            "availCount": 6,
-            "count": 100
-        },
-        "2003": {
-            "originPrice": 10,
-            "price": 10,
-            "availCount": 15,
-            "count": 4
-        },
-        "4001": {
-            "originPrice": 10,
-            "price": 10,
-            "availCount": 15,
-            "count": 4000
-        },
-        "3003": {
-            "originPrice": 10,
-            "price": 10,
-            "availCount": 15,
-            "count": 8
-        },
-        "3401": {
-            "originPrice": 40,
-            "price": 40,
-            "availCount": 5,
-            "count": 100
-        },
-        "voucher_recruitR3_1": {
-            "originPrice": 200,
-            "price": 200,
-            "availCount": 1,
-            "count": 1
-        },
-        "voucher_recruitR4_1": {
-            "originPrice": 750,
-            "price": 750,
-            "availCount": 1,
-            "count": 1
-        },
-        "7003 ": {
-            "originPrice": 450,
-            "price": 450,
-            "availCount": 2,
-            "count": 1
-        },
-        "7001 ": {
-            "originPrice": 15,
-            "price": 15,
-            "availCount": 20,
-            "count": 1
-        },
-        "30013": {
-            "originPrice": 25,
-            "price": 25,
-            "availCount": 15,
-            "count": 1
-        },
-        "30023": {
-            "originPrice": 30,
-            "price": 30,
-            "availCount": 15,
-            "count": 1
-        },
-        "30033": {
-            "originPrice": 30,
-            "price": 30,
-            "availCount": 15,
-            "count": 1
-        },
-        "30043": {
-            "originPrice": 35,
-            "price": 35,
-            "availCount": 15,
-            "count": 1
-        },
-        "30053": {
-            "originPrice": 35,
-            "price": 35,
-            "availCount": 15,
-            "count": 1
-        },
-        "30063": {
-            "originPrice": 45,
-            "price": 45,
-            "availCount": 10,
-            "count": 1
-        },
-        "30073": {
-            "originPrice": 30,
-            "price": 30,
-            "availCount": 15,
-            "count": 1
-        },
-        "30083": {
-            "originPrice": 35,
-            "price": 35,
-            "availCount": 15,
-            "count": 1
-        },
-        "30093": {
-            "originPrice": 40,
-            "price": 40,
-            "availCount": 15,
-            "count": 1
-        },
-        "30103": {
-            "originPrice": 45,
-            "price": 45,
-            "availCount": 10,
-            "count": 1
-        },
-        "31013": {
-            "originPrice": 40,
-            "price": 40,
-            "availCount": 15,
-            "count": 1
-        },
-        "31023": {
-            "originPrice": 35,
-            "price": 35,
-            "availCount": 10,
-            "count": 1
-        },
-        "31033": {
-            "originPrice": 30,
-            "price": 30,
-            "availCount": 10,
-            "count": 1
-        },
-        "31043": {
-            "originPrice": 40,
-            "price": 40,
-            "availCount": 10,
-            "count": 1
-        },
-        "31053": {
-            "originPrice": 40,
-            "price": 40,
-            "availCount": 10,
-            "count": 1
-        },
-        "31063": {
-            "originPrice": 45,
-            "price": 45,
-            "availCount": 10,
-            "count": 1
-        },
-        "4001 ": {
-            "originPrice": 100,
-            "price": 100,
-            "availCount": 15,
-            "count": 10000
-        },
-        "4003 ": {
-            "originPrice": 50,
-            "price": 50,
-            "availCount": -1,
-            "count": 30
+        "group_3": {
+            "4001": {
+                "originPrice": 100,
+                "price": 100,
+                "availCount": 15,
+                "count": 10000
+            },
+            "4003": {
+                "originPrice": 50,
+                "price": 50,
+                "availCount": -1,
+                "count": 30
+            }
         }
     },
-    "groupIndex": [
-        [
-            7
-        ],
-        [
-            7,
-            27
-        ],
-        [
-            27,
-            29
-        ]
-    ]
+    "thash": "41082f37-8750-5972-93fa-ae37a72b5ea7"
 }

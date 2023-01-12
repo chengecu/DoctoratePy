@@ -89,7 +89,6 @@ def decrypt_battle_data(data: str, login_time: int) -> Dict:
 def decrypt_battle_replay(battle_replay: str) -> Dict:
 
     data = base64.decodebytes(battle_replay.encode())
-    b = None
     try:
         bis = BytesIO(data)
         zip = ZipFile(bis)

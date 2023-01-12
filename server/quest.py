@@ -74,7 +74,7 @@ def questBattleStart() -> Response:
     if request_data["squad"] is not None:
         slots = request_data["squad"]["slots"]
         for char in slots:
-            if char is not None:
+            if char not in ["", None]:
                 charInstId = str(char["charInstId"])
                 if charInstId in chars_data:
                     if dangerLevel in ["-", None]:

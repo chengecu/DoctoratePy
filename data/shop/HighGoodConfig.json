@@ -1,0 +1,197 @@
+{
+    "items": {
+        "chars": [
+            "char_400_weedy",
+            "char_436_whispr"
+        ],
+        "normal": {
+            "芯片助剂": {
+                "id": "32001",
+                "price": 15,
+                "availCount": 30
+            },
+            "模组数据块": {
+                "id": "mod_unlock_token",
+                "price": 20,
+                "availCount": 4
+            }
+        },
+        "rules": [
+            4,
+            6
+        ],
+        "materials": {
+            "白马醇": {
+                "id": "30074",
+                "price": 10
+            },
+            "三水锰矿": {
+                "id": "30084",
+                "price": 10
+            },
+            "五水研磨石": {
+                "id": "30094",
+                "price": 10
+            },
+            "RMA70-24": {
+                "id": "30104",
+                "price": 15
+            },
+            "提纯源岩": {
+                "id": "30014",
+                "price": 10
+            },
+            "改量装置": {
+                "id": "30064",
+                "price": 20
+            },
+            "聚酸酯块": {
+                "id": "30034",
+                "price": 10
+            },
+            "糖聚块": {
+                "id": "30024",
+                "price": 10
+            },
+            "异铁块": {
+                "id": "30044",
+                "price": 15
+            },
+            "酮阵列": {
+                "id": "30054",
+                "price": 15
+            },
+            "聚合凝胶": {
+                "id": "31014",
+                "price": 15
+            },
+            "炽合金块": {
+                "id": "31024",
+                "price": 15
+            },
+            "晶体电路": {
+                "id": "31034",
+                "price": 15
+            },
+            "精炼溶剂": {
+                "id": "31044",
+                "price": 15
+            },
+            "切削原液": {
+                "id": "31054",
+                "price": 15
+            },
+            "转质盐聚块": {
+                "id": "31064",
+                "price": 15
+            }
+        }
+    },
+    "progress": {
+        "AAA": [
+            {
+                "order": 1,
+                "price": 10,
+                "displayName": "寻访凭证",
+                "item": {
+                    "id": "7003",
+                    "count": 1,
+                    "type": "TKT_GACHA"
+                }
+            },
+            {
+                "order": 2,
+                "price": 18,
+                "displayName": "寻访凭证",
+                "item": {
+                    "id": "7003",
+                    "count": 2,
+                    "type": "TKT_GACHA"
+                }
+            },
+            {
+                "order": 3,
+                "price": 40,
+                "displayName": "寻访凭证",
+                "item": {
+                    "id": "7003",
+                    "count": 5,
+                    "type": "TKT_GACHA"
+                }
+            },
+            {
+                "order": 4,
+                "price": 70,
+                "displayName": "批量寻访凭证 ",
+                "item": {
+                    "id": "7004",
+                    "count": 1,
+                    "type": "TKT_GACHA_10"
+                }
+            },
+            {
+                "order": 5,
+                "price": 120,
+                "displayName": "批量寻访凭证",
+                "item": {
+                    "id": "7004",
+                    "count": 2,
+                    "type": "TKT_GACHA_10"
+                }
+            }
+        ],
+        "BBB": [
+            {
+                "order": 1,
+                "price": 5,
+                "displayName": "加急许可",
+                "item": {
+                    "id": "7002",
+                    "count": 1,
+                    "type": "TKT_INST_FIN"
+                }
+            },
+            {
+                "order": 2,
+                "price": 9,
+                "displayName": "加急许可",
+                "item": {
+                    "id": "7002",
+                    "count": 2,
+                    "type": "TKT_INST_FIN"
+                }
+            },
+            {
+                "order": 3,
+                "price": 24,
+                "displayName": "加急许可",
+                "item": {
+                    "id": "7002",
+                    "count": 6,
+                    "type": "TKT_INST_FIN"
+                }
+            },
+            {
+                "order": 4,
+                "price": 40,
+                "displayName": "加急许可",
+                "item": {
+                    "id": "7002",
+                    "count": 12,
+                    "type": "TKT_INST_FIN"
+                }
+            },
+            {
+                "order": 5,
+                "price": 60,
+                "displayName": "加急许可",
+                "item": {
+                    "id": "7002",
+                    "count": 20,
+                    "type": "TKT_INST_FIN"
+                }
+            }
+        ]
+    },
+    "thash": "268d920f-9bef-54c5-bfa7-083f47fbfb63"
+}

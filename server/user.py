@@ -286,9 +286,12 @@ def userExchangeDiamondShard() -> Response:
             "errMsg": "至纯源石不足，是否前往商店购买至纯源石？"
         }
         return data
+
+    if request.user_agent.platform == "iphone":
+        player_data["status"]["iosDiamond"] -= count
+    else:
+        player_data["status"]["androidDiamond"] -= count
     
-    player_data["status"]["androidDiamond"] -= count
-    player_data["status"]["iosDiamond"] -= count
     player_data["status"]["diamondShard"] += count * 180
 
     userData.set_user_data(accounts.get_uid(), player_data)
@@ -338,8 +341,11 @@ def userBuyAp() -> Response:
                 player_data["status"]["ap"] += addAp
                 player_data["status"]["lastApAddTime"] = time_now
 
-    player_data["status"]["androidDiamond"] -= 1
-    player_data["status"]["iosDiamond"] -= 1
+    if request.user_agent.platform == "iphone":
+        player_data["status"]["iosDiamond"] -= 1
+    else:
+        player_data["status"]["androidDiamond"] -= 1
+    
     player_data["status"]["ap"] += player_data["status"]["maxAp"]
     player_data["status"]["lastApAddTime"] = time_now
     player_data["status"]["buyApRemainTimes"] = player_data["status"]["buyApRemainTimes"]

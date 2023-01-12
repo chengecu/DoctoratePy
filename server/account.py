@@ -1,4 +1,5 @@
 import json
+from turtle import update
 from flask import Response, request, abort
 
 from time import time
@@ -6,7 +7,7 @@ from core.function.update import updateData
 from constants import CONFIG_PATH, CHARACTER_TABLE_URL, CHARWORD_TABLE_URL, \
     EQUIP_TABLE_URL, GACHA_TABLE_URL, SYNC_DATA_TEMPLATE_PATH, ITEM_TABLE_URL, \
     STAGE_TABLE_URL, MEDAL_TABLE_URL, BUILDING_DATA_URL, RL_TABLE_URL, SKIN_TABLE_URL, \
-    GAMEDATA_CONST_URL
+    GAMEDATA_CONST_URL, SHOP_CLIENT_TABLE_URL, ANNOUNCEMENT_META_PATH
 from utils import read_json
 from core.database import userData
 from core.Account import Account
@@ -40,6 +41,7 @@ def accountLogin() -> Response:
     
     accounts = Account(*result[0])
     server_config = read_json(CONFIG_PATH)
+    player_data = json.loads(accounts.get_user())
     
     if accounts.get_ban() == 1:
         data = {
@@ -61,7 +63,6 @@ def accountLogin() -> Response:
     
     try:
         if accounts.get_user() != "{}":
-            player_data = json.loads(accounts.get_user())
             registerTs = player_data["status"]["registerTs"]
 
             if int(time()) < registerTs:
@@ -82,6 +83,12 @@ def accountLogin() -> Response:
         syncData["status"]["lastApAddTime"] = ts
         
         userData.set_user_data(accounts.get_uid(), syncData)
+
+    if "checkMeta" not in player_data:
+        player_data["checkMeta"] = {
+            "version": 65230,
+            "ts": 1618436227
+        }
 
     data = {
         "result": 0,
@@ -130,6 +137,7 @@ def accountSyncData() -> Response:
     updateData(STAGE_TABLE_URL)
     updateData(MEDAL_TABLE_URL)
     updateData(SKIN_TABLE_URL)
+    updateData(SHOP_CLIENT_TABLE_URL)
     updateData(GAMEDATA_CONST_URL)
     updateData(BUILDING_DATA_URL)
 
@@ -145,8 +153,10 @@ def accountSyncData() -> Response:
 def accountSyncStatus() -> Response:
     
     data = request.data
+    request_data = request.get_json()
 
     secret = request.headers.get("secret")
+    params = request_data["params"]
     server_config = read_json(CONFIG_PATH)
     
     if not server_config["server"]["enableServer"]:
@@ -170,9 +180,9 @@ def accountSyncStatus() -> Response:
 
     for index in list(consumable.keys()):
         for item in list(consumable[index].keys()):
-            tmp = consumable[index][item]
-            if tmp["ts"] != -1:
-                if tmp["ts"] <= int(time()) or tmp["count"] == 0:
+            ES = consumable[index][item]
+            if ES["ts"] != -1:
+                if ES["ts"] <= int(time()) or ES["count"] == 0:
                     del consumable[index][item]
 
     mailbox_list = json.loads(accounts.get_mails())
@@ -200,25 +210,58 @@ def accountSyncStatus() -> Response:
         
     userData.set_user_data(accounts.get_uid(), player_data)
     
+    announcementVersion = read_json(ANNOUNCEMENT_META_PATH, encoding='utf-8')["focusAnnounceId"]
+    announcementPopUpVersion = server_config["version"]["android"]["resVersion"][:5].replace("-", "") + str(accounts.get_uid())[-4:]
+
+    modules = {}
+
+    for key, value in params.items():
+        if key == "16":
+            modules.setdefault("16", {
+                "goodPurchaseState": {
+                    "result": {}
+                }
+            })
+            goodIdMap = value["goodIdMap"]
+            for goodType in goodIdMap:
+                if goodType == "GP":
+                    good_list = {}
+                    for type in list(player_data["shop"]["GP"].keys()):
+                        good_list.update({d["id"]: d["count"] for d in player_data["shop"]["GP"][type]["info"]})
+                else:
+                    good_list = {d["id"]: d["count"] for d in player_data["shop"][goodType]["info"]} if goodType != "CASH" else player_data["shop"]["FURNI"]["groupInfo"]
+                for item in goodIdMap[goodType]:
+                    if item in good_list:
+                        modules["16"]["goodPurchaseState"]["result"].update({item: -1})
+                    else:
+                        modules["16"]["goodPurchaseState"]["result"].update({item: 1})
+
     data = {
         "ts": ts, 
         "result": {
             "4": {
-                "announcementVersion": "1061",
-                "announcementPopUpVersion": "1937"
+                "announcementVersion": announcementVersion,
+                "announcementPopUpVersion": announcementPopUpVersion
             }
-        }, # TODO: Research the data that needs to be filled here
+        },
         "playerDataDelta": {
             "modified": {
                 "status": player_data["status"],
                 "gacha": player_data["gacha"],
                 "inventory": player_data["inventory"],
                 "pushFlags": player_data["pushFlags"],
+                "building": player_data["building"],
+                "carousel": player_data["carousel"],
                 "consumable": player_data["consumable"],
+                "event": player_data["event"],
+                "retro": player_data["retro"],
                 "rlv2": player_data["rlv2"]
             },
             "deleted": {}
         }
     }
+                        
+    if len(modules) > 0:
+        data["result"].update(modules)
 
     return data

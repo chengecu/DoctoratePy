@@ -3,6 +3,7 @@ from flask import Response, request, abort
 
 from time import time
 from constants import CONFIG_PATH, ALLPRODUCT_LIST_PATH
+from pay import TemporaryData
 from utils import read_json
 from core.Account import Account
 from core.database import userData
@@ -40,6 +41,12 @@ def userV1getToken() -> Response:
         return data
     
     accounts = Account(*result[0])
+    if accounts.get_ban() == 1:
+        data = {
+            "result": 2,
+            "error": "该账号已被封禁\n如有问题请联系客服"
+        }
+        return data
 
     if accounts.get_ban() > 1:
         user_status = accounts.get_ban()
@@ -132,6 +139,7 @@ def userVerifyAccount() -> Response:
 def payGetAllProductList() -> Response:
     
     data = request.data
+    
     server_config = read_json(CONFIG_PATH)
     
     if not server_config["server"]["enableServer"]:
@@ -147,15 +155,31 @@ def payGetAllProductList() -> Response:
     
 
 def payConfirmOrderState() -> Response:
+    '''
+    payState:
+        0：获取订单状态失败，请重新登录确认结果，如有问题请联系客服，错误号:0
+        1：获取支付结果超时，请重新登录确认结果，如有问题请联系客服。
+        2：第三方支付处理中，未能获取到支付结果，请重启游戏后以实际结果为准，如有问题请联系客服。
+        4：支付未完成
+    '''
     
     data = request.data
+    request_data = request.get_json()
+    
+    orderId = request_data["orderId"]
     server_config = read_json(CONFIG_PATH)
     
     if not server_config["server"]["enableServer"]:
         return abort(400)
     
+    if orderId in TemporaryData.order_data_list:
+        data = {
+            "payState": 3
+        }
+        return data
+
     data = {
-        "payState": 3
+        "payState": 0
     }
     
     return data

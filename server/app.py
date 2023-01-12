@@ -88,6 +88,12 @@ app.add_url_rule('/mail/removeAllReceivedMail', methods=['POST'], view_func=mail
 app.add_url_rule('/online/v1/ping', methods=['POST'], view_func=online.onlineV1Ping)
 app.add_url_rule('/online/v1/loginout', methods=['POST'], view_func=online.onlineV1LoginOut)
 
+app.add_url_rule('/pay/confirmOrder', methods=['POST'], view_func=pay.payConfirmOrder)
+app.add_url_rule('/pay/confirmOrderAlipay', methods=['POST'], view_func=pay.payConfirmOrderAlipay)
+app.add_url_rule('/pay/createOrder', methods=['POST'], view_func=pay.payCreateOrder)
+app.add_url_rule('/pay/createOrderAlipay', methods=['POST'], view_func=pay.payCreateOrderAlipay)
+app.add_url_rule('/pay/createOrderWechat', methods=['POST'], view_func=pay.payCreateOrderWechat)
+app.add_url_rule('/pay/success', methods=['POST'], view_func=pay.paySuccess)
 app.add_url_rule('/pay/getUnconfirmedOrderIdList', methods=['POST'], view_func=pay.payGetUnconfirmedOrderIdList)
 app.add_url_rule('/u8/pay/confirmOrderState', methods=['POST'], view_func=auth.u8.payConfirmOrderState)
 app.add_url_rule('/u8/pay/getAllProductList', methods=['POST'], view_func=auth.u8.payGetAllProductList) # TODO: Add full pay system
@@ -111,11 +117,23 @@ app.add_url_rule('/rlv2/closeRecruitTicket', methods=['POST'], view_func=rlv2.rl
 app.add_url_rule('/rlv2/finishEvent', methods=['POST'], view_func=rlv2.rlv2FinishEvent)
 app.add_url_rule('/rlv2/moveAndBattleStart', methods=['POST'], view_func=rlv2.rlv2MoveAndBattleStart)
 
+app.add_url_rule('/shop/buyEPGSGood', methods=['POST'], view_func=shop.shopBuyEPGSGood)
+app.add_url_rule('/shop/buyExtraGood', methods=['POST'], view_func=shop.shopBuyExtraGood)
+app.add_url_rule('/shop/buyFurniGood', methods=['POST'], view_func=shop.shopBuyFurniGood)
+app.add_url_rule('/shop/buyFurniGroup', methods=['POST'], view_func=shop.shopBuyFurniGroup)
+app.add_url_rule('/shop/buyHighGood', methods=['POST'], view_func=shop.shopBuyHighGood)
 app.add_url_rule('/shop/buyLowGood', methods=['POST'], view_func=shop.shopBuyLowGood)
+app.add_url_rule('/shop/buyRepGood', methods=['POST'], view_func=shop.shopBuyRepGood)
 app.add_url_rule('/shop/buySkinGood', methods=['POST'], view_func=shop.shopBuySkinGood)
+app.add_url_rule('/shop/getCashGoodList', methods=['POST'], view_func=shop.shopGetCashGoodList)
 app.add_url_rule('/shop/getGoodPurchaseState', methods=['POST'], view_func=shop.shopGetGoodPurchaseState)
-# app.add_url_rule('/shop/getHighGoodList', methods=['POST'], view_func=shop.shopGetHighGoodList) # TODO
+app.add_url_rule('/shop/getGPGoodList', methods=['POST'], view_func=shop.shopGetGPGoodList)
+app.add_url_rule('/shop/getEPGSGoodList', methods=['POST'], view_func=shop.shopGetEPGSGoodList)
+app.add_url_rule('/shop/getExtraGoodList', methods=['POST'], view_func=shop.shopGetExtraGoodList)
+app.add_url_rule('/shop/getFurniGoodList', methods=['POST'], view_func=shop.shopGetFurniGoodList)
+app.add_url_rule('/shop/getHighGoodList', methods=['POST'], view_func=shop.shopGetHighGoodList)
 app.add_url_rule('/shop/getLowGoodList', methods=['POST'], view_func=shop.shopGetLowGoodList)
+app.add_url_rule('/shop/getRepGoodList', methods=['POST'], view_func=shop.shopGetRepGoodList)
 app.add_url_rule('/shop/getSkinGoodList', methods=['POST'], view_func=shop.shopGetSkinGoodList)
 
 app.add_url_rule('/social/deleteFriend', methods=['POST'], view_func=social.socialDeleteFriend)

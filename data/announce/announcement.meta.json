@@ -2,22 +2,58 @@
     "focusAnnounceId": "1103",
     "announceList": [
         {
-            "announceId": "1109",
-            "title": "引航者试炼\n活动即将开启",
+            "announceId": "1121",
+            "title": "01月12日\n闪断更新公告",
             "isWebUrl": true,
-            "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1109_1672312269.html",
-            "day": 3,
+            "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1121_1673446901.html",
+            "day": 11,
+            "month": 1,
+            "group": "SYSTEM"
+        },
+        {
+            "announceId": "1118",
+            "title": "【公开招募】\n标签刷新通知",
+            "isWebUrl": true,
+            "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1118_1673166042.html",
+            "day": 8,
+            "month": 1,
+            "group": "SYSTEM"
+        },
+        {
+            "announceId": "1117",
+            "title": "【万象伶仃】\n限定寻访说明",
+            "isWebUrl": true,
+            "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1117_1673166035.html",
+            "day": 8,
             "month": 1,
             "group": "ACTIVITY"
         },
         {
-            "announceId": "1108",
-            "title": "「制作组通讯」\n#26期",
+            "announceId": "1116",
+            "title": "「登临意」\n活动即将开启",
             "isWebUrl": true,
-            "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1108_1672311434.html",
-            "day": 1,
+            "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1116_1673359516.html",
+            "day": 8,
             "month": 1,
-            "group": "SYSTEM"
+            "group": "ACTIVITY"
+        },
+        {
+            "announceId": "1099",
+            "title": "特定干员\n限时出率上升",
+            "isWebUrl": true,
+            "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1099_1671095608.html",
+            "day": 5,
+            "month": 1,
+            "group": "ACTIVITY"
+        },
+        {
+            "announceId": "1109",
+            "title": "引航者试炼\n限时活动开启",
+            "isWebUrl": true,
+            "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1109_1673338230.html",
+            "day": 3,
+            "month": 1,
+            "group": "ACTIVITY"
         },
         {
             "announceId": "1106",
@@ -56,15 +92,6 @@
             "group": "ACTIVITY"
         },
         {
-            "announceId": "1098",
-            "title": "特定干员\n限时出率上升",
-            "isWebUrl": true,
-            "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1098_1671095553.html",
-            "day": 22,
-            "month": 12,
-            "group": "ACTIVITY"
-        },
-        {
             "announceId": "1102",
             "title": "跨年欢庆·相逢\n寻访即将开启",
             "isWebUrl": true,
@@ -81,15 +108,6 @@
             "day": 17,
             "month": 12,
             "group": "ACTIVITY"
-        },
-        {
-            "announceId": "1084",
-            "title": "「制作组通讯」\n#25期",
-            "isWebUrl": true,
-            "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1084_1669809044.html",
-            "day": 1,
-            "month": 12,
-            "group": "SYSTEM"
         },
         {
             "announceId": "1025",
