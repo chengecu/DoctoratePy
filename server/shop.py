@@ -63,7 +63,7 @@ def shopGetGoodPurchaseState() -> Response:
             for type in list(player_data["shop"]["GP"].keys()):
                 good_list.update({d["id"]: d["count"] for d in player_data["shop"]["GP"][type]["info"]})
         else:
-            good_list = {d["id"]: d["count"] for d in player_data["shop"][goodType]["info"]} if goodType != "CASH" else player_data["shop"]["FURNI"]["groupInfo"]
+            good_list = {d["id"]: d["count"] for d in player_data["shop"][goodType]["info"]} if goodType != "CASH" else player_data["shop"]["FURNI"].get("groupInfo", {})
         for item in goodIdMap[goodType]:
             if item in good_list:
                 result.update({item: -1})
