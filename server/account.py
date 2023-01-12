@@ -124,6 +124,7 @@ def accountSyncData() -> Response:
     
     player_data["status"]["lastOnlineTs"] = int(time())
     player_data["status"]["lastRefreshTs"] = ts # TODO: Add userTimeStamps
+    player_data.setdefault("carousel", {})
 
     userData.set_user_data(accounts.get_uid(), player_data)
     
