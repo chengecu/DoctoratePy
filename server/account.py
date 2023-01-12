@@ -5,6 +5,7 @@ from time import time
 from core.function.update import updateData
 from constants import CONFIG_PATH, CHARACTER_TABLE_URL, CHARWORD_TABLE_URL, \
     EQUIP_TABLE_URL, GACHA_TABLE_URL, SYNC_DATA_TEMPLATE_PATH, ITEM_TABLE_URL, \
+    STAGE_TABLE_URL, MEDAL_TABLE_URL, BUILDING_DATA_URL, RL_TABLE_URL, SKIN_TABLE_URL, \
     GAMEDATA_CONST_URL, SHOP_CLIENT_TABLE_URL, ANNOUNCEMENT_META_PATH, TOWER_TABLE_URL
 from utils import read_json
 from core.database import userData
