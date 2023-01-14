@@ -11,21 +11,16 @@ Discord Invite: [Link](https://discord.gg/pUj8HQ5FQU)
 4. Run `setup_requirements.bat` and choose corresponding emulator.
 5. Configure your proxy ip address in `config\config.json` in the `host` key.
 6. Run `start_mitmproxy.bat` and `start_local_server.bat`.
-
-### MuMu Player
-7. Open the game. Wait till an error appears.
-8. Run `start_frida-server.bat` and choose `1`.
-9. Run `start_frida-hook.bat` and choose `1`.
-
-### LDPlayer9
-7. Run `start_frida-server.bat` and choose `2`.
-8. Run `start_frida-hook.bat` and choose `2`. It should automatically open up the game.
-
-### Others (Haven't tested yet. Might or might not work.)
-7. Run `start_frida-server.bat` and choose `3`.
-8. Run `start_frida-hook.bat` and choose `2`. It should automatically open up the game.
+7. Run `start_frida-server.bat`
+8. Run `start_frida-hook.bat`
 
 Note: There should be a total of 4 cmd windows opened.
+
+## Known Issues
+
+### MuMu Player
+- If you are having issue when running step 8, run it with `-m` parameter instead and follow instructions. 
+Eg: `start_frida-hook.bat -m`
 
 ## Currently tested emulator to be working
 1. LDPlayer9

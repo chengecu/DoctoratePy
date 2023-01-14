@@ -1,7 +1,9 @@
 import sys
+import argparse
 from base64 import b64decode
 
 import frida
+from adbutils import adb
 
 from server.constants import CONFIG_PATH
 from server.utils import read_json
@@ -11,34 +13,19 @@ HOST = read_json(CONFIG_PATH)["server"]["host"]
 def on_message(message, data):
     print("[%s] => %s" % (message, data))
 
-def main():
+def main(use_mumu=False):
+
+    if use_mumu:
+        adb_device = adb.device_list()[0]
+        adb_device.shell("kill `pidof zygote`")
+        adb_device.shell("kill `pidof zygote64`")
+        input("Press enter when the emulator is ready: ")
+
     device = frida.get_usb_device(timeout=1)
-    while True:
-        num = input("Choose your emulator.\n1. Mumu Player\n2. LDPlayer9 and Others\nChoose one: ")
-        try:
-            num = int(num)
-        except:
-            print("Invalid input")
-            continue
-
-        if num not in [1, 2]:
-            print("Invalid input")
-            continue
-
-        if num == 1:
-            # Mumu Player
-            session = device.attach("Arknights")
-            timeout = 500
-            break
-
-        elif num == 2:
-            # LDPlayer9
-            pid = device.spawn(b64decode('Y29tLmh5cGVyZ3J5cGguYXJrbmlnaHRz').decode())
-            device.resume(pid)
-            session = device.attach(pid)
-            timeout = 6000
-            break
-
+    pid = device.spawn(b64decode('Y29tLmh5cGVyZ3J5cGguYXJrbmlnaHRz').decode())
+    device.resume(pid)
+    session = device.attach(pid)
+    timeout = 6000
     script = session.create_script("""
 
     function redirect_traffic_to_proxy(proxy_url, proxy_port) {{
@@ -194,4 +181,9 @@ def main():
     session.detach()
 
 if __name__ == '__main__':
-    main()
+
+    args = argparse.ArgumentParser(description='Doctorate Hooking Script')
+    args.add_argument('-m', '--mumu', action='store_true', help='Use this flag if you are having black screen issues with Mumu emulator')
+    
+    args = args.parse_args()
+    main(args.mumu)

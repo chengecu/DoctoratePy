@@ -1,78 +1,55 @@
-import os
 import sys
-import lzma
 import time
 import subprocess
-from contextlib import suppress
 
-import requests
-from ppadb.client import Client as AdbClient
+from adbutils import adb, adb_path
+from adbutils.errors import AdbTimeout
 
-ADB_PATH = "platform-tools\\adb.exe"
+default_ports = ["5555", "7555"]
+devices = []
+count = 0
 
-os.system('cls')
-subprocess.run(f"{ADB_PATH} kill-server")
-subprocess.run(f"{ADB_PATH} start-server")
-time.sleep(3)
-client = AdbClient(host="127.0.0.1", port=5037)
-device = None
+while len(devices) < 1:
+    for port in default_ports:
+        print(f"Trying to connect to port {port}...", end="\r")
+        adb.connect(f"127.0.0.1:{port}")
+    print("Waiting for device...", end="\r")
+    devices = adb.device_list()
+    count += 1
+    time.sleep(1)
 
-while True:
-    num = input("Choose your emulator.\n1. Mumu Player\n2. LDPlayer9\n3. Auto\nChoose one: ")
-    try:
-        num = int(num)
-    except:
-        print("Invalid input")
-        continue
+    if count > 10:
+        ans = input("No device found after 10 tries. Do you want to connect manually? (y/n) (Default: n): ")
 
-    if num not in [1, 2, 3]:
-        print("Invalid input")
-        continue
-
-    if num == 1:
-        # Mumu Player
-        print("Trying to connect to currently opened Mumu Player")
-        client.remote_connect("127.0.0.1", 7555) # Default port for mumu player
-        devices = client.devices()
-        if len(devices) != 1:
-            print("Something went wrong. Make sure that an emulator is running and has adb connection open.")
+        if ans.lower() != "y":
+            print("Quitting...")
             sys.exit(0)
-        device = devices[0]
-        break
-
-    elif num == 2:
-        # LDPlayer9
-        print("Trying to connect to currently opened LDPlayer9 Player")
-        devices = client.devices() # LDPlayer9 usually auto connects to adb
-        if len(devices) != 1: # If not found, try to connect manually to default port
-            client.remote_connect("127.0.0.1", 5555)
-            devices = client.devices()
-            if len(devices) != 1:
-                print("Something went wrong. Make sure that an emulator is running and has adb connection open.")
-                sys.exit(0)
-        device = devices[0]
-        break
-
-    elif num == 3:
-        # Auto
-        print("Finding an open emulator within the default port range...")
-        for i in range(5554, 5682):
-            print("Trying port", i, end="\r")
-            client.remote_connect("127.0.0.1", i) # Default port for mumu player
-            devices = client.devices()
-            if len(devices) == 1:
-                device = devices[0]
-                print("Found emulator on port", i)
-                break
-        if not device:
-            print("No emulator found on default port range (5554-5682). Make sure that an emulator is running and has adb connection open.")
+            
+        ip_port = input("Please type in the IP address and port of the device: ")
+        adb.connect(ip_port)
+        try:
+            adb.wait_for(state="device", timeout=10)
+        except AdbTimeout:
+            print("Cannot connect to device. Quitting...")
             sys.exit(0)
-        break
+        devices = adb.device_list()
+        if len(devices) < 1:
+            print("Cannot connect to device. Quitting...")
+            sys.exit(0)
 
-print("Check the emulator and accept if it asks for root permission.")
-with suppress(RuntimeError):
-    device.root()
-time.sleep(5) # Sleep for 5 seconds to make sure that the emulator is rooted
+device = devices[0]
+print("\nDevice found:", device.serial)
 
+print("Restarting ADB server with root permissions...")
+device.root()
+adb.wait_for(state="device", timeout=10)
 print("\nRunning frida\nNow you can start fridahook\n")
-os.system(f'{ADB_PATH} shell "/data/local/tmp/frida-server" &')
+p = subprocess.Popen(f'"{adb_path()}" shell /data/local/tmp/frida-server &', shell=True)
+
+while p.poll() is None:
+    try:
+        time.sleep(1)
+    except KeyboardInterrupt:
+        print("Quitting...")
+        p.terminate()
+        sys.exit(0)
