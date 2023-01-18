@@ -9,7 +9,7 @@ from constants import CONFIG_PATH
 from utils import read_json
 
 import account, activity, background, building, campaignV2, char, charBuild, charm, crisis, \
-    deepsea, gacha, logger, mail, quest, pay, rlv2, shop, social, story, storyreview, user, \
+    deepsea, gacha, logger, mail, quest, pay, rlv2, shop, social, story, storyreview, tower, user, \
     asset.assetbundle, auth.online, auth.user, auth.u8, config.prod, core.database.initDatabase
 
 server_config = read_json(CONFIG_PATH)
@@ -170,17 +170,16 @@ app.add_url_rule('/story/finishStory', methods=['POST'], view_func=story.storyFi
 app.add_url_rule('/storyreview/markStoryAcceKnown', methods=['POST'], view_func=storyreview.storyreviewMarkStoryAcceKnown)
 app.add_url_rule('/storyreview/readStory', methods=['POST'], view_func=storyreview.storyreviewReadStory)
 
-# TODO
-# app.add_url_rule('/tower/createGame', methods=['POST'], view_func=tower.towerCreateGame)
-# app.add_url_rule('/tower/battleStart', methods=['POST'], view_func=tower.towerBattleStart)
-# app.add_url_rule('/tower/battleFinish', methods=['POST'], view_func=tower.towerBattleFinish)
-# app.add_url_rule('/tower/settleGame', methods=['POST'], view_func=tower.towerSettleGame)
-# app.add_url_rule('/tower/initGodCard', methods=['POST'], view_func=tower.towerInitGodCard)
-# app.add_url_rule('/tower/initGame', methods=['POST'], view_func=tower.towerInitGame)
-# app.add_url_rule('/tower/initCard', methods=['POST'], view_func=tower.towerInitCard)
-# app.add_url_rule('/tower/chooseSubGodCard', methods=['POST'], view_func=tower.towerChooseSubGodCard)
-# app.add_url_rule('/tower/recruit', methods=['POST'], view_func=tower.towerRecruit)
-# app.add_url_rule('/tower/layerReward', methods=['POST'], view_func=tower.towerLayerReward)
+app.add_url_rule('/tower/createGame', methods=['POST'], view_func=tower.towerCreateGame)
+app.add_url_rule('/tower/battleStart', methods=['POST'], view_func=tower.towerBattleStart)
+app.add_url_rule('/tower/battleFinish', methods=['POST'], view_func=tower.towerBattleFinish)
+app.add_url_rule('/tower/settleGame', methods=['POST'], view_func=tower.towerSettleGame)
+app.add_url_rule('/tower/initGodCard', methods=['POST'], view_func=tower.towerInitGodCard)
+app.add_url_rule('/tower/initGame', methods=['POST'], view_func=tower.towerInitGame)
+app.add_url_rule('/tower/initCard', methods=['POST'], view_func=tower.towerInitCard)
+app.add_url_rule('/tower/chooseSubGodCard', methods=['POST'], view_func=tower.towerChooseSubGodCard)
+app.add_url_rule('/tower/recruit', methods=['POST'], view_func=tower.towerRecruit)
+app.add_url_rule('/tower/layerReward', methods=['POST'], view_func=tower.towerLayerReward)
 
 app.add_url_rule('/user/auth', methods=['POST'], view_func=auth.user.userAuth)
 app.add_url_rule('/user/authenticateUserIdentity', methods=['POST'], view_func=auth.user.userAuthenticateUserIdentity)
