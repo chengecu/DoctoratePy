@@ -143,9 +143,6 @@ def accountSyncData() -> Response:
     player_data["status"]["lastRefreshTs"] = ts
     player_data.setdefault("carousel", {})
 
-    unlockActivity(player_data)
-    userData.set_user_data(accounts.get_uid(), player_data)
-
     updateData(ACTIVITY_TABLE_URL)
     updateData(CHARACTER_TABLE_URL)
     updateData(CHARWORD_TABLE_URL)
@@ -160,6 +157,9 @@ def accountSyncData() -> Response:
     updateData(SHOP_CLIENT_TABLE_URL)
     updateData(GAMEDATA_CONST_URL)
     updateData(BUILDING_DATA_URL)
+
+    unlockActivity(player_data)
+    userData.set_user_data(accounts.get_uid(), player_data)
 
     data = {
         "result": 0,

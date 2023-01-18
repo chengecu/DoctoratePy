@@ -19,7 +19,7 @@
     "developer": {
         "dropRate": 1,
         "debugMode": true,
-        "timestamp": -1
+        "timestamp": 999999999
     },
     "version": {
         "android": {
