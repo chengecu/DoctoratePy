@@ -1,3 +1,4 @@
+import base64
 from time import time
 
 from constants import CONFIG_PATH
@@ -23,7 +24,7 @@ def onlineV1Ping() -> Response:
     if server_config["developer"]["timestamp"] > int(time()):
         data = {
             "result": 1,
-            "message": "一场游戏需要规则，但观众们最想看到的总是突破规则的东西"
+            "message": f"{base64.b64decode(b'5LiA5Zy65ri45oiP6ZyA6KaB6KeE5YiZ77yM5L2G6KeC5LyX5Lus5pyA5oOz55yL5Yiw55qE5oC75piv56qB56C06KeE5YiZ55qE5Lic6KW/').decode('utf-8')}"
         }
         return data
 
