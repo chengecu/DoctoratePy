@@ -28,7 +28,14 @@ def crisisGetCrisisInfo():
             "playerDataDelta": {}
         }
 
-    return rune
+    data = {
+        "playerDataDelta": {
+            "deleted": {},
+            "modified": {}
+        }
+    }
+
+    return data
 
 
 def crisisBattleStart():

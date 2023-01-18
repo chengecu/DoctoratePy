@@ -22,4 +22,6 @@ IF '%errorlevel%' NEQ '0' (
 )
 
 cls
+py setup_requirements.py
+cls
 py setup_mysql.py

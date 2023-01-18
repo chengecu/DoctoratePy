@@ -897,24 +897,59 @@
     "activity": {
         "TYPE_ACT21SIDE": {},
         "TYPE_ACT9D0": {
-            "act22side": {
+            "act23side": {
                 "coin": 0,
-                "favorList": [],
-                "news": {}
-            },
-            "act15sre": {
-                "coin": 0,
-                "favorList": [],
+                "favorList": [
+                    "char_2024_chyue",
+                    "char_4080_lin",
+                    "char_493_firwhl",
+                    "char_4078_bdhkgt"
+                ],
                 "news": {}
             }
         },
         "CHECKIN_ONLY": {
-            "act32sign": {
-                "lastTs": 1672344000,
-                "history": [
-                    1,
-                    1
-                ]
+            "act33sign": {
+                "lastTs": 1673899200,
+                "history": [],
+                "extraHistory": []
+            }
+        },
+        "BOSS_RUSH": {
+            "act2bossrush": {
+                "milestone": {
+                    "point": 0,
+                    "got": []
+                },
+                "relic": {
+                    "token": {
+                        "current": 0,
+                        "total": 0
+                    },
+                    "level": {
+                        "act2bossrush_relic_01": 1
+                    },
+                    "select": ""
+                },
+                "best": {}
+            }
+        },
+        "PRAY_ONLY": {
+            "act5pray": {
+                "lastTs": -1,
+                "extraCount": 0,
+                "prayDaily": 2,
+                "praying": 0,
+                "insureCount": 0,
+                "prayCount": 0,
+                "prayMax": 0,
+                "prayMaxIndex": -1,
+                "prayArray": []
+            }
+        },
+        "LOGIN_ONLY": {
+            "act13login": {
+                "reward": 1
             }
         }
     },
@@ -944,11 +979,11 @@
         "diamondShard": 500,
         "gold": 10000,
         "practiceTicket": 30,
-        "lastRefreshTs": 1672350993,
+        "lastRefreshTs": 1674037766,
         "lastApAddTime": 1669282675,
         "mainStageProgress": "main_00-01",
         "registerTs": 1669282675,
-        "lastOnlineTs": 1672350993,
+        "lastOnlineTs": 1674037766,
         "serverName": "泰拉",
         "avatarId": "0",
         "avatar": {},
@@ -1087,7 +1122,18 @@
                 ],
                 "voiceLan": "CN_MANDARIN",
                 "currentEquip": null,
-                "equip": {}
+                "equip": {
+                    "uniequip_001_amiya": {
+                        "hide": 1,
+                        "locked": 0,
+                        "level": 1
+                    },
+                    "uniequip_002_amiya": {
+                        "hide": 1,
+                        "locked": 1,
+                        "level": 1
+                    }
+                }
             },
             "2": {
                 "instId": 2,
@@ -1260,7 +1306,7 @@
         "hasFriendRequest": 0,
         "hasClues": 0,
         "hasFreeLevelGP": 0,
-        "status": 1672350993
+        "status": 1674037766
     },
     "equipment": {
         "missions": {}
@@ -14736,6 +14782,366 @@
                             "value": 0
                         }
                     ]
+                },
+                "2bossrushActivity_1": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "2bossrushActivity_2": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "2bossrushActivity_3": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "2bossrushActivity_4": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "2bossrushActivity_5": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 40,
+                            "value": 0
+                        }
+                    ]
+                },
+                "2bossrushActivity_6": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 50,
+                            "value": 0
+                        }
+                    ]
+                },
+                "2bossrushActivity_7": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 100,
+                            "value": 0
+                        }
+                    ]
+                },
+                "2bossrushActivity_8": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "2bossrushActivity_9": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "2bossrushActivity_10": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "2bossrushActivity_11": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "2bossrushActivity_12": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "2bossrushActivity_13": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "2bossrushActivity_14": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "23sideActivity_1": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "23sideActivity_2": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "23sideActivity_3": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "23sideActivity_4": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "23sideActivity_5": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "23sideActivity_6": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "23sideActivity_7": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "23sideActivity_8": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "23sideActivity_9": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "23sideActivity_10": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "23sideActivity_11": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "23sideActivity_12": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "23sideActivity_13": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "23sideActivity_14": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "23sideActivity_15": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "23sideActivity_16": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "23sideActivity_17": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "23sideActivity_18": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "23sideActivity_19": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "23sideActivity_20": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "23sideActivity_21": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "23sideActivity_22": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "23sideActivity_23": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 1,
+                            "value": 0
+                        }
+                    ]
+                },
+                "23sideActivity_24": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 15,
+                            "value": 0
+                        }
+                    ]
+                },
+                "23sideActivity_25": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 45,
+                            "value": 0
+                        }
+                    ]
+                },
+                "23sideActivity_26": {
+                    "state": 2,
+                    "progress": [
+                        {
+                            "target": 85,
+                            "value": 0
+                        }
+                    ]
                 }
             }
         },
@@ -14834,8 +15240,10 @@
             "act5d1day_13": 0,
             "act22side": 0,
             "act14sre": 0,
-            "weekly_g_7": 0,
             "act15sre": 0,
+            "act2bossrush": 0,
+            "act23side": 0,
+            "weekly_g_7": 0,
             "daily_g_50": 0
         }
     },
@@ -14857,7 +15265,7 @@
                 "buffSpeed": 0,
                 "processPoint": 0,
                 "value": 32,
-                "lastUpdateTime": 1672350993,
+                "lastUpdateTime": 1674037766,
                 "maxValue": 32
             },
             "workshop": {
@@ -14868,7 +15276,7 @@
         "chars": {
             "1": {
                 "charId": "char_002_amiya",
-                "lastApAddTime": 1672350993,
+                "lastApAddTime": 1674037766,
                 "ap": 8640000,
                 "roomSlotId": "",
                 "index": -1,
@@ -14887,7 +15295,7 @@
             },
             "2": {
                 "charId": "char_502_nblade",
-                "lastApAddTime": 1672350993,
+                "lastApAddTime": 1674037766,
                 "ap": 8640000,
                 "roomSlotId": "",
                 "index": -1,
@@ -14906,7 +15314,7 @@
             },
             "3": {
                 "charId": "char_500_noirc",
-                "lastApAddTime": 1672350993,
+                "lastApAddTime": 1674037766,
                 "ap": 8640000,
                 "roomSlotId": "",
                 "index": -1,
@@ -14925,7 +15333,7 @@
             },
             "4": {
                 "charId": "char_503_rang",
-                "lastApAddTime": 1672350993,
+                "lastApAddTime": 1674037766,
                 "ap": 8640000,
                 "roomSlotId": "",
                 "index": -1,
@@ -15013,7 +15421,7 @@
                         }
                     },
                     "apCost": -100,
-                    "lastUpdateTime": 1672350993
+                    "lastUpdateTime": 1674037766
                 }
             },
             "ELEVATOR": {
@@ -15078,8 +15486,8 @@
     },
     "crisis": {
         "current": "",
-        "lst": 1672351241,
-        "nst": 1672430400,
+        "lst": 1674037767,
+        "nst": 1674072000,
         "map": {
             "rune_11-01": {
                 "rank": 0,
@@ -15112,6 +15520,18 @@
             "rune_06-02": {
                 "rank": 0,
                 "confirmed": 0
+            },
+            "rune_05-01": {
+                "rank": 0,
+                "confirmed": 0
+            },
+            "rune_08-02": {
+                "rank": 0,
+                "confirmed": 0
+            },
+            "rune_09-01": {
+                "rank": 0,
+                "confirmed": 0
             }
         },
         "shop": {
@@ -15121,7 +15541,7 @@
         },
         "training": {
             "currentStage": [
-                "tr_level_rune_13-02"
+                "tr_level_rune_09-01"
             ],
             "stage": {
                 "tr_level_rune_10-02": {
@@ -15147,9 +15567,18 @@
                 },
                 "tr_level_rune_06-02": {
                     "point": -1
+                },
+                "tr_level_rune_05-01": {
+                    "point": -1
+                },
+                "tr_level_rune_08-02": {
+                    "point": -1
+                },
+                "tr_level_rune_09-01": {
+                    "point": -1
                 }
             },
-            "nst": 1672430400
+            "nst": 1674072000
         },
         "season": {
             "rune_season_11_1": {
@@ -15301,7 +15730,11 @@
             "cnt": 21
         },
         "normal": {},
-        "limit": {}
+        "limit": {
+            "LIMITED_35_0_1": {
+                "leastFree": 1
+            }
+        }
     },
     "backflow": {
         "open": false,
@@ -19097,17 +19530,17 @@
                     }
                 },
                 "mission": {
-                    "updateId": "rogue_2_update_3",
+                    "updateId": "rogue_2_update_4",
                     "refresh": 4,
                     "list": [
                         {
                             "type": "A",
                             "mission": {
                                 "type": "A",
-                                "tmpl": "KillCerternEnemy",
-                                "id": "rogue_2_task_24",
+                                "tmpl": "SaveGold",
+                                "id": "rogue_2_task_26",
                                 "state": 0,
-                                "target": 3,
+                                "target": 30,
                                 "value": 0
                             }
                         },
@@ -19137,8 +19570,8 @@
                             "type": "C",
                             "mission": {
                                 "type": "C",
-                                "tmpl": "PassFloor",
-                                "id": "rogue_2_task_9",
+                                "tmpl": "AccelerateLevel",
+                                "id": "rogue_2_task_8",
                                 "state": 0,
                                 "target": 15,
                                 "value": 0
@@ -19152,7 +19585,7 @@
                 },
                 "monthTeam": {
                     "valid": [
-                        "month_team_3"
+                        "month_team_4"
                     ],
                     "reward": {}
                 },
@@ -19444,9 +19877,9 @@
             "passWithGodCard": {},
             "slots": {},
             "period": {
-                "termTs": 1673812799,
+                "termTs": 1676491199,
                 "items": {},
-                "cur": 0,
+                "cur": 1,
                 "len": 4
             }
         }
@@ -19563,6 +19996,10 @@
             "act22side": {
                 "rts": -1,
                 "stories": []
+            },
+            "act23side": {
+                "rts": -1,
+                "stories": []
             }
         },
         "tags": {}
@@ -19652,72 +20089,92 @@
             "customs": {}
         }
     },
-    "recruit": {
-        "normal": {
-            "slots": {
-                "0": {
-                    "state": 0,
-                    "tags": [
-                        4,
-                        6,
-                        8,
-                        9,
-                        22
-                    ],
-                    "selectTags": [],
-                    "startTs": -1,
-                    "durationInSec": -1,
-                    "maxFinishTs": -1,
-                    "realFinishTs": -1
-                },
-                "1": {
-                    "state": 0,
-                    "tags": [
-                        3,
-                        5,
-                        6,
-                        21,
-                        22
-                    ],
-                    "selectTags": [],
-                    "startTs": -1,
-                    "durationInSec": -1,
-                    "maxFinishTs": -1,
-                    "realFinishTs": -1
-                },
-                "2": {
-                    "state": 0,
-                    "tags": [
-                        3,
-                        4,
-                        5,
-                        8,
-                        22
-                    ],
-                    "selectTags": [],
-                    "startTs": -1,
-                    "durationInSec": -1,
-                    "maxFinishTs": -1,
-                    "realFinishTs": -1
-                },
-                "3": {
-                    "state": 0,
-                    "tags": [
-                        2,
-                        4,
-                        6,
-                        17,
-                        19
-                    ],
-                    "selectTags": [],
-                    "startTs": -1,
-                    "durationInSec": -1,
-                    "maxFinishTs": -1,
-                    "realFinishTs": -1
-                }
-            }
+    "event": {
+        "building": 1674072000
+    },
+    "openServer": {
+        "checkIn": {
+            "isAvailable": true,
+            "history": [
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1
+            ]
+        },
+        "chainLogin": {
+            "isAvailable": true,
+            "nowIndex": 1,
+            "history": [
+                1,
+                1
+            ],
+            "finalReward": 0
         }
     },
+    "checkIn": {
+        "canCheckIn": 0,
+        "checkInGroupId": "signin53",
+        "checkInRewardIndex": 0,
+        "checkInHistory": []
+    },
+    "charm": {
+        "charms": {
+            "level_cost_1": 1,
+            "range_ep_recovery_1": 1,
+            "range_ep_recovery_2": 1,
+            "melee_ep_recovery_1": 1,
+            "melee_ep_recovery_2": 1,
+            "range_drowning_resist_1": 1,
+            "range_drowning_resist_2": 1,
+            "melee_drowning_resist_1": 1,
+            "melee_drowning_resist_2": 1,
+            "range_drowning_atk_1": 1,
+            "range_drowning_atk_2": 1,
+            "melee_drowning_atk_1": 1,
+            "melee_drowning_atk_2": 1,
+            "range_drowning_def_1": 1,
+            "range_drowning_def_2": 1,
+            "melee_drowning_def_1": 1,
+            "melee_drowning_def_2": 1,
+            "range_buff_atk_1": 1,
+            "range_buff_atk_2": 1,
+            "melee_buff_atk_1": 1,
+            "melee_buff_atk_2": 1,
+            "range_buff_def_1": 1,
+            "range_buff_def_2": 1,
+            "melee_buff_def_1": 1,
+            "melee_buff_def_2": 1,
+            "special_swimming_1": 1,
+            "defender_swimming_1": 1,
+            "guard_swimming_1": 1,
+            "vanguard_swimming_1": 1,
+            "medic_swimming_1": 1,
+            "caster_swimming_1": 1,
+            "sniper_swimming_1": 1,
+            "support_swimming_1": 1,
+            "trap_oxygen_1": 1,
+            "trap_oxygen_2": 1,
+            "trap_oxygen_3": 1,
+            "medic_favor_out_1": 1,
+            "special_favor_out_1": 1,
+            "defender_favor_out_1": 1,
+            "guard_favor_out_1": 1,
+            "vanguard_favor_out_1": 1,
+            "caster_favor_out_1": 1,
+            "sniper_favor_out_1": 1,
+            "support_favor_out_1": 1,
+            "charm_coin_1": 1,
+            "charm_coin_2": 1,
+            "charm_coin_3": 1,
+            "charm_coin_4": 1
+        },
+        "squad": []
+    },
+    "inventory": {},
     "tshop": {
         "shop_act21side": {
             "coin": 0,
@@ -19920,43 +20377,13 @@
             "progressInfo": {}
         }
     },
-    "collectionReward": {
-        "team": {}
-    },
     "aprilFool": {
         "act3fun": {
             "stages": {}
         }
     },
-    "checkIn": {
-        "canCheckIn": 0,
-        "checkInGroupId": "signin52",
-        "checkInRewardIndex": 0,
-        "checkInHistory": []
-    },
-    "consumable": {},
-    "ticket": {},
-    "openServer": {
-        "checkIn": {
-            "isAvailable": true,
-            "history": [
-                1,
-                1,
-                1,
-                1
-            ]
-        },
-        "chainLogin": {
-            "isAvailable": true,
-            "nowIndex": 0,
-            "history": [
-                1
-            ],
-            "finalReward": 0
-        }
-    },
-    "event": {
-        "building": 1672387200
+    "collectionReward": {
+        "team": {}
     },
     "retro": {
         "coin": 2,
@@ -20024,7 +20451,7 @@
             },
             "permanent_sidestory_12_Invitation_To_Wine": {
                 "locked": 1,
-                "open": 0
+                "open": 1
             }
         },
         "trail": {
@@ -20078,64 +20505,85 @@
                 "trailReward_sidestory_6_4": 0,
                 "trailReward_sidestory_6_5": 0,
                 "trailReward_sidestory_6_6": 0
+            },
+            "permanent_sidestory_7_Mansfield_Break": {
+                "trailReward_sidestory_7_1": 0,
+                "trailReward_sidestory_7_2": 0,
+                "trailReward_sidestory_7_3": 0,
+                "trailReward_sidestory_7_4": 0,
+                "trailReward_sidestory_7_5": 0
             }
         },
-        "lst": 1672350993,
-        "nst": 1672430400
+        "lst": 1674037766,
+        "nst": 1674072000
     },
-    "charm": {
-        "charms": {
-            "level_cost_1": 1,
-            "range_ep_recovery_1": 1,
-            "range_ep_recovery_2": 1,
-            "melee_ep_recovery_1": 1,
-            "melee_ep_recovery_2": 1,
-            "range_drowning_resist_1": 1,
-            "range_drowning_resist_2": 1,
-            "melee_drowning_resist_1": 1,
-            "melee_drowning_resist_2": 1,
-            "range_drowning_atk_1": 1,
-            "range_drowning_atk_2": 1,
-            "melee_drowning_atk_1": 1,
-            "melee_drowning_atk_2": 1,
-            "range_drowning_def_1": 1,
-            "range_drowning_def_2": 1,
-            "melee_drowning_def_1": 1,
-            "melee_drowning_def_2": 1,
-            "range_buff_atk_1": 1,
-            "range_buff_atk_2": 1,
-            "melee_buff_atk_1": 1,
-            "melee_buff_atk_2": 1,
-            "range_buff_def_1": 1,
-            "range_buff_def_2": 1,
-            "melee_buff_def_1": 1,
-            "melee_buff_def_2": 1,
-            "special_swimming_1": 1,
-            "defender_swimming_1": 1,
-            "guard_swimming_1": 1,
-            "vanguard_swimming_1": 1,
-            "medic_swimming_1": 1,
-            "caster_swimming_1": 1,
-            "sniper_swimming_1": 1,
-            "support_swimming_1": 1,
-            "trap_oxygen_1": 1,
-            "trap_oxygen_2": 1,
-            "trap_oxygen_3": 1,
-            "medic_favor_out_1": 1,
-            "special_favor_out_1": 1,
-            "defender_favor_out_1": 1,
-            "guard_favor_out_1": 1,
-            "vanguard_favor_out_1": 1,
-            "caster_favor_out_1": 1,
-            "sniper_favor_out_1": 1,
-            "support_favor_out_1": 1,
-            "charm_coin_1": 1,
-            "charm_coin_2": 1,
-            "charm_coin_3": 1,
-            "charm_coin_4": 1
-        },
-        "squad": []
+    "recruit": {
+        "normal": {
+            "slots": {
+                "0": {
+                    "state": 0,
+                    "tags": [
+                        4,
+                        6,
+                        8,
+                        9,
+                        22
+                    ],
+                    "selectTags": [],
+                    "startTs": -1,
+                    "durationInSec": -1,
+                    "maxFinishTs": -1,
+                    "realFinishTs": -1
+                },
+                "1": {
+                    "state": 0,
+                    "tags": [
+                        3,
+                        5,
+                        6,
+                        21,
+                        22
+                    ],
+                    "selectTags": [],
+                    "startTs": -1,
+                    "durationInSec": -1,
+                    "maxFinishTs": -1,
+                    "realFinishTs": -1
+                },
+                "2": {
+                    "state": 0,
+                    "tags": [
+                        3,
+                        4,
+                        5,
+                        8,
+                        22
+                    ],
+                    "selectTags": [],
+                    "startTs": -1,
+                    "durationInSec": -1,
+                    "maxFinishTs": -1,
+                    "realFinishTs": -1
+                },
+                "3": {
+                    "state": 0,
+                    "tags": [
+                        2,
+                        4,
+                        6,
+                        17,
+                        19
+                    ],
+                    "selectTags": [],
+                    "startTs": -1,
+                    "durationInSec": -1,
+                    "maxFinishTs": -1,
+                    "realFinishTs": -1
+                }
+            }
+        }
     },
+    "ticket": {},
     "campaignsV2": {
         "campaignCurrentFee": 0,
         "campaignTotalFee": 1200,
@@ -20145,16 +20593,16 @@
                 "camp_02",
                 "camp_03"
             ],
-            "rotate": "camp_r_13",
-            "rGroup": "group_r_13",
+            "rotate": "camp_r_14",
+            "rGroup": "group_r_14",
             "training": [
-                "camp_r_01",
-                "camp_r_02",
-                "camp_r_04",
-                "camp_r_06",
-                "camp_r_07"
+                "camp_r_03",
+                "camp_r_05",
+                "camp_r_09",
+                "camp_r_10",
+                "camp_r_12"
             ],
-            "tGroup": "group_tr_25",
+            "tGroup": "group_tr_26",
             "tAllOpen": null
         },
         "instances": {
@@ -20365,6 +20813,19 @@
                     0,
                     0
                 ]
+            },
+            "camp_r_14": {
+                "maxKills": 0,
+                "rewardStatus": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                ]
             }
         },
         "missions": {
@@ -20373,8 +20834,8 @@
             "exterminateActivity_3": 0,
             "exterminateActivity_4": 0
         },
-        "lastRefreshTs": 1672350993,
+        "lastRefreshTs": 1674037766,
         "sweepMaxKills": {}
     },
-    "inventory": {}
+    "consumable": {}
 }

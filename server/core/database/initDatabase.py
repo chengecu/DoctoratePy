@@ -1,8 +1,7 @@
 import pymysql
-
 from constants import CONFIG_PATH
-from utils import read_json
 from core.database.userData import table_exists
+from utils import read_json
 
 database_config = read_json(CONFIG_PATH)["database"]
 
@@ -25,12 +24,12 @@ def initDB() -> None:
             insertUserTable()
         if len(table_exists("mail")) != 1:
             insertMailTable()
-        
+
     finally:
         cursor.close()
         connection.close()
-    
-    
+
+
 def insertUserTable() -> None:
 
     cursor = connection.cursor()
@@ -39,19 +38,19 @@ def insertUserTable() -> None:
     cursor.execute("DROP TABLE IF EXISTS `account`")
     cursor.execute("""CREATE TABLE `account` (
     `uid` INT NOT NULL AUTO_INCREMENT,
-    `phone` VARCHAR ( 255 ) CHARACTER 
+    `phone` VARCHAR ( 255 ) CHARACTER
     SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
-    `password` VARCHAR ( 255 ) CHARACTER 
+    `password` VARCHAR ( 255 ) CHARACTER
     SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
-    `secret` VARCHAR ( 255 ) CHARACTER 
+    `secret` VARCHAR ( 255 ) CHARACTER
     SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
     `user` json NULL,
     `mails` json NULL,
     `assistCharList` json NULL,
     `friend` json NULL,
     `ban` INT NULL DEFAULT NULL,
-    PRIMARY KEY USING BTREE ( `uid` ) 
-    ) ENGINE = INNODB AUTO_INCREMENT = 3 CHARACTER 
+    PRIMARY KEY USING BTREE ( `uid` )
+    ) ENGINE = INNODB AUTO_INCREMENT = 3 CHARACTER
     SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;""")
     cursor.execute("SET FOREIGN_KEY_CHECKS = 1")
     cursor.execute("ALTER TABLE account auto_increment=100000000")

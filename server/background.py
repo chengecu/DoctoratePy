@@ -1,10 +1,11 @@
 import json
-from flask import Response, request, abort
+
+from flask import Response, abort, request
 
 from constants import CONFIG_PATH
-from utils import read_json
-from core.database import userData
 from core.Account import Account
+from core.database import userData
+from utils import read_json
 
 
 def backgroundSetBackground() -> Response:
@@ -15,15 +16,15 @@ def backgroundSetBackground() -> Response:
     secret = request.headers.get("secret")
     bgID = request_data["bgID"]
     server_config = read_json(CONFIG_PATH)
-    
+
     if not server_config["server"]["enableServer"]:
         return abort(400)
-    
+
     result = userData.query_account_by_secret(secret)
-    
+
     if len(result) != 1:
         return abort(403)
-    
+
     accounts = Account(*result[0])
     player_data = json.loads(accounts.get_user())
     player_data["background"]["selected"] = bgID
@@ -41,4 +42,3 @@ def backgroundSetBackground() -> Response:
         }
     }
     return data
-

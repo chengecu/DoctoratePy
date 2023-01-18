@@ -1,17 +1,9 @@
-import os
-import socket
-import zipfile
 import hashlib
-
-from datetime import datetime
+import os
+import zipfile
 from typing import List
 
-
-def writeLog(data: str) -> None:
-
-    time = datetime.now().strftime("%d/%b/%Y %H:%M:%S")
-    clientIp = socket.gethostbyname(socket.gethostname())
-    print(f'{clientIp} - - [{time}] {data}')
+from logger import writeLog
 
 
 def loadMods(log: bool = True) -> List:
@@ -23,7 +15,7 @@ def loadMods(log: bool = True) -> List:
         "path": [],
         "download": []
     }
-    
+
     for file in os.listdir('./mods/'):
         if file != ".placeholder" and file.endswith(".dat"):
             fileList.append('./mods/' + file)
@@ -39,7 +31,7 @@ def loadMods(log: bool = True) -> List:
                 if not zipfile.ZipInfo.is_dir(info):
                     modName = fileName
                     if modName in loadedModList["name"]:
-                        writeLog(filePath + ' - \033[1;33mConflict with other mods...\033[0;0m')
+                        writeLog(filePath + ' - \033[1;33mConflict with other mods...\033[0;0m', "warning")
                         continue
 
                     byteBuffer = modFile.read(fileName)
@@ -54,9 +46,9 @@ def loadMods(log: bool = True) -> List:
                         "totalSize": totalSize,
                         "abSize": abSize
                     }
-                    
+
                     if log:
-                        writeLog(filePath + ' - \033[1;32mMod loaded successfully...\033[0;0m')
+                        writeLog(filePath + ' - \033[1;32mMod loaded successfully...\033[0;0m', "info")
 
                     loadedModList["mods"].append(abInfo)
                     loadedModList["name"].append(modName)
@@ -64,7 +56,8 @@ def loadMods(log: bool = True) -> List:
                     downloadName = modName.replace("/", "_").replace("#", "__").replace(".ab", ".dat")
                     loadedModList["download"].append(downloadName)
 
-        except:
-            writeLog(filePath + ' - \033[1;31mMod file loading failed...\033[0;0m')
+        except Exception as e:
+            writeLog(str(e), "debug")
+            writeLog(filePath + ' - \033[1;31mMod file loading failed...\033[0;0m', "error")
 
     return loadedModList

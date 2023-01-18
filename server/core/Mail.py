@@ -1,5 +1,4 @@
 class Mail:
-    
     def __init__(self, id: int, name: str, _from: str, subject: str,
                  content: str, items: str):
         self.id = id
@@ -8,7 +7,7 @@ class Mail:
         self.subject = subject
         self.content = content
         self.items = items
-        
+
     def get_id(self):
         return self.id
 

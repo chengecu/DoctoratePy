@@ -1,27 +1,18 @@
-import re
-import json
-import socket
-import random
 import hashlib
-from flask import Response, request, abort
+import json
+import random
+import re
+from time import sleep, strftime, time
 
-from time import time, strftime, sleep
-from datetime import datetime
 from constants import CONFIG_PATH
-from utils import read_json
-from core.database import userData
 from core.Account import Account
-from utils import encrypt_code_data, decrypt_user_key
+from core.database import userData
 from core.function.captcha import sentSmsCode, verifySmsCode
+from flask import Response, abort, request
+from logger import writeLog
+from utils import decrypt_user_key, encrypt_code_data, read_json
 
 USER_TOKEN_KEY = "7318def77669979d"
-
-
-def writeLog(data: str) -> None:
-
-    time = datetime.now().strftime("%d/%b/%Y %H:%M:%S")
-    clientIp = socket.gethostbyname(socket.gethostname())
-    print(f'{clientIp} - - [{time}] {data}')
 
 
 def userV1NeedCloudAuth() -> Response:
@@ -43,33 +34,33 @@ def userOAuth2V1Grant() -> Response:
     '''
     data = request.data
     request_data = request.get_json()
-    
+
     appCode = request_data["appCode"]
     token = request_data["token"]
     server_config = read_json(CONFIG_PATH)
-    
+
     if not server_config["server"]["enableServer"]:
         data = {
             "status": 2,
             "msg": server_config["server"]["maintenanceMsg"]
         }
         return data
-    
+
     result = userData.query_account_by_secret(token)
-    
+
     if len(result) != 1:
         data = {
             "status": 2,
             "msg": "该用户尚不存在，请先注册"
         }
         return data
-    
+
     code_data = encrypt_code_data(appCode, token, int(time()))
 
     data = {
         "data": {
             "code": code_data,
-            "uid": ''.join(str(random.randint(0, 9)) for _ in range(12)) # TODO: Add track server UID
+            "uid": ''.join(str(random.randint(0, 9)) for _ in range(12))
         },
         "status": 0,
         "msg": "OK"
@@ -99,7 +90,7 @@ def userOauth2V1UnbindGrant() -> Response:
             "status": 4
         }
         return data
-    
+
     if verifySmsCode(phoneCode) is None:
         data = {
             "status": 2,
@@ -114,29 +105,29 @@ def userOauth2V1UnbindGrant() -> Response:
         return data
 
     result = userData.query_account_by_secret(secret)
-    
+
     if len(result) != 1:
-        data ={
+        data = {
             "status": 2,
             "msg": "该用户尚不存在"
         }
         return data
-    
+
     accounts = Account(*result[0])
     player_data = json.loads(accounts.get_user())
-    
+
     time_now = int(time())
     accounts.set_ban(time_now + 60 * 5)
     player_data["status"]["lastOnlineTs"] = time_now
-    
+
     userData.set_user_data(accounts.get_uid(), player_data)
     userData.set_user_status(accounts.get_uid(), accounts.get_ban())
-    
+
     data = {
         "status": 0,
         "msg": "OK"
     }
-    
+
     return data
 
 
@@ -151,13 +142,13 @@ def userV1GuestLogin() -> Response:
     '''
 
     data = request.data
-    
+
     if request.user_agent.platform == "iphone":
         data = {
             "result": 2
         }
         return data
-    
+
     data = {
         "result": 3
     }
@@ -176,13 +167,13 @@ def userAuthenticateUserIdentity() -> Response:
     request_data = request.get_json()
 
     name = request_data["name"]
-    
+
     if name != "DoctoratePy":
         data = {
             "result": 1
         }
         return data
-    
+
     data = {
         "result": 0,
         "message": "OK",
@@ -221,13 +212,13 @@ def userCheckIdCard() -> Response:
         check_sum = sum(((1 << (17 - index)) % 11) * int(idCardNum[index]) for index in range(0, 17))
         check_digit = (12 - (check_sum % 11)) % 11
         check_digit = check_digit if check_digit < 10 else 'X'
-    
+
     if str(check_digit) != idCardNum[-1]:
         data = {
             "result": 1
         }
         return data
-    
+
     data = {
         "result": 0,
         "message": "OK",
@@ -245,7 +236,7 @@ def userInfoV1SendPhoneCode() -> Response:
         4：人机校验失败，请重试
         5：手机验证码不正确，请重试
     '''
-    
+
     data = request.data
     request_data = request.get_json()
 
@@ -254,14 +245,14 @@ def userInfoV1SendPhoneCode() -> Response:
     token = request_data["token"]
 
     result = userData.query_account_by_secret(secret)
-    
+
     if len(result) != 1:
-        data ={
+        data = {
             "status": 2,
             "msg": "该用户尚不存在"
         }
         return data
-    
+
     if token != "":
         sentSmsCode(type)
         data = {
@@ -269,7 +260,7 @@ def userInfoV1SendPhoneCode() -> Response:
             "msg": "OK"
         }
         return data
-    
+
     data = {
         "status": 1
     }
@@ -294,21 +285,21 @@ def userSendSmsCode() -> Response:
     account = request_data["account"]
     type = request_data["type"]
     server_config = read_json(CONFIG_PATH)
-    
+
     if not server_config["server"]["enableServer"]:
         data = {
             "result": 8
         }
         return data
-    
+
     result = userData.query_account_by_secret(secret)
-    
+
     if type != 0 and len(result) != 1:
-        data ={
+        data = {
             "result": 7
         }
         return data
-    
+
     if account:
         status = sentSmsCode(type)
         data = {
@@ -317,7 +308,7 @@ def userSendSmsCode() -> Response:
         if status == 0:
             data["msg"] = "OK"
         return data
-    
+
     data = {
         "result": 5
     }
@@ -332,7 +323,7 @@ def userRegister() -> Response:
         5：<自定义消息>errMsg
         8：<需要人机验证>message & captcha
     '''
-    
+
     data = request.data
     request_data = request.get_json()
 
@@ -353,11 +344,11 @@ def userRegister() -> Response:
             "errMsg": "<color=red>密码格式错误</color>\n密码应为8-16位大小写字母和数字的组合\n其中可以选择包含一些常用字符"
         }
         return data
-    
+
     result = userData.query_account_by_phone(account)
 
     if len(result) != 0:
-        if Account(*result[0]).get_user() != "{}": 
+        if Account(*result[0]).get_user() != "{}":
             data = {
                 "result": 5,
                 "errMsg": "该账户已存在，请检查注册信息"
@@ -384,7 +375,7 @@ def userRegister() -> Response:
         11, 12, 13, 14, 15, 21, 22, 23, 31, 32, 33, 34, 35, 36, 37, 41,
         42, 43, 44, 45, 46, 50, 51, 52, 53, 54, 61, 62, 63, 64, 65, 66
     ]
-    
+
     def generateFakeIdCard() -> str:
         try:
             random_year = random.randint(int(strftime('%Y')) - 82, int(strftime('%Y')) - 18)
@@ -394,11 +385,11 @@ def userRegister() -> Response:
             serial_number = "0" + str(random.randint(10, 99)) if random.randint(10, 199) < 100 else str(random.randint(10, 199))
             area_code = str(province[random.randint(0, len(province))]) + "0101"
             part_code = area_code + birthday + serial_number
-            fake_code = part_code + check_digits[sum(int(part_code[index:index+1]) * weights[index+1] for index in range(17)) % 11]
+            fake_code = part_code + check_digits[sum(int(part_code[index:index + 1]) * weights[index + 1] for index in range(17)) % 11]
             return fake_code
-        except:
+        except Exception:
             return ""
-        
+
     if captcha == "":
         success = 1 if sign == "" else 0
         data = {
@@ -412,9 +403,9 @@ def userRegister() -> Response:
             }
         }
         return data
-    
+
     sleep(1)
-        
+
     while captcha:
         fake_id_card = generateFakeIdCard()
         if re.match(r"^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$", fake_id_card):
@@ -423,7 +414,7 @@ def userRegister() -> Response:
             check_digit = (12 - (check_sum % 11)) % 11
             check_digit = check_digit if check_digit < 10 else 'X'
             if str(check_digit) == fake_id_card[-1]:
-                writeLog(f"\033[1;32mFake ID Card: {fake_id_card} - Name: DoctoratePy\033[0;0m")
+                writeLog(f"\033[1;32mFake ID Card: {fake_id_card} - Name: DoctoratePy\033[0;0m", "info")
                 break
 
     if userData.register_account(account, hashlib.md5((password + decrypt_user_key(USER_TOKEN_KEY, int(time()))).encode()).hexdigest(), secret) != 1:
@@ -432,7 +423,7 @@ def userRegister() -> Response:
             "errMsg": "注册失败，未知错误"
         }
         return data
-    
+
     data = {
         "result": 0,
         "uid": 0,
@@ -442,7 +433,7 @@ def userRegister() -> Response:
         "needAuthenticate": True,
         "isLatestUserAgreement": True
     }
-    
+
     return data
 
 
@@ -455,7 +446,7 @@ def userLogin() -> Response:
         7：认证系统人机校验失败，请重试
         8：<需要人机验证>message & captcha
     '''
-    
+
     data = request.data
     request_data = request.get_json()
 
@@ -509,13 +500,13 @@ def userLogin() -> Response:
             return data
 
     accounts = Account(*result[0])
-    
+
     if accounts.get_user() == "{}":
         data = {
             "result": 3
         }
         return data
-    
+
     data = {
         "result": 0,
         "uid": "0",
@@ -537,13 +528,13 @@ def userLoginBySmsCode() -> Response:
         7：认证系统人机校验失败，请重试
         8：网络异常，登录失败，请稍后重试 - 错误号:0
     '''
-    
+
     data = request.data
     request_data = request.get_json()
 
     account = str(request_data["account"])
     smsCode = str(request_data["smsCode"])
-    
+
     result = userData.query_account_by_phone(account)
 
     if len(result) != 1:
@@ -551,7 +542,7 @@ def userLoginBySmsCode() -> Response:
             "result": 1
         }
         return data
-    
+
     if not verifySmsCode(smsCode):
         data = {
             "result": 4
@@ -559,7 +550,7 @@ def userLoginBySmsCode() -> Response:
         return data
 
     accounts = Account(*result[0])
-    
+
     data = {
         "result": 0,
         "uid": accounts.get_uid(),
@@ -579,7 +570,7 @@ def userChangePassword() -> Response:
         1：格式错误
         2：验证码输入错误
     '''
-    
+
     data = request.data
     request_data = request.get_json()
 
@@ -590,13 +581,13 @@ def userChangePassword() -> Response:
     result = userData.query_account_by_secret(secret)
     accounts = Account(*result[0])
     password = accounts.get_password()
-    
+
     if hashlib.md5((newPassword + decrypt_user_key(USER_TOKEN_KEY, int(time()))).encode()).hexdigest() == password:
         data = {
             "result": 1
         }
         return data
-    
+
     pattern = re.compile(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*]{8,16}$')
 
     if not pattern.match(newPassword):
@@ -610,10 +601,10 @@ def userChangePassword() -> Response:
             "result": 2
         }
         return data
-    
+
     accounts.set_password(hashlib.md5((newPassword + decrypt_user_key(USER_TOKEN_KEY, int(time()))).encode()).hexdigest())
     userData.set_password(secret, accounts.get_password())
-    
+
     data = {
         "result": 0
     }
@@ -626,9 +617,9 @@ def userChangePhoneCheck() -> Response:
     result:
         11：每个账号换绑时间不得少于7天
     '''
-    
+
     data = request.data
-    
+
     secret = request.headers.get('secret')
     result = userData.query_account_by_secret(secret)
     accounts = Account(*result[0])
@@ -663,7 +654,7 @@ def userChangePhone() -> Response:
     newPhone = request_data["newPhone"]
     phoneCode = request_data["phoneCode"]
     newPhoneCode = request_data["newPhoneCode"]
-    
+
     result = userData.query_account_by_secret(secret)
     accounts = Account(*result[0])
 
@@ -678,14 +669,14 @@ def userChangePhone() -> Response:
             "result": 12
         }
         return data
-    
+
     new_secret = hashlib.md5((newPhone + decrypt_user_key(USER_TOKEN_KEY, int(time()))).encode()).hexdigest()
-    
+
     player_data = json.loads(accounts.get_user())
     player_data["status"]["registerTs"] = int(time())
     accounts.set_phone(newPhone)
     accounts.set_secret(new_secret)
-    
+
     userData.set_user_data(accounts.get_uid(), player_data)
     userData.set_phone(secret, accounts.get_phone(), new_secret)
 
@@ -702,20 +693,20 @@ def userAuth() -> Response:
     request_data = request.get_json()
 
     secret = str(request_data["token"])
-    
+
     if secret is None or len(secret) < 0:
         return abort(400)
 
     result = userData.query_account_by_secret(secret)
-    
+
     if len(result) != 1:
         return abort(500)
-    
+
     accounts = Account(*result[0])
 
     if accounts.get_user() == "{}":
         return abort(500)
-        
+
     data = {
         "uid": accounts.get_uid(),
         "isMinor": False,
@@ -724,5 +715,5 @@ def userAuth() -> Response:
         "needAuthenticate": False,
         "isLatestUserAgreement": True
     }
-    
+
     return data

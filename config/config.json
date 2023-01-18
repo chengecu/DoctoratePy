@@ -18,12 +18,13 @@
     },
     "developer": {
         "dropRate": 1,
-        "debugMode": true
+        "debugMode": true,
+        "timestamp": -1
     },
     "version": {
         "android": {
-            "resVersion": "23-01-11-12-54-27-873b47",
-            "clientVersion": "1.9.42"
+            "resVersion": "23-01-17-18-34-01-50b196",
+            "clientVersion": "1.9.62"
         }
     },
     "remote": {
@@ -35,9 +36,9 @@
         "sign": "sign",
         "content": {
             "configVer": "5",
-            "funcVer": "V034",
+            "funcVer": "V035",
             "configs": {
-                "V034": {
+                "V035": {
                     "override": true,
                     "network": {
                         "gs": "{server}",

@@ -1,15 +1,34 @@
 import json
-from flask import Response, request, abort
-
 from time import time
-from core.function.update import updateData
-from constants import CONFIG_PATH, CHARACTER_TABLE_URL, CHARWORD_TABLE_URL, \
-    EQUIP_TABLE_URL, GACHA_TABLE_URL, SYNC_DATA_TEMPLATE_PATH, ITEM_TABLE_URL, \
-    STAGE_TABLE_URL, MEDAL_TABLE_URL, BUILDING_DATA_URL, RL_TABLE_URL, SKIN_TABLE_URL, \
-    GAMEDATA_CONST_URL, SHOP_CLIENT_TABLE_URL, ANNOUNCEMENT_META_PATH, TOWER_TABLE_URL
-from utils import read_json
-from core.database import userData
+
+from flask import Response, abort, request
+
+from constants import (ACTIVITY_TABLE_URL, ANNOUNCEMENT_META_PATH,
+                       BUILDING_DATA_URL, CHARACTER_TABLE_URL,
+                       CHARWORD_TABLE_URL, CONFIG_PATH, EQUIP_TABLE_URL,
+                       GACHA_TABLE_URL, GAMEDATA_CONST_URL, ITEM_TABLE_URL,
+                       MEDAL_TABLE_URL, RL_TABLE_URL, SHOP_CLIENT_TABLE_URL,
+                       SKIN_TABLE_URL, STAGE_TABLE_URL,
+                       SYNC_DATA_TEMPLATE_PATH, TOWER_TABLE_URL)
 from core.Account import Account
+from core.database import userData
+from core.function.unlockActivity import unlockActivity
+from core.function.update import updateData
+from utils import read_json
+
+
+def userTimestamp() -> int:
+
+    time_now = int(time())
+    server_config = read_json(CONFIG_PATH)
+    user_ts = server_config["developer"]["timestamp"]
+
+    if user_ts == -1 or user_ts > time_now:
+        timestamp = time_now
+    else:
+        timestamp = user_ts
+
+    return timestamp
 
 
 def accountLogin() -> Response:
@@ -31,17 +50,17 @@ def accountLogin() -> Response:
     networkVersion = str(request_data["networkVersion"])
 
     result = userData.query_account_by_secret(secret)
-    
+
     if len(result) != 1:
         data = {
             "result": 3
         }
         return data
-    
+
     accounts = Account(*result[0])
     server_config = read_json(CONFIG_PATH)
     player_data = json.loads(accounts.get_user())
-    
+
     if accounts.get_ban() == 1:
         data = {
             "result": 1
@@ -53,23 +72,21 @@ def accountLogin() -> Response:
             "result": 2
         }
         return data
-    
+
     if networkVersion != server_config["networkConfig"]["content"]["configVer"]:
         data = {
             "result": 5
         }
         return data
-    
-    try:
-        if accounts.get_user() != "{}":
-            registerTs = player_data["status"]["registerTs"]
 
-            if int(time()) < registerTs:
-                data = {
-                    "result": 6
-                }
-                return data
-    except:
+    try:
+        if server_config["developer"]["timestamp"] > int(time()):
+            data = {
+                "result": 6
+            }
+            return data
+
+    except Exception:
         data = {
             "result": 4
         }
@@ -80,7 +97,7 @@ def accountLogin() -> Response:
         syncData = read_json(SYNC_DATA_TEMPLATE_PATH, encoding='utf8')
         syncData["status"]["registerTs"] = ts
         syncData["status"]["lastApAddTime"] = ts
-        
+
         userData.set_user_data(accounts.get_uid(), syncData)
 
     if "checkMeta" not in player_data:
@@ -106,27 +123,30 @@ def accountSyncData() -> Response:
     '''
 
     data = request.data
-    
+
     secret = request.headers.get("secret")
     server_config = read_json(CONFIG_PATH)
-    
+
     if not server_config["server"]["enableServer"]:
         return abort(400)
-    
+
     result = userData.query_account_by_secret(secret)
-    
+
     if len(result) != 1:
         return abort(500)
-    
-    ts = int(time()) # TODO: Add userTimeStamps
+
+    ts = userTimestamp()
     accounts = Account(*result[0])
     player_data = json.loads(accounts.get_user())
-    
-    player_data["status"]["lastOnlineTs"] = int(time())
-    player_data["status"]["lastRefreshTs"] = ts # TODO: Add userTimeStamps
 
+    player_data["status"]["lastOnlineTs"] = int(time())
+    player_data["status"]["lastRefreshTs"] = ts
+    player_data.setdefault("carousel", {})
+
+    unlockActivity(player_data)
     userData.set_user_data(accounts.get_uid(), player_data)
-    
+
+    updateData(ACTIVITY_TABLE_URL)
     updateData(CHARACTER_TABLE_URL)
     updateData(CHARWORD_TABLE_URL)
     updateData(EQUIP_TABLE_URL)
@@ -136,46 +156,47 @@ def accountSyncData() -> Response:
     updateData(STAGE_TABLE_URL)
     updateData(MEDAL_TABLE_URL)
     updateData(SKIN_TABLE_URL)
+    updateData(TOWER_TABLE_URL)
     updateData(SHOP_CLIENT_TABLE_URL)
     updateData(GAMEDATA_CONST_URL)
     updateData(BUILDING_DATA_URL)
-    updateData(TOWER_TABLE_URL)
 
     data = {
         "result": 0,
-        "ts": ts, # TODO: Add userTimeStamps
+        "ts": ts,
         "user": player_data
     }
-    
+
     return data
-    
+
 
 def accountSyncStatus() -> Response:
-    
+
     data = request.data
     request_data = request.get_json()
 
     secret = request.headers.get("secret")
     params = request_data["params"]
     server_config = read_json(CONFIG_PATH)
-    
+
     if not server_config["server"]["enableServer"]:
         return abort(400)
 
     result = userData.query_account_by_secret(secret)
-    
+
     if len(result) != 1:
         return abort(500)
-    
-    ts = int(time()) # TODO: Add userTimeStamps
+
+    ts = userTimestamp()
     accounts = Account(*result[0])
-    
+
     player_data = json.loads(accounts.get_user())
     player_data["status"]["lastOnlineTs"] = int(time())
     player_data["status"]["lastRefreshTs"] = ts
     player_data["pushFlags"]["hasGifts"] = 0
     player_data["pushFlags"]["hasFriendRequest"] = 0
-    
+
+    # Check consumable
     consumable = player_data["consumable"]
 
     for index in list(consumable.keys()):
@@ -185,6 +206,7 @@ def accountSyncStatus() -> Response:
                 if ES["ts"] <= int(time()) or ES["count"] == 0:
                     del consumable[index][item]
 
+    # Mail
     mailbox_list = json.loads(accounts.get_mails())
 
     for index in range(len(mailbox_list)):
@@ -194,22 +216,24 @@ def accountSyncStatus() -> Response:
                 break
             else:
                 mailbox_list[index]["remove"] = 1
-                
+
+    # Friends
     friend_data = json.loads(accounts.get_friend())
     friend_request = friend_data["request"]
-    
+
     for friend in friend_request:
         result = userData.query_account_by_uid(friend["uid"])
         if len(result) == 0:
             friend_request.remove(friend)
-    
+
     userData.set_friend_data(accounts.get_uid(), friend_data)
-            
+
     if len(friend_request) != 0:
         player_data["pushFlags"]["hasFriendRequest"] = 1
-        
+
     userData.set_user_data(accounts.get_uid(), player_data)
-    
+
+    # Announcement
     announcementVersion = read_json(ANNOUNCEMENT_META_PATH, encoding='utf-8')["focusAnnounceId"]
     announcementPopUpVersion = server_config["version"]["android"]["resVersion"][:5].replace("-", "") + str(accounts.get_uid())[-4:]
 
@@ -229,7 +253,7 @@ def accountSyncStatus() -> Response:
                     for type in list(player_data["shop"]["GP"].keys()):
                         good_list.update({d["id"]: d["count"] for d in player_data["shop"]["GP"][type]["info"]})
                 else:
-                    good_list = {d["id"]: d["count"] for d in player_data["shop"][goodType]["info"]} if goodType != "CASH" else player_data["shop"]["FURNI"]["groupInfo"]
+                    good_list = {d["id"]: d["count"] for d in player_data["shop"][goodType]["info"]} if goodType != "CASH" else player_data["shop"]["FURNI"].get("groupInfo", {})
                 for item in goodIdMap[goodType]:
                     if item in good_list:
                         modules["16"]["goodPurchaseState"]["result"].update({item: -1})
@@ -237,7 +261,7 @@ def accountSyncStatus() -> Response:
                         modules["16"]["goodPurchaseState"]["result"].update({item: 1})
 
     data = {
-        "ts": ts, 
+        "ts": ts,
         "result": {
             "4": {
                 "announcementVersion": announcementVersion,
@@ -260,7 +284,7 @@ def accountSyncStatus() -> Response:
             "deleted": {}
         }
     }
-                        
+
     if len(modules) > 0:
         data["result"].update(modules)
 

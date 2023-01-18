@@ -1,14 +1,86 @@
 {
-    "focusAnnounceId": "1103",
+    "focusAnnounceId": "1123",
     "announceList": [
         {
-            "announceId": "1121",
-            "title": "01月12日\n闪断更新公告",
+            "announceId": "1119",
+            "title": "春节未成年人\n游戏限时通知",
             "isWebUrl": true,
-            "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1121_1673446901.html",
-            "day": 11,
+            "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1119_1673089344.html",
+            "day": 18,
             "month": 1,
             "group": "SYSTEM"
+        },
+        {
+            "announceId": "1134",
+            "title": "01月18日\n闪断更新公告",
+            "isWebUrl": true,
+            "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1134_1674028445.html",
+            "day": 18,
+            "month": 1,
+            "group": "SYSTEM"
+        },
+        {
+            "announceId": "1131",
+            "title": "01月18日\n闪断更新公告",
+            "isWebUrl": true,
+            "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1131_1673965536.html",
+            "day": 17,
+            "month": 1,
+            "group": "SYSTEM"
+        },
+        {
+            "announceId": "1123",
+            "title": "【万象伶仃】\n限定寻访开启",
+            "isWebUrl": true,
+            "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1123_1673928781.html",
+            "day": 17,
+            "month": 1,
+            "group": "ACTIVITY"
+        },
+        {
+            "announceId": "1124",
+            "title": "0011制造\n新装限时上架",
+            "isWebUrl": true,
+            "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1124_1673928786.html",
+            "day": 17,
+            "month": 1,
+            "group": "ACTIVITY"
+        },
+        {
+            "announceId": "1127",
+            "title": "0011制造\n限时复刻上架",
+            "isWebUrl": true,
+            "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1127_1673928764.html",
+            "day": 17,
+            "month": 1,
+            "group": "ACTIVITY"
+        },
+        {
+            "announceId": "1130",
+            "title": "「登临意」\nUP主应援计划",
+            "isWebUrl": true,
+            "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1130_1673928736.html",
+            "day": 17,
+            "month": 1,
+            "group": "ACTIVITY"
+        },
+        {
+            "announceId": "1128",
+            "title": "罗德岛风尚回顾\n限时开启",
+            "isWebUrl": true,
+            "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1128_1673928731.html",
+            "day": 17,
+            "month": 1,
+            "group": "ACTIVITY"
+        },
+        {
+            "announceId": "1116",
+            "title": "「登临意」\n限时活动开启",
+            "isWebUrl": true,
+            "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1116_1673928868.html",
+            "day": 17,
+            "month": 1,
+            "group": "ACTIVITY"
         },
         {
             "announceId": "1118",
@@ -29,15 +101,6 @@
             "group": "ACTIVITY"
         },
         {
-            "announceId": "1116",
-            "title": "「登临意」\n活动即将开启",
-            "isWebUrl": true,
-            "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1116_1673359516.html",
-            "day": 8,
-            "month": 1,
-            "group": "ACTIVITY"
-        },
-        {
             "announceId": "1099",
             "title": "特定干员\n限时出率上升",
             "isWebUrl": true,
@@ -53,60 +116,6 @@
             "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1109_1673338230.html",
             "day": 3,
             "month": 1,
-            "group": "ACTIVITY"
-        },
-        {
-            "announceId": "1106",
-            "title": "「将进酒」\n复刻限时开启",
-            "isWebUrl": true,
-            "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1106_1672597012.html",
-            "day": 1,
-            "month": 1,
-            "group": "ACTIVITY"
-        },
-        {
-            "announceId": "1113",
-            "title": "0011系列\n新装限时上架",
-            "isWebUrl": true,
-            "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1113_1672597000.html",
-            "day": 1,
-            "month": 1,
-            "group": "ACTIVITY"
-        },
-        {
-            "announceId": "1114",
-            "title": "0011系列\n限时复刻上架",
-            "isWebUrl": true,
-            "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1114_1672596929.html",
-            "day": 1,
-            "month": 1,
-            "group": "ACTIVITY"
-        },
-        {
-            "announceId": "1103",
-            "title": "跨年欢庆·相逢\n限时寻访开启",
-            "isWebUrl": true,
-            "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1103_1671434632.html",
-            "day": 1,
-            "month": 1,
-            "group": "ACTIVITY"
-        },
-        {
-            "announceId": "1102",
-            "title": "跨年欢庆·相逢\n寻访即将开启",
-            "isWebUrl": true,
-            "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1102_1671272460.html",
-            "day": 17,
-            "month": 12,
-            "group": "ACTIVITY"
-        },
-        {
-            "announceId": "1101",
-            "title": "跨年纪念活动\n即将开启",
-            "isWebUrl": true,
-            "webUrl": "https://ak.hycdn.cn/announce/Android/announcement/1101_1672542149.html",
-            "day": 17,
-            "month": 12,
             "group": "ACTIVITY"
         },
         {

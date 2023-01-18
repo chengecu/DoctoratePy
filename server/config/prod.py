@@ -1,16 +1,16 @@
-import re
 import json
-from flask import Response
-
+import re
 from random import shuffle
+
 from constants import CONFIG_PATH
-from utils import read_json, write_json
 from core.function.update import updateData
+from flask import Response
+from utils import read_json, write_json
 
 
 def randomHash() -> str:
 
-    hash  = list("abcdef")
+    hash = list("abcdef")
     shuffle(hash)
 
     return ''.join(hash)

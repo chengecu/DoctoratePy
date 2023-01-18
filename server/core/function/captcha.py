@@ -1,17 +1,16 @@
 import random
-import socket
-
 from time import time
-from datetime import datetime
- 
+
+from logger import writeLog
+
 
 class TemporaryData:
 
     codes = []
     req_num = 0
     lastSendTs = 0
-    
-    
+
+
 class AuthCode:
     def __init__(self, code: str, ts: int, type: int):
         self.code = code
@@ -19,23 +18,16 @@ class AuthCode:
         self.type = type
 
 
-def writeLog(data: str) -> None:
-
-    time = datetime.now().strftime("%d/%b/%Y %H:%M:%S")
-    clientIp = socket.gethostbyname(socket.gethostname())
-    print(f'{clientIp} - - [{time}] {data}')
-
-    
 def sentSmsCode(type: int = 0) -> int:
-    
+
     ts = int(time())
     code = "".join(str(index) for index in [random.randint(0, 9) for _ in range(6)])
-    
+
     if ts - TemporaryData.lastSendTs <= 5:
         return 2
-    
+
     TemporaryData.codes.append(AuthCode(code, ts, type))
-    
+
     if ts - TemporaryData.lastSendTs >= 300:
         TemporaryData.req_num = 0
 
@@ -43,16 +35,16 @@ def sentSmsCode(type: int = 0) -> int:
         if TemporaryData.req_num >= 5:
             TemporaryData.req_num = 0
             return 1
-        TemporaryData.req_num += 1 
-        
+        TemporaryData.req_num += 1
+
     TemporaryData.lastSendTs = ts
-    writeLog('\033[1;32mVerification code: {}\033[0;0m'.format(code))
-    
+    writeLog(f"\033[1;32mVerification code: {code}\033[0;0m", "info")
+
     return 0
 
-    
+
 def verifySmsCode(smsCode: str, smsCode_2: str = None, phone_check: bool = False) -> bool:
-    
+
     pass_code = []
     for code in TemporaryData.codes:
         if code.type == 101 and code.code == smsCode:
@@ -66,11 +58,11 @@ def verifySmsCode(smsCode: str, smsCode_2: str = None, phone_check: bool = False
                 return None
         if code.type == 103 and code.code == smsCode_2:
             pass_code.append(code)
-            
+
         if phone_check and len(pass_code) == 2:
             if pass_code[0].code == smsCode:
                 for item in pass_code:
                     TemporaryData.codes.remove(item)
                 return True
-    
+
     return False

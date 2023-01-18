@@ -1,5 +1,4 @@
 class SearchAssistCharList:
-    
     def __init__(self, uid: int, status: str, chars: str, social_assist_char_list: str,
                  assist_char_list: str):
         self.uid = uid
@@ -40,7 +39,6 @@ class SearchAssistCharList:
 
 
 class SearchUidList:
-    
     def __init__(self, uid: int, level: str):
         self.uid = uid
         self.level = level

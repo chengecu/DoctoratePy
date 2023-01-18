@@ -1,5 +1,4 @@
 class Account:
-    
     def __init__(self, uid: int, phone: str, password: str, secret: str, user: str,
                  mails: str, assist_char_list: str, friend: str, ban: int):
         self.uid = uid
@@ -68,7 +67,6 @@ class Account:
 
 
 class UserInfo:
-    
     def __init__(self, uid: int, status: str, chars: str, social_assist_char_list: str,
                  assist_char_list: str, friend: str):
         self.uid = uid

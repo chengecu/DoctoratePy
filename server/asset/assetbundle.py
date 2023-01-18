@@ -1,16 +1,16 @@
-import os
-import socket
 import hashlib
-import requests
-
+import os
 from datetime import datetime
-from flask import Response, stream_with_context, redirect
+
+import requests
 from constants import CONFIG_PATH
 from core.function.loadMods import loadMods
+from flask import Response, redirect, stream_with_context
+from logger import writeLog
 from utils import read_json, write_json
 
 header = {
-    "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36 Edg/105.0.1343.53"
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36 Edg/105.0.1343.53"
 }
 MODS_LIST = {
     "mods": [],
@@ -20,26 +20,19 @@ MODS_LIST = {
 }
 
 
-def writeLog(data: str) -> None:
-
-    time = datetime.now().strftime("%d/%b/%Y %H:%M:%S")
-    clientIp = socket.gethostbyname(socket.gethostname())
-    print(f'{clientIp} - - [{time}] {data}')
-        
-    
 def getFile(assetsHash: str, fileName: str) -> bytes:
-    
+
     global MODS_LIST
     server_config = read_json(CONFIG_PATH)
     version = server_config["version"]["android"]["resVersion"]
-    basePath  = os.path.join('.', 'assets', version, 'redirect')
-    
+    basePath = os.path.join('.', 'assets', version, 'redirect')
+
     if fileName == 'hot_update_list.json' and read_json(CONFIG_PATH)["assets"]["enableMods"]:
         MODS_LIST = loadMods()
 
     if not server_config["assets"]["downloadLocally"]:
-        basePath  = os.path.join('.', 'assets', version)
-        if fileName != 'hot_update_list.json'and fileName not in MODS_LIST["download"]:
+        basePath = os.path.join('.', 'assets', version)
+        if fileName != 'hot_update_list.json' and fileName not in MODS_LIST["download"]:
             return redirect('https://ak.hycdn.cn/assetbundle/official/Android/assets/{}/{}'.format(version, fileName), 302)
 
     if not os.path.isdir(basePath):
@@ -63,14 +56,14 @@ def getFile(assetsHash: str, fileName: str) -> bytes:
                 wrongSize = False
                 filePath = path
 
-    writeLog('/{}/{}'.format(version, fileName))
-    
+    writeLog(f'/{version}/{fileName}', "info")
+
     return export('https://ak.hycdn.cn/assetbundle/official/Android/assets/{}/{}'.format(version, fileName), filePath, assetsHash, wrongSize)
 
 
 def downloadFile(url: str, filePath: str) -> None:
 
-    writeLog('\033[1;33mDownload {}\033[0;0m'.format(os.path.basename(filePath)))
+    writeLog(f'\033[1;33mDownload {os.path.basename(filePath)}\033[0;0m', "info")
     res = requests.get(url, headers=header, stream=True)
     with open(filePath, 'wb') as f:
         for chunk in res.iter_content(chunk_size=512):
@@ -94,16 +87,16 @@ def export(url: str, filePath: str, assetsHash: str, redownload: bool = False) -
     }
 
     if os.path.basename(filePath) == 'hot_update_list.json':
-        
+
         if os.path.exists(filePath):
             hot_update_list = read_json(filePath)
         else:
             hot_update_list = requests.get(url, headers=header).json()
             write_json(hot_update_list, filePath)
-            
+
         abInfoList = hot_update_list["abInfos"]
         newAbInfos = []
-        
+
         for abInfo in abInfoList:
             if server_config["assets"]["enableMods"]:
                 hot_update_list["versionId"] = assetsHash
@@ -129,7 +122,7 @@ def export(url: str, filePath: str, assetsHash: str, redownload: bool = False) -
 
         with open(savePath, 'rb') as f:
             data = f.read()
-        
+
         return Response(
             data,
             headers=headers
@@ -139,7 +132,7 @@ def export(url: str, filePath: str, assetsHash: str, redownload: bool = False) -
         with open(filePath, "rb") as f:
             data = f.read()
         headers["Content-Length"] = os.path.getsize(filePath)
-        
+
         return Response(
             data,
             headers=headers
@@ -149,7 +142,7 @@ def export(url: str, filePath: str, assetsHash: str, redownload: bool = False) -
         file = requests.head(url, headers=header)
         total_size_in_bytes = int(file.headers.get('Content-length', 0))
         headers["Content-Length"] = total_size_in_bytes
-            
+
     return Response(
         stream_with_context(downloadFile(url, filePath)),
         headers=headers

@@ -1,36 +1,53 @@
-import os
+import traceback
 import webbrowser
-from datetime import datetime
+from wsgiref.simple_server import make_server
 
 from flask import Flask
-from wsgiref.simple_server import make_server
 from flask_wtf.csrf import CSRFProtect
-from utils import read_json
-from constants import CONFIG_PATH
 
-import account, background, building, campaignV2, char, charBuild, charm, crisis, \
-        deepsea, gacha, mail, online, quest, tower, pay, rlv2, shop, social, story, storyreview, user, \
-        asset.assetbundle, auth.user, auth.u8, config.prod, core.database.initDatabase#, \
-        #admin.login, admin.index
+from constants import CONFIG_PATH
+from utils import read_json
+
+import account, activity, background, building, campaignV2, char, charBuild, charm, crisis, \
+    deepsea, gacha, logger, mail, quest, pay, rlv2, shop, social, story, storyreview, user, \
+    asset.assetbundle, auth.online, auth.user, auth.u8, config.prod, core.database.initDatabase
 
 server_config = read_json(CONFIG_PATH)
 core.database.initDatabase.initDB()
 
 app = Flask(__name__)
-#app.config["SECRET_KEY"] = "HRMCwPonJLIB3WCl"
-#CSRFProtect(app)
+# app.config["SECRET_KEY"] = "HRMCwPonJLIB3WCl"
+# CSRFProtect(app)
 
 host = server_config["server"]["host"]
 port = server_config["server"]["port"]
 WSGIServer = False
 
+
+@app.errorhandler(Exception)
+def handle_exceptions(error):
+    if not hasattr(error, "code"):
+        logger.writeLog(f"{error} - {traceback.format_exc()}", "error")
+        return "", 502
+    return error
+
 # TODO: Add Web-UI
-#app.add_url_rule('/', methods=['GET', 'POST'], view_func=admin.index.index)
-#app.add_url_rule('/login', methods=['GET', 'POST'], view_func=admin.login.login)
+# app.add_url_rule('/', methods=['GET', 'POST'], view_func=admin.index.index)
+# app.add_url_rule('/login', methods=['GET', 'POST'], view_func=admin.login.login)
+
 
 app.add_url_rule('/account/login', methods=['POST'], view_func=account.accountLogin)
 app.add_url_rule('/account/syncData', methods=['POST'], view_func=account.accountSyncData)
 app.add_url_rule('/account/syncStatus', methods=['POST'], view_func=account.accountSyncStatus)
+
+app.add_url_rule('/activity/bossRush/battleStart', methods=['POST'], view_func=activity.activityBossRushBattleStart)
+app.add_url_rule('/activity/bossRush/battleFinish', methods=['POST'], view_func=activity.activityBossRushBattleFinish)
+app.add_url_rule('/activity/bossRush/relicSelect', methods=['POST'], view_func=activity.activityBossRushRelicSelect)
+app.add_url_rule('/activity/bossRush/relicUpgrade', methods=['POST'], view_func=activity.activityBossRushRelicUpgrade)
+app.add_url_rule('/activity/confirmActivityMission', methods=['POST'], view_func=activity.activityConfirmActivityMission)
+app.add_url_rule('/activity/confirmActivityMissionList', methods=['POST'], view_func=activity.activityConfirmActivityMissionList)
+app.add_url_rule('/activity/rewardMilestone', methods=['POST'], view_func=activity.activityRewardMilestone)
+app.add_url_rule('/activity/rewardAllMilestone', methods=['POST'], view_func=activity.activityRewardAllMilestone)
 
 app.add_url_rule('/assetbundle/official/Android/assets/<string:assetsHash>/<string:fileName>', methods=['GET', 'POST'], view_func=asset.assetbundle.getFile)
 
@@ -85,18 +102,19 @@ app.add_url_rule('/mail/receiveMail', methods=['POST'], view_func=mail.mailRecei
 app.add_url_rule('/mail/receiveAllMail', methods=['POST'], view_func=mail.mailReceiveAllMail)
 app.add_url_rule('/mail/removeAllReceivedMail', methods=['POST'], view_func=mail.mailRemoveAllReceivedMail)
 
-app.add_url_rule('/online/v1/ping', methods=['POST'], view_func=online.onlineV1Ping)
-app.add_url_rule('/online/v1/loginout', methods=['POST'], view_func=online.onlineV1LoginOut)
+app.add_url_rule('/online/v1/ping', methods=['POST'], view_func=auth.online.onlineV1Ping)
+app.add_url_rule('/online/v1/loginout', methods=['POST'], view_func=auth.online.onlineV1LoginOut)
 
 app.add_url_rule('/pay/confirmOrder', methods=['POST'], view_func=pay.payConfirmOrder)
 app.add_url_rule('/pay/confirmOrderAlipay', methods=['POST'], view_func=pay.payConfirmOrderAlipay)
+app.add_url_rule('/pay/confirmOrderWechat', methods=['POST'], view_func=pay.payConfirmOrderWechat)
 app.add_url_rule('/pay/createOrder', methods=['POST'], view_func=pay.payCreateOrder)
 app.add_url_rule('/pay/createOrderAlipay', methods=['POST'], view_func=pay.payCreateOrderAlipay)
 app.add_url_rule('/pay/createOrderWechat', methods=['POST'], view_func=pay.payCreateOrderWechat)
 app.add_url_rule('/pay/success', methods=['POST'], view_func=pay.paySuccess)
 app.add_url_rule('/pay/getUnconfirmedOrderIdList', methods=['POST'], view_func=pay.payGetUnconfirmedOrderIdList)
 app.add_url_rule('/u8/pay/confirmOrderState', methods=['POST'], view_func=auth.u8.payConfirmOrderState)
-app.add_url_rule('/u8/pay/getAllProductList', methods=['POST'], view_func=auth.u8.payGetAllProductList) # TODO: Add full pay system
+app.add_url_rule('/u8/pay/getAllProductList', methods=['POST'], view_func=auth.u8.payGetAllProductList)
 
 app.add_url_rule('/quest/battleStart', methods=['POST'], view_func=quest.questBattleStart)
 app.add_url_rule('/quest/battleFinish', methods=['POST'], view_func=quest.questBattleFinish)
@@ -152,17 +170,17 @@ app.add_url_rule('/story/finishStory', methods=['POST'], view_func=story.storyFi
 app.add_url_rule('/storyreview/markStoryAcceKnown', methods=['POST'], view_func=storyreview.storyreviewMarkStoryAcceKnown)
 app.add_url_rule('/storyreview/readStory', methods=['POST'], view_func=storyreview.storyreviewReadStory)
 
-app.add_url_rule('/tower/createGame', methods=['POST'], view_func=tower.towerCreateGame)
-app.add_url_rule('/tower/battleStart', methods=['POST'], view_func=tower.towerBattleStart)
-app.add_url_rule('/tower/battleFinish', methods=['POST'], view_func=tower.towerBattleFinish)
-app.add_url_rule('/tower/settleGame', methods=['POST'], view_func=tower.towerSettleGame)
-app.add_url_rule('/tower/initGodCard', methods=['POST'], view_func=tower.towerInitGodCard)
-app.add_url_rule('/tower/initGame', methods=['POST'], view_func=tower.towerInitGame)
-app.add_url_rule('/tower/initCard', methods=['POST'], view_func=tower.towerInitCard)
-app.add_url_rule('/tower/chooseSubGodCard', methods=['POST'], view_func=tower.towerChooseSubGodCard)
-app.add_url_rule('/tower/recruit', methods=['POST'], view_func=tower.towerRecruit)
-app.add_url_rule('/tower/layerReward', methods=['POST'], view_func=tower.towerLayerReward)
-
+# TODO
+# app.add_url_rule('/tower/createGame', methods=['POST'], view_func=tower.towerCreateGame)
+# app.add_url_rule('/tower/battleStart', methods=['POST'], view_func=tower.towerBattleStart)
+# app.add_url_rule('/tower/battleFinish', methods=['POST'], view_func=tower.towerBattleFinish)
+# app.add_url_rule('/tower/settleGame', methods=['POST'], view_func=tower.towerSettleGame)
+# app.add_url_rule('/tower/initGodCard', methods=['POST'], view_func=tower.towerInitGodCard)
+# app.add_url_rule('/tower/initGame', methods=['POST'], view_func=tower.towerInitGame)
+# app.add_url_rule('/tower/initCard', methods=['POST'], view_func=tower.towerInitCard)
+# app.add_url_rule('/tower/chooseSubGodCard', methods=['POST'], view_func=tower.towerChooseSubGodCard)
+# app.add_url_rule('/tower/recruit', methods=['POST'], view_func=tower.towerRecruit)
+# app.add_url_rule('/tower/layerReward', methods=['POST'], view_func=tower.towerLayerReward)
 
 app.add_url_rule('/user/auth', methods=['POST'], view_func=auth.user.userAuth)
 app.add_url_rule('/user/authenticateUserIdentity', methods=['POST'], view_func=auth.user.userAuthenticateUserIdentity)
@@ -191,13 +209,8 @@ app.add_url_rule('/user/info/v1/send_phone_code', methods=['POST'], view_func=au
 app.add_url_rule('/u8/user/v1/getToken', methods=['POST'], view_func=auth.u8.userV1getToken)
 app.add_url_rule('/u8/user/verifyAccount', methods=['POST'], view_func=auth.u8.userV1getToken)
 
-
-def writeLog(data: str) -> None:
-    os.system("")
-    print(f'[{datetime.now().strftime("%d/%b/%Y %H:%M:%S")}] {data}')
-
 if __name__ == "__main__":
-    writeLog(f'\033[1;35m[SERVER]\033[0;0m Server started at \033[1;32mhttp://{host}:{str(port)}\033[0;0m')
+    logger.writeLog(f"\033[1;35m[SERVER]\033[0;0m Server started at \033[1;32mhttp://{host}:{str(port)}\033[0;0m", "info")
     # webbrowser.open(f'http://{host}:{str(port)}/login') # TODO: Add Web-UI
     if WSGIServer:
         server = make_server(host, port, app)

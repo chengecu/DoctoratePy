@@ -1,12 +1,12 @@
 import json
-from flask import Response, request, abort
-
 from time import time
-from constants import CONFIG_PATH, ALLPRODUCT_LIST_PATH
-from pay import TemporaryData
-from utils import read_json
+
+from constants import ALLPRODUCT_LIST_PATH, CONFIG_PATH
 from core.Account import Account
 from core.database import userData
+from flask import Response, abort, request
+from pay import TemporaryData
+from utils import read_json
 
 
 def userV1getToken() -> Response:
@@ -17,20 +17,20 @@ def userV1getToken() -> Response:
         3：<将会导致客户端卡死>
         4：认证系统人机校验失败，请重试
     '''
-    
+
     data = request.data
     request_data = request.get_json()
 
     secret = json.loads(request_data["extension"])["access_token"]
     server_config = read_json(CONFIG_PATH)
-    
+
     if not server_config["server"]["enableServer"]:
         data = {
             "result": 2,
             "error": server_config["server"]["maintenanceMsg"]
         }
         return data
-    
+
     result = userData.query_account_by_secret(secret)
 
     if len(result) != 1:
@@ -39,7 +39,7 @@ def userV1getToken() -> Response:
             "error": "该用户尚不存在"
         }
         return data
-    
+
     accounts = Account(*result[0])
     if accounts.get_ban() == 1:
         data = {
@@ -60,7 +60,7 @@ def userV1getToken() -> Response:
         else:
             accounts.set_ban(0)
             userData.set_user_status(accounts.get_uid(), accounts.get_ban())
-    
+
     data = {
         "result": 0,
         "uid": accounts.get_uid(),
@@ -83,20 +83,20 @@ def userVerifyAccount() -> Response:
         1：服务器目前暂未开放
         2：<自定义消息>error
     '''
-    
+
     data = request.data
     request_data = request.get_json()
-    
+
     secret = json.loads(request_data["extension"])["access_token"]
     server_config = read_json(CONFIG_PATH)
-    
+
     if not server_config["server"]["enableServer"]:
         data = {
             "result": 2,
             "error": server_config["server"]["maintenanceMsg"]
         }
         return data
-    
+
     result = userData.query_account_by_secret(secret)
 
     if len(result) != 1:
@@ -105,7 +105,7 @@ def userVerifyAccount() -> Response:
             "error": "该用户尚不存在"
         }
         return data
-    
+
     accounts = Account(*result[0])
 
     if accounts.get_ban() > 1:
@@ -120,7 +120,7 @@ def userVerifyAccount() -> Response:
         else:
             accounts.set_ban(0)
             userData.set_user_status(accounts.get_uid(), accounts.get_ban())
-    
+
     data = {
         "result": 0,
         "uid": accounts.get_uid(),
@@ -137,22 +137,22 @@ def userVerifyAccount() -> Response:
 
 
 def payGetAllProductList() -> Response:
-    
+
     data = request.data
-    
+
     server_config = read_json(CONFIG_PATH)
-    
+
     if not server_config["server"]["enableServer"]:
         return abort(400)
 
     productList = read_json(ALLPRODUCT_LIST_PATH, encoding='utf-8')["productList"]
-    
+
     data = {
         "productList": productList
     }
 
     return data
-    
+
 
 def payConfirmOrderState() -> Response:
     '''
@@ -162,16 +162,16 @@ def payConfirmOrderState() -> Response:
         2：第三方支付处理中，未能获取到支付结果，请重启游戏后以实际结果为准，如有问题请联系客服。
         4：支付未完成
     '''
-    
+
     data = request.data
     request_data = request.get_json()
-    
+
     orderId = request_data["orderId"]
     server_config = read_json(CONFIG_PATH)
-    
+
     if not server_config["server"]["enableServer"]:
         return abort(400)
-    
+
     if orderId in TemporaryData.order_data_list:
         data = {
             "payState": 3
@@ -181,5 +181,5 @@ def payConfirmOrderState() -> Response:
     data = {
         "payState": 0
     }
-    
+
     return data

@@ -30,6 +30,7 @@ account-test.py
 data/excel/
 data/announce/
 assets/
+log/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

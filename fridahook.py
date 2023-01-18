@@ -176,8 +176,8 @@ def main():
         var mitm_cert_location_on_device = "/data/local/tmp/mitmproxy-ca-cert.cer";
 
         setTimeout(function() {{
-            [0x1b87621, 0xbe74a0].forEach(hookTrue);
-            [0x1b7fcc9].forEach(hookFalse);
+            [0xfe978f, 0x362b87e].forEach(hookTrue);
+            [0xfde384].forEach(hookFalse);
         }}, {timeout})
 
         redirect_traffic_to_proxy(proxy_url, proxy_port);

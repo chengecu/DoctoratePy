@@ -1,20 +1,30 @@
+import json
 import os
-import socket
-import requests
-from flask import abort
+from functools import lru_cache
 
-from datetime import datetime
-from utils import read_json, write_json
+import requests
 from constants import CONFIG_PATH
+from flask import abort
+from logger import writeLog
+from utils import read_json, write_json
 
 from . import loadMods
 
 
-def writeLog(data: str) -> None:
+class CacheData:
 
-    time = datetime.now().strftime("%d/%b/%Y %H:%M:%S")
-    clientIp = socket.gethostbyname(socket.gethostname())
-    print(f'{clientIp} - - [{time}] {data}')
+    cached_data = {}
+
+    @classmethod
+    @lru_cache(maxsize=10485760)
+    def read_cache(cls, localPath):
+        current_modification_time = os.path.getmtime(localPath)
+        if localPath in cls.cached_data and current_modification_time == cls.cached_data[localPath]["modification_time"]:
+            return cls.cached_data[localPath]["data"]
+        data = read_json(localPath, encoding='utf-8')
+        modification_time = os.path.getmtime(localPath)
+        cls.cached_data[localPath] = {"data": data, "modification_time": modification_time}
+        return data
 
 
 def updateData(url: str, use_local: bool = False) -> None:
@@ -23,7 +33,7 @@ def updateData(url: str, use_local: bool = False) -> None:
         ("https://raw.githubusercontent.com/Kengxxiao/ArknightsGameData/master/zh_CN/gamedata", './data'),
         ("https://ak-conf.hypergryph.com/config/prod/announce_meta/Android", './data/announce')
     ]
-    
+
     for index in BASE_URL_LIST:
         if index[0] in url:
             if not os.path.isdir(index[1]):
@@ -36,11 +46,16 @@ def updateData(url: str, use_local: bool = False) -> None:
 
     if use_local:
         try:
-            data = read_json(localPath, encoding = "utf-8")
+            cache_data = CacheData()
+            data = cache_data.read_cache(localPath)
             return data
-        
-        except:
-            writeLog(f'\033[1;31mCould not load file "{os.path.basename(localPath)}"\033[0;0m')
+
+        except json.decoder.JSONDecodeError:
+            writeLog(f'\033[1;31mCould not load file "{os.path.basename(localPath)}"\033[0;0m', "error")
+            return abort(500)
+
+        except IOError:
+            writeLog(f'\033[1;31mCould not open file "{os.path.basename(localPath)}"\033[0;0m', "error")
             return abort(500)
 
     server_config = read_json(CONFIG_PATH)
@@ -57,21 +72,21 @@ def updateData(url: str, use_local: bool = False) -> None:
             if current_url in mod:
                 current_is_mod = True
                 break
-    
+
     if not current_is_mod:
         try:
             data = requests.get(url).json()
             write_json(data, localPath)
-            writeLog(f'Auto-update of file "{os.path.basename(localPath)}" - \033[1;32mSuccessful!\033[0;0m')
+            writeLog(f'Auto-update of file "{os.path.basename(localPath)}" - \033[1;32mSuccessful!\033[0;0m', "info")
 
-        except:
-            writeLog(f'Auto-update of file "{os.path.basename(localPath)}" - \033[1;31mFailed!\033[0;0m')
+        except requests.exceptions.RequestException:
+            writeLog(f'Auto-update of file "{os.path.basename(localPath)}" - \033[1;31mFailed!\033[0;0m', "error")
             if not os.path.exists(localPath):
-               writeLog(f'\033[1;31mCould not find file "{os.path.basename(localPath)}"\033[0;0m')
-               return abort(500)
-            
+                writeLog(f'\033[1;31mCould not find file "{os.path.basename(localPath)}"\033[0;0m', "error")
+                return abort(500)
+
     if "announce_meta" in url:
-        data = read_json(localPath, encoding = "utf-8")
+        data = read_json(localPath, encoding='utf-8')
         return data
 
     return None

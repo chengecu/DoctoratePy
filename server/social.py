@@ -1,33 +1,34 @@
 import json
-from flask import Response, request, abort
 
-from constants import CONFIG_PATH, CHARACTER_TABLE_URL, MEDAL_TABLE_URL
-from utils import read_json
-from core.function.update import updateData
-from core.database import userData
+from flask import Response, abort, request
+
+from constants import CHARACTER_TABLE_URL, CONFIG_PATH, MEDAL_TABLE_URL
 from core.Account import Account, UserInfo
+from core.database import userData
+from core.function.update import updateData
 from core.Search import SearchUidList
+from utils import read_json
 
 
 def socialSetAssistCharList() -> Response:
-    
+
     data = request.data
     request_data = request.get_json()
-    
+
     secret = request.headers.get("secret")
     assistCharList = request_data["assistCharList"]
     server_config = read_json(CONFIG_PATH)
 
     CHARACTER_TABLE = updateData(CHARACTER_TABLE_URL, True)
-    
+
     if not server_config["server"]["enableServer"]:
         return abort(400)
-    
+
     result = userData.query_account_by_secret(secret)
-    
+
     if len(result) != 1:
         return abort(500)
-    
+
     assistChar = {}
     accounts = Account(*result[0])
     player_data = json.loads(accounts.get_user())
@@ -36,20 +37,20 @@ def socialSetAssistCharList() -> Response:
     userData.set_user_data(accounts.get_uid(), player_data)
 
     for index in range(len(assistCharList)):
-        if assistCharList[index] is not None:
+        if assistCharList[index]:
             charInfo = assistCharList[index]
             charInstId = str(charInfo["charInstId"])
             charId = player_data["troop"]["chars"][charInstId]["charId"]
             charInfo["charId"] = charId
             profession = CHARACTER_TABLE[charId]["profession"]
-            
+
             if profession not in assistChar:
                 assistChar[profession] = []
 
             assistChar[profession].append(charInfo)
-            
+
     userData.set_assist_char_list_data(accounts.get_uid(), assistChar)
-    
+
     data = {
         "playerDataDelta": {
             "deleted": {},
@@ -63,19 +64,19 @@ def socialSetAssistCharList() -> Response:
 
 
 def socialGetSortListInfo() -> Response:
-    
+
     data = request.data
     request_data = request.get_json()
 
     secret = request.headers.get("secret")
     type = request_data["type"]
     server_config = read_json(CONFIG_PATH)
-    
+
     if not server_config["server"]["enableServer"]:
         return abort(400)
-    
+
     result = userData.query_account_by_secret(secret)
-    
+
     if len(result) != 1:
         return abort(500)
 
@@ -85,12 +86,12 @@ def socialGetSortListInfo() -> Response:
     friend_data = json.loads(accounts.get_friend())
     friend_request = friend_data["request"]
     friend_list = friend_data["list"]
-    
+
     for friend in friend_request:
         result = userData.query_account_by_uid(friend["uid"])
         if len(result) == 0:
             friend_request.remove(friend)
-            
+
     for friend in friend_list:
         result = userData.query_account_by_uid(friend["uid"])
         if len(result) == 0:
@@ -132,19 +133,19 @@ def socialGetSortListInfo() -> Response:
                 for item in rooms["MEETING"]:
                     infoShare = rooms["MEETING"][item]["infoShare"]["ts"]
                     break
-                
+
             friendInfo = {
                 "level": userStatus["level"],
                 "infoShare": infoShare,
                 "uid": friendUid
             }
-            
+
             resultList.append(friendInfo)
-    
+
     if type == 2:
         friendRequest = json.loads(accounts.get_friend())["request"]
         resultList = friendRequest
-            
+
     data = {
         "playerDataDelta": {
             "deleted": {},
@@ -157,26 +158,26 @@ def socialGetSortListInfo() -> Response:
 
 
 def socialGetFriendList() -> Response:
-    
+
     data = request.data
     request_data = request.get_json()
 
     secret = request.headers.get("secret")
     idList = request_data["idList"]
     server_config = read_json(CONFIG_PATH)
-    
+
     if not server_config["server"]["enableServer"]:
         return abort(400)
-    
+
     result = userData.query_account_by_secret(secret)
-    
+
     if len(result) != 1:
         return abort(500)
-    
+
     friends = []
     friendAlias = []
     accounts = Account(*result[0])
-    
+
     for index in range(len(idList)):
         board = []
         infoShare = 0
@@ -193,11 +194,11 @@ def socialGetFriendList() -> Response:
         result = userData.query_account_by_uid(friendUid)
         friendAccounts = Account(*result[0])
         friend_data = json.loads(friendAccounts.get_user())
-        
+
         teamV2 = friend_data["dexNav"]["teamV2"]
         furn = friend_data["building"]["furniture"]
         rooms = friend_data["building"]["rooms"]
-        
+
         for item in teamV2:
             teamV2[item] = len(teamV2[item].keys())
 
@@ -206,17 +207,17 @@ def socialGetFriendList() -> Response:
                 board = list(rooms["MEETING"][item]["board"].keys())
                 infoShare = rooms["MEETING"][item]["infoShare"]["ts"]
                 break
-            
+
         if "medalBoard" in friend_data["social"]:
             custom = friend_data["social"]["medalBoard"]["custom"]
-            if custom is not None:
+            if custom:
                 medalBoard["custom"] = friend_data["medal"]["custom"]["customs"][custom]
                 medalBoard["template"] = None
             else:
                 medalBoard["template"] = {
                     "groupId": friend_data["social"]["medalBoard"]["template"],
                     "medalList": friend_data["social"]["medalBoard"]["templateMedalList"]
-            }
+                }
             medalBoard["type"] = friend_data["social"]["medalBoard"]["type"]
 
         userAssistCharList = json.loads(userInfo.get_social_assist_char_list())
@@ -227,7 +228,7 @@ def socialGetFriendList() -> Response:
         assistCharList = []
 
         for n in range(len(userAssistCharList)):
-            if userAssistCharList[n] is not None:
+            if userAssistCharList[n]:
                 charInstId = str(userAssistCharList[n]["charInstId"])
                 char_data = chars[charInstId]
                 char_data["skillIndex"] = userAssistCharList[n]["skillIndex"]
@@ -259,11 +260,11 @@ def socialGetFriendList() -> Response:
             "teamV2": teamV2,
             "uid": friendUid
         }
-        
+
         friends.append(friendInfo)
 
         friendList = userFriend["list"]
-        
+
         for n in range(len(friendList)):
             if str(friendList[n]["uid"]) == friendUid:
                 friendAlias.append(friendList[n]["alias"])
@@ -279,25 +280,25 @@ def socialGetFriendList() -> Response:
     }
 
     return data
-    
+
 
 def socialSearchPlayer() -> Response:
-    
+
     data = request.data
     request_data = request.get_json()
 
     secret = request.headers.get("secret")
     idList = request_data["idList"]
     server_config = read_json(CONFIG_PATH)
-    
+
     if not server_config["server"]["enableServer"]:
         return abort(400)
-    
+
     result = userData.query_account_by_secret(secret)
-    
+
     if len(result) != 1:
         return abort(500)
-    
+
     friends = []
     friendStatusList = []
     accounts = Account(*result[0])
@@ -309,24 +310,24 @@ def socialSearchPlayer() -> Response:
             "template": None,
             "type": "EMPTY"
         }
-        
+
         result = userData.query_user_info(friendUid)
         userInfo = UserInfo(*result[0])
-        
+
         result = userData.query_account_by_uid(friendUid)
         friendAccounts = Account(*result[0])
         friend_data = json.loads(friendAccounts.get_user())
-            
+
         if "medalBoard" in friend_data["social"]:
             custom = friend_data["social"]["medalBoard"]["custom"]
-            if custom is not None:
+            if custom:
                 medalBoard["custom"] = friend_data["medal"]["custom"]["customs"][custom]
                 medalBoard["template"] = None
             else:
                 medalBoard["template"] = {
                     "groupId": friend_data["social"]["medalBoard"]["template"],
                     "medalList": friend_data["social"]["medalBoard"]["templateMedalList"]
-            }
+                }
             medalBoard["type"] = friend_data["social"]["medalBoard"]["type"]
 
         userAssistCharList = json.loads(userInfo.get_social_assist_char_list())
@@ -337,14 +338,14 @@ def socialSearchPlayer() -> Response:
         assistCharList = []
 
         for n in range(len(userAssistCharList)):
-            if userAssistCharList[n] is not None:
+            if userAssistCharList[n]:
                 charInstId = str(userAssistCharList[n]["charInstId"])
                 char_data = chars[charInstId]
                 char_data["skillIndex"] = userAssistCharList[n]["skillIndex"]
                 assistCharList.append(char_data)
             else:
                 assistCharList.append(None)
-                
+
         friendInfo = {
             "assistCharList": assistCharList,
             "avatarId": userStatus["avatarId"],
@@ -363,7 +364,7 @@ def socialSearchPlayer() -> Response:
 
         friendRequest = userFriend["request"]
         friendList = userFriend["list"]
-        
+
         is_set = False
         for n in range(len(friendList)):
             if friendList[n]['uid'] == accounts.get_uid():
@@ -390,24 +391,24 @@ def socialSearchPlayer() -> Response:
 
 
 def socialGetFriendRequestList() -> Response:
-    
+
     data = request.data
     request_data = request.get_json()
 
     secret = request.headers.get("secret")
     idList = request_data["idList"]
     server_config = read_json(CONFIG_PATH)
-    
+
     if not server_config["server"]["enableServer"]:
         return abort(400)
-    
+
     result = userData.query_account_by_secret(secret)
-    
+
     if len(result) != 1:
         return abort(500)
-    
+
     friends = []
-    
+
     for index in range(len(idList)):
         board = []
         infoShare = 0
@@ -417,37 +418,37 @@ def socialGetFriendRequestList() -> Response:
             "template": None,
             "type": "EMPTY"
         }
-        
+
         result = userData.query_user_info(friendUid)
         userInfo = UserInfo(*result[0])
 
         result = userData.query_account_by_uid(friendUid)
         friendAccounts = Account(*result[0])
         friend_data = json.loads(friendAccounts.get_user())
-        
+
         teamV2 = friend_data["dexNav"]["teamV2"]
         furn = friend_data["building"]["furniture"]
         rooms = friend_data["building"]["rooms"]
-        
+
         for item in teamV2:
             teamV2[item] = len(teamV2[item].keys())
-        
+
         if "MEETING" in rooms:
             for item in rooms["MEETING"]:
                 board = list(rooms["MEETING"][item]["board"].keys())
                 infoShare = rooms["MEETING"][item]["infoShare"]["ts"]
                 break
-            
+
         if "medalBoard" in friend_data["social"]:
             custom = friend_data["social"]["medalBoard"]["custom"]
-            if custom is not None:
+            if custom:
                 medalBoard["custom"] = friend_data["medal"]["custom"]["customs"][custom]
                 medalBoard["template"] = None
             else:
                 medalBoard["template"] = {
                     "groupId": friend_data["social"]["medalBoard"]["template"],
                     "medalList": friend_data["social"]["medalBoard"]["templateMedalList"]
-            }
+                }
             medalBoard["type"] = friend_data["social"]["medalBoard"]["type"]
 
         userAssistCharList = json.loads(userInfo.get_social_assist_char_list())
@@ -457,14 +458,14 @@ def socialGetFriendRequestList() -> Response:
         assistCharList = []
 
         for n in range(len(userAssistCharList)):
-            if userAssistCharList[n] is not None:
+            if userAssistCharList[n]:
                 charInstId = str(userAssistCharList[n]["charInstId"])
                 char_data = chars[charInstId]
                 char_data["skillIndex"] = userAssistCharList[n]["skillIndex"]
                 assistCharList.append(char_data)
             else:
                 assistCharList.append(None)
-                
+
         friendInfo = {
             "assistCharList": assistCharList,
             "avatar": userStatus["avatar"],
@@ -480,7 +481,7 @@ def socialGetFriendRequestList() -> Response:
             "medalBoard": medalBoard,
             "nickName": userStatus["nickName"],
             "nickNumber": userStatus["nickNumber"],
-            "recentVisited": 0, # TODO: Set correct data
+            "recentVisited": 0,  # TODO: Set correct data
             "registerTs": userStatus["registerTs"],
             "resume": userStatus["resume"],
             "secretary": userStatus["secretary"],
@@ -489,7 +490,7 @@ def socialGetFriendRequestList() -> Response:
             "teamV2": teamV2,
             "uid": friendUid
         }
-        
+
         friends.append(friendInfo)
 
     data = {
@@ -505,7 +506,7 @@ def socialGetFriendRequestList() -> Response:
 
 
 def socialProcessFriendRequest() -> Response:
-    
+
     data = request.data
     request_data = request.get_json()
 
@@ -513,21 +514,21 @@ def socialProcessFriendRequest() -> Response:
     action = request_data["action"]
     friendId = request_data["friendId"]
     server_config = read_json(CONFIG_PATH)
-    
+
     if not server_config["server"]["enableServer"]:
         return abort(400)
-    
+
     result = userData.query_account_by_secret(secret)
-    
+
     if len(result) != 1:
         return abort(500)
-    
+
     accounts = Account(*result[0])
     player_data = json.loads(accounts.get_user())
     friend_data = json.loads(accounts.get_friend())
     friendRequest = friend_data["request"]
     friendList = friend_data["list"]
-    
+
     for index in friendList:
         for item in friendRequest:
             if item["uid"] == index["uid"]:
@@ -537,9 +538,9 @@ def socialProcessFriendRequest() -> Response:
         if str(friendRequest[index]["uid"]) == friendId:
             friendRequest.pop(index)
             friend_data["request"] = friendRequest
-            
+
             userData.set_friend_data(accounts.get_uid(), friend_data)
-            
+
             if action == 1:
                 friend = {
                     "uid": int(friendId),
@@ -547,9 +548,9 @@ def socialProcessFriendRequest() -> Response:
                 }
                 friendList.append(friend)
                 friend_data["list"] = friendList
-                
+
                 userData.set_friend_data(accounts.get_uid(), friend_data)
-    
+
     if action == 1:
         result = userData.query_user_info(friendId)
         userInfo = UserInfo(*result[0])
@@ -557,11 +558,11 @@ def socialProcessFriendRequest() -> Response:
         _fdata = json.loads(userInfo.get_friend())
         _flist = _fdata["list"]
         _freq = _fdata["request"]
-        
+
         for m, n in enumerate(_freq):
             if n["uid"] == accounts.get_uid():
                 _freq.pop(m)
-        
+
         friend = {
             "uid": accounts.get_uid(),
             "alias": None
@@ -569,7 +570,7 @@ def socialProcessFriendRequest() -> Response:
         _flist.append(friend)
         _fdata["list"] = _flist
         _fdata["request"] = _freq
-        
+
         userData.set_friend_data(friendId, _fdata)
 
     if len(friendRequest) == 0:
@@ -592,22 +593,22 @@ def socialProcessFriendRequest() -> Response:
 
 
 def socialSendFriendRequest() -> Response:
-    
+
     data = request.data
     request_data = request.get_json()
 
     secret = request.headers.get("secret")
     friendId = request_data["friendId"]
     server_config = read_json(CONFIG_PATH)
-    
+
     if not server_config["server"]["enableServer"]:
         return abort(400)
-    
+
     result = userData.query_account_by_secret(secret)
-    
+
     if len(result) != 1:
         return abort(500)
-    
+
     accounts = Account(*result[0])
     player_data = json.loads(accounts.get_user())
     result = userData.query_user_info(friendId)
@@ -619,14 +620,14 @@ def socialSendFriendRequest() -> Response:
     friend_data = json.loads(userInfo.get_friend())
     friendRequest = friend_data["request"]
     friendList = friend_data["list"]
-    
+
     if len(friendList) == json.loads(friendAccounts.get_user())["status"]["friendNumLimit"] or len(json.loads(accounts.get_friend())["list"]) == player_data["status"]["friendNumLimit"]:
         data = {
             "result": 1,
             "error": "好友数量达到上限，无法发送好友申请"
         }
         return data
-    
+
     for index in range(len(friendList)):
         if friendList[index]["uid"] == accounts.get_uid():
             data = {
@@ -647,7 +648,7 @@ def socialSendFriendRequest() -> Response:
     friendRequest.append(req)
 
     friend_data["request"] = friendRequest
-    
+
     userData.set_friend_data(friendId, friend_data)
     userData.set_user_data(accounts.get_uid(), player_data)
 
@@ -663,7 +664,7 @@ def socialSendFriendRequest() -> Response:
 
 
 def socialSetFriendAlias() -> Response:
-    
+
     data = request.data
     request_data = request.get_json()
 
@@ -671,15 +672,15 @@ def socialSetFriendAlias() -> Response:
     alias = request_data["alias"]
     friendId = request_data["friendId"]
     server_config = read_json(CONFIG_PATH)
-    
+
     if not server_config["server"]["enableServer"]:
         return abort(400)
-    
+
     result = userData.query_account_by_secret(secret)
-    
+
     if len(result) != 1:
         return abort(500)
-    
+
     accounts = Account(*result[0])
     player_data = json.loads(accounts.get_user())
     result = userData.query_user_info(accounts.get_uid())
@@ -693,10 +694,10 @@ def socialSetFriendAlias() -> Response:
             friendList[index]["alias"] = alias
 
     friend_data["list"] = friendList
-    
+
     userData.set_friend_data(accounts.get_uid(), friend_data)
     userData.set_user_data(accounts.get_uid(), player_data)
-    
+
     data = {
         "result": 0,
         "playerDataDelta": {
@@ -709,22 +710,22 @@ def socialSetFriendAlias() -> Response:
 
 
 def socialDeleteFriend() -> Response:
-    
+
     data = request.data
     request_data = request.get_json()
 
     secret = request.headers.get("secret")
     friendId = request_data["friendId"]
     server_config = read_json(CONFIG_PATH)
-    
+
     if not server_config["server"]["enableServer"]:
         return abort(400)
-    
+
     result = userData.query_account_by_secret(secret)
-    
+
     if len(result) != 1:
         return abort(500)
-    
+
     accounts = Account(*result[0])
     player_data = json.loads(accounts.get_user())
     result = userData.query_user_info(accounts.get_uid())
@@ -732,7 +733,7 @@ def socialDeleteFriend() -> Response:
 
     friend_data = json.loads(userInfo.get_friend())
     friendList = friend_data["list"]
-    
+
     for index in range(len(friendList)):
         if str(friendList[index]["uid"]) == friendId:
             friendList.pop(index)
@@ -740,7 +741,7 @@ def socialDeleteFriend() -> Response:
     friend_data["list"] = friendList
 
     userData.set_friend_data(accounts.get_uid(), friend_data)
-    
+
     result = userData.query_user_info(friendId)
     userFriend = UserInfo(*result[0])
 
@@ -752,7 +753,7 @@ def socialDeleteFriend() -> Response:
             friendList.pop(index)
 
     friend_data["list"] = friendList
-    
+
     userData.set_friend_data(friendId, friend_data)
     userData.set_user_data(accounts.get_uid(), player_data)
 
@@ -768,7 +769,7 @@ def socialDeleteFriend() -> Response:
 
 
 def socialSetCardShowMedal() -> Response:
-    
+
     data = request.data
     request_data = request.get_json()
 
@@ -779,15 +780,15 @@ def socialSetCardShowMedal() -> Response:
     server_config = read_json(CONFIG_PATH)
 
     MEDAL_TABLE = updateData(MEDAL_TABLE_URL, True)
-    
+
     if not server_config["server"]["enableServer"]:
         return abort(400)
-    
+
     result = userData.query_account_by_secret(secret)
-    
+
     if len(result) != 1:
         return abort(500)
-    
+
     accounts = Account(*result[0])
     player_data = json.loads(accounts.get_user())
     medal_data = MEDAL_TABLE
@@ -798,19 +799,19 @@ def socialSetCardShowMedal() -> Response:
         medalBoard["custom"] = None
         medalBoard["template"] = templateGroup
         templateMedalList = []
-        
+
         if "Activity" in templateGroup:
             medalGroupId = "activityMedal"
         if "Rogue" in templateGroup:
             medalGroupId = "rogueMedal"
-    
+
         for item in medal_data["medalTypeData"][medalGroupId]["groupData"]:
             if item["groupId"] == templateGroup:
                 medalIdList = item["medalId"]
 
         for index in medalIdList:
             for item in medal_data["medalList"]:
-                if item["medalId"] == index and item["advancedMedal"] is not None:
+                if item["medalId"] == index and item["advancedMedal"]:
                     medalIdList.append(item["advancedMedal"])
 
         for item in medalIdList:
@@ -830,7 +831,7 @@ def socialSetCardShowMedal() -> Response:
     userData.set_user_data(accounts.get_uid(), player_data)
 
     data = {
-        "playerDataDelta":{
+        "playerDataDelta": {
             "deleted": {},
             "modified": {
                 "social": {
