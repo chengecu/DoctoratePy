@@ -257,10 +257,12 @@ def questBattleFinish() -> Response:
     firstRewards = []
     new_stages = {}
     rewards = []
+    apFailReturn = 0
 
     # Add enemies encountered in the level to temporary data
     if player_stage["state"] == 0:
         dexNav["enemy"]["stage"][stageId] = enemyList
+        player_data["dungeon"]["stages"][stageId]["state"] = 1
 
     # Battle lost
     if completeState == 1:
@@ -287,9 +289,6 @@ def questBattleFinish() -> Response:
         player_data["status"]["lastApAddTime"] = time_now
 
     else:
-        if player_stage["state"] == 0:
-            player_data["dungeon"]["stages"][stageId]["state"] = 1
-
         # First time 3 stars pass
         FirstClear = False
         if player_stage["state"] != 3 and completeState == 3:
@@ -469,7 +468,7 @@ def questBattleFinish() -> Response:
 
     data = {
         "result": 0,
-        "apFailReturn": 0,
+        "apFailReturn": apFailReturn,
         "goldScale": goldScale,
         "expScale": expScale,
         "rewards": rewards,

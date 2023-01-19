@@ -112,7 +112,8 @@ def unlockActivity(player_data: Dict) -> Dict:
                             if chr in item:
                                 unlockStage["noCostCnt"] = 0
 
-                        player_data["dungeon"]["stages"].update({item: unlockStage})
+                        if item not in player_data["dungeon"]["stages"]:
+                            player_data["dungeon"]["stages"].update({item: unlockStage})
 
             # TODO: Add more
         if value["name"] in replicate_list:
