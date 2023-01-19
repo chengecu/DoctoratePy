@@ -43,6 +43,7 @@ def createRecruitList(player_data: dict) -> None:
     pickedCards = [str(player_data["tower"]["current"]["cards"][key]["relation"]) for key in player_data["tower"]["current"]["cards"]]
     availableCards = list(set(allCards) - set(pickedCards))
     if len(availableCards) > 5:
+        availableCards = random.sample(availableCards, 5)
         for card in availableCards:
             candidate.append({
                 "groupId": player_data["troop"]["chars"][card]["charId"],
