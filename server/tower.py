@@ -109,6 +109,7 @@ def changeState(stageCnt: int, player_data: dict, BattleData: dict, trap: list) 
                     "alias": i.split(",")[2],
                 })
         player_data["tower"]["current"]["status"]["trap"] = trap
+        player_data["tower"]["current"]["trap"] = trap
         return trap
     else:
         player_data["tower"]["current"]["status"]["state"] = "RECRUIT"
