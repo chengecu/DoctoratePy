@@ -8,28 +8,27 @@ Discord Invite: [Link](https://discord.gg/pUj8HQ5FQU)
 1. Install [mitmproxy](https://mitmproxy.org/) and [python3](https://www.python.org/downloads/).
 2. Clone the repo.
 3. Open emulator, enable root and open adb connection if necessary. Install the game.
-4. Run `setup_requirements.bat` and choose corresponding emulator.
+4. Run `setup_requirements.bat`.
 5. Configure your proxy ip address in `config\config.json` in the `host` key.
 6. Run `start_mitmproxy.bat` and `start_local_server.bat`.
-
-### MuMu Player
-7. Open the game. Wait till an error appears.
-8. Run `start_frida-server.bat` and choose `1`.
-9. Run `start_frida-hook.bat` and choose `1`.
-
-### LDPlayer9
-7. Run `start_frida-server.bat` and choose `2`.
-8. Run `start_frida-hook.bat` and choose `2`. It should automatically open up the game.
-
-### Others (Haven't tested yet. Might or might not work.)
-7. Run `start_frida-server.bat` and choose `3`.
-8. Run `start_frida-hook.bat` and choose `2`. It should automatically open up the game.
+7. Run `start_frida-hook.bat`.
 
 Note: There should be a total of 4 cmd windows opened.
+
+## FAQ
+- Q: I get a blank screen when running `start_frida-hook.bat`. (MuMu Player and Nox Player)
+- A: Run `start_frida-hook.bat` with the parameter `-m`. For example, `start_frida-hook.bat -m`.
+- Reason: MuMu Player and Nox Player interact with frida differently. This is a workaround for now.
+<br />
+<br />
+- Q: I can't change my squad name or bring up text input box. (MuMu Player and Nox Player)
+- A: Close `start_frida-hook.bat` and run `start_frida-hook.bat` with the parameter `-a`. For example, `start_frida-hook.bat -a`.
+- Reason: MuMu Player and Nox Player interact with frida differently. This is a workaround for now. This will reattach to the game process and hook the functions again.
 
 ## Currently tested emulator to be working
 1. LDPlayer9
 2. MuMu Player (Not X or Nebula)
+3. Nox Player
 
 ## Changing contengency contract season
 Change the value of key `selectedCrisis` in `config\config.json` to whatever you want. The avaiable seasons are under `data\crisis`.

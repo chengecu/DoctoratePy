@@ -1,44 +1,64 @@
+import argparse
 import sys
+import time
 from base64 import b64decode
 
 import frida
-
+from adbutils import adb
+from loguru import logger
 from server.constants import CONFIG_PATH
 from server.utils import read_json
 
 HOST = read_json(CONFIG_PATH)["server"]["host"]
 
+
 def on_message(message, data):
     print("[%s] => %s" % (message, data))
 
-def main():
-    device = frida.get_usb_device(timeout=1)
-    while True:
-        num = input("Choose your emulator.\n1. Mumu Player\n2. LDPlayer9 and Others\nChoose one: ")
-        try:
-            num = int(num)
-        except:
-            print("Invalid input")
-            continue
 
-        if num not in [1, 2]:
-            print("Invalid input")
-            continue
+def main(use_mumu=False, attach=False):
 
-        if num == 1:
-            # Mumu Player
-            session = device.attach("Arknights")
-            timeout = 500
-            break
+    try:
+        adb_device = adb.device_list()[0]
+    except IndexError:
+        logger.info("No device found. Trying to connect to one...")
+        default_ports = ["5555", "7555", "62001"]
+        for port in default_ports:
+            logger.info(f"Trying to connect to port {port}...")
+            adb.connect(f"127.0.0.1:{port}")
+            time.sleep(0.5)
+            if len(adb.device_list()) > 0:
+                logger.info("Device found!")
+                adb_device = adb.device_list()[0]
+                if port in ["7555", "62001"]:
+                    logger.info("Device is a MUMU type emulator. Setting use_mumu to True")
+                    use_mumu = True
+                break
 
-        elif num == 2:
-            # LDPlayer9
-            pid = device.spawn(b64decode('Y29tLmh5cGVyZ3J5cGguYXJrbmlnaHRz').decode())
-            device.resume(pid)
-            session = device.attach(pid)
-            timeout = 6000
-            break
+    if adb_device.shell("command -v su") == "":
+        logger.error("No root access found. Exiting...")
+        sys.exit(1)
 
+    if adb_device.shell("pidof frida-server") == "":
+        logger.info("Frida server not running. Starting it...")
+        adb_device.shell("su -c \"/data/local/tmp/frida-server -D\"")
+        time.sleep(1)
+
+    if not attach:
+        device = frida.get_usb_device(timeout=1)
+        pid = device.spawn(b64decode('Y29tLmh5cGVyZ3J5cGguYXJrbmlnaHRz').decode())
+        device.resume(pid)
+
+        if use_mumu:
+            logger.info("MUMU emulator detected. Restarting frida server...")
+            adb_device.shell("su -c \"kill `pidof frida-server`\"")
+            time.sleep(3)
+            adb_device.shell("su -c \"/data/local/tmp/frida-server -D\"")
+
+        session = device.attach(pid)
+    else:
+        device = frida.get_usb_device(timeout=1)
+        session = device.attach('Arknights')
     script = session.create_script("""
 
     function redirect_traffic_to_proxy(proxy_url, proxy_port) {{
@@ -84,14 +104,14 @@ def main():
             // Load CAs from an InputStream
             console.log("[+] Loading our CA...")
             var cf = CertificateFactory.getInstance("X.509");
-            
+
             try {{
                 var fileInputStream = FileInputStream.$new(mitm_cert_location);
             }}
             catch(err) {{
                 console.log("[o] " + err);
             }}
-            
+
             var bufferedInputStream = BufferedInputStream.$new(fileInputStream);
             var ca = cf.generateCertificate(bufferedInputStream);
             bufferedInputStream.close();
@@ -105,7 +125,7 @@ def main():
             var keyStore = KeyStore.getInstance(keyStoreType);
             keyStore.load(null, null);
             keyStore.setCertificateEntry("ca", ca);
-            
+
             // Create a TrustManager that trusts the CAs in our KeyStore
             console.log("[+] Creating a TrustManager that trusts the CA in our KeyStore...");
             var tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
@@ -175,23 +195,47 @@ def main():
         var proxy_port = 8080;
         var mitm_cert_location_on_device = "/data/local/tmp/mitmproxy-ca-cert.cer";
 
-        setTimeout(function() {{
+        var awaitForCondition = function (e) {{
+            var int = setInterval(function () {{
+                var addr = Module.findBaseAddress("libil2cpp.so");
+                if (addr) {{
+                    clearInterval(int);
+                    e(+addr);
+                    return;
+                }}
+            }}, 0);
+        }}
+        awaitForCondition(()=>{{
+            console.log('[+] libil2cpp.so Loaded!');
             [0xfe978f, 0x362b87e].forEach(hookTrue);
             [0xfde384].forEach(hookFalse);
-        }}, {timeout})
+        }});
 
         redirect_traffic_to_proxy(proxy_url, proxy_port);
-        replace_cert(mitm_cert_location_on_device);	
+        replace_cert(mitm_cert_location_on_device);
     }}
 
     init();
 
-""".format(HOST=HOST, timeout=timeout))
+""".format(HOST=HOST))
     script.on('message', on_message)
     script.load()
     print("[!] Ctrl+D on UNIX, Ctrl+Z on Windows/cmd.exe to detach from instrumented program.\n\n")
     sys.stdin.read()
     session.detach()
 
+
 if __name__ == '__main__':
-    main()
+
+    args = argparse.ArgumentParser(description='Doctorate Hooking Script')
+    args.add_argument('-a', '--attach', action='store_true', help='Use this flag to attach to an already running process')
+    args.add_argument('-m', '--mumu', action='store_true', help='Use this flag if you are having black screen issues with Mumu emulator')
+
+    args = args.parse_args()
+    try:
+        main(args.mumu, args.attach)
+    except KeyboardInterrupt:
+        if len(adb.device_list()) > 0:
+            logger.info("Killing frida-server on device")
+            adb_device = adb.device_list()[0]
+            adb_device.shell("su -c \"kill `pidof frida-server`\"")

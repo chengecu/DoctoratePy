@@ -4,10 +4,10 @@ requests
 mitmproxy
 frida
 pycryptodome
-pure-python-adb
 scikit-learn
 pymysql
 wtforms
 tqdm
 adbutils
 psutil
+loguru
